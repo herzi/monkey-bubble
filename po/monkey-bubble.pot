@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-06 12:32+0200\n"
+"POT-Creation-Date: 2003-12-22 16:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,19 +25,19 @@ msgid "Monkey Bubbles Arcade Game"
 msgstr ""
 
 #: data/monkey-bubble.glade.h:1
-msgid "About"
-msgstr ""
-
-#: data/monkey-bubble.glade.h:2
 msgid "Monkey Bubble"
 msgstr ""
 
-#: data/monkey-bubble.glade.h:3
+#: data/monkey-bubble.glade.h:2
 msgid "New 1 player"
 msgstr ""
 
-#: data/monkey-bubble.glade.h:4
+#: data/monkey-bubble.glade.h:3
 msgid "New 2 players"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:4
+msgid "Pause game"
 msgstr ""
 
 #: data/monkey-bubble.glade.h:5
@@ -45,39 +45,51 @@ msgid "Resume game"
 msgstr ""
 
 #: data/monkey-bubble.glade.h:6
-msgid "_Game"
+msgid "Stop game"
 msgstr ""
 
 #: data/monkey-bubble.glade.h:7
+msgid "_About"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:8
+msgid "_Game"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:9
 msgid "_Help"
 msgstr ""
 
+#: data/monkey-bubble.glade.h:10
+msgid "_Settings"
+msgstr ""
+
 #: data/keybinding.glade.h:1
-msgid "*"
+msgid "    Aim Left:"
 msgstr ""
 
 #: data/keybinding.glade.h:2
-msgid "Keybinding"
+msgid "    Aim Right:"
 msgstr ""
 
 #: data/keybinding.glade.h:3
-msgid "Left"
+msgid "    Launch Bubble:"
 msgstr ""
 
 #: data/keybinding.glade.h:4
-msgid "Player 1"
+msgid "*"
 msgstr ""
 
 #: data/keybinding.glade.h:5
-msgid "Player 2"
+msgid "<span weight=\"bold\">Player 1 Controls</span>"
 msgstr ""
 
 #: data/keybinding.glade.h:6
-msgid "Right"
+msgid "<span weight=\"bold\">Player 2 Controls</span>"
 msgstr ""
 
 #: data/keybinding.glade.h:7
-msgid "Shoot"
+msgid "Configure Controls"
 msgstr ""
 
 #: data/monkey-bubble.schemas.in.h:1
@@ -128,6 +140,6 @@ msgstr ""
 msgid "shoot key for player two"
 msgstr ""
 
-#: src/ui/ui-main.c:601
+#: src/ui/ui-main.c:566
 msgid "translator_credits"
 msgstr ""

@@ -38,11 +38,10 @@ struct Game1PlayerPrivate {
     guint timeout_id;
     GameState state;
   Clock * clock;
-    GList * observers;
 
 	 gboolean lost;
 
-
+  gint score;
   Block * paused_block;
   Layer * paused_layer;
 
@@ -62,21 +61,20 @@ struct Game1PlayerPrivate {
     gint notify_id;
 };
 
-static void game_1_player_bubbles_waiting_changed(IMonkeyObserver * bo,
-																  Monkey * monkey,
-																  int bubbles_count);
-static void game_1_player_bubble_sticked(IMonkeyObserver * i,Monkey * monkey,Bubble * b);
+static void game_1_player_add_to_score(Game1Player * g,gint points);
 
-static void game_1_player_game_lost(IMonkeyObserver *bo,Monkey * monkey);
+static void game_1_player_bubble_sticked(Monkey * monkey,Bubble * b,Game1Player * game);
 
-static void game_1_player_bubbles_exploded(IMonkeyObserver * bo,
-					  Monkey * monkey,
-					  GList * exploded,
-					  GList * fallen);
+static void game_1_player_game_lost(Monkey * monkey,Game1Player * game);
 
-static void game_1_player_bubble_shot(IMonkeyObserver * bo,
-					 Monkey * monkey,
-					 Bubble * bubble);
+static void game_1_player_bubbles_exploded(Monkey * monkey,
+					   GList * exploded,
+					   GList * fallen,
+					   Game1Player * game);
+
+static void game_1_player_bubble_shot(Monkey * monkey,
+				      Bubble * bubble,
+				      Game1Player * game);
 
 static void game_1_player_add_bubble(Game1Player * game);
 
@@ -88,12 +86,7 @@ static GameState game_1_player_get_state(Game * game);
 
 void game_1_player_fire_changed(Game1Player * game);
 
-void game_1_player_attach_observer(Game * game,IGameObserver *observer);
-void game_1_player_detach_observer(Game * game,IGameObserver *observer);
 
-
-static void game_1_player_game_iface_init(GameClass * i);
-static void game_1_player_imonkey_observer_iface_init(IMonkeyObserverClass * i);
 
 static gint game_1_player_timeout (gpointer data);
 
@@ -130,12 +123,14 @@ static void game_1_player_finalize(GObject* object) {
   g_signal_handlers_disconnect_by_func( G_OBJECT(PRIVATE(game)->window) ,
 		    GTK_SIGNAL_FUNC (game_1_player_key_released),game);
 
+  g_signal_handlers_disconnect_matched(  G_OBJECT( PRIVATE(game)->monkey ),
+                                         G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,game);
+                                                                                
+
 
   g_object_unref( PRIVATE(game)->clock);
   g_object_unref( PRIVATE(game)->display );
 
-  monkey_detach_observer( PRIVATE(game)->monkey,
-			   IMONKEY_OBSERVER(game));
 
   g_object_unref( PRIVATE(game)->monkey);
   g_free(game->private);
@@ -150,10 +145,17 @@ static void game_1_player_finalize(GObject* object) {
 static void game_1_player_class_init (Game1PlayerClass *klass) {
 
     GObjectClass* object_class;
-    
+    GameClass * game_class;
     parent_class = g_type_class_peek_parent(klass);
     object_class = G_OBJECT_CLASS(klass);
     object_class->finalize = game_1_player_finalize;
+
+    game_class = &(klass->parent_class);
+    game_class->start = game_1_player_start;
+    game_class->stop = game_1_player_stop;
+    game_class->pause = game_1_player_pause;
+    game_class->get_state = game_1_player_get_state;
+
 }
 
 
@@ -172,33 +174,12 @@ GType game_1_player_get_type(void) {
 	1,              /* n_preallocs */
 	(GInstanceInitFunc) game_1_player_instance_init,
       };
-
-      static const GInterfaceInfo iface_game = {
-	(GInterfaceInitFunc) game_1_player_game_iface_init,
-	NULL,
-	NULL
-      };
-
-
-
-      static const GInterfaceInfo iface_imonkey_observer = {
-	(GInterfaceInitFunc) game_1_player_imonkey_observer_iface_init,
-	NULL,
-	NULL
-      };
       
       
-      game_1_player_type = g_type_register_static(G_TYPE_OBJECT,
+      game_1_player_type = g_type_register_static(TYPE_GAME,
 						  "Game1Player",
 						  &game_1_player_info, 0);
 
-      g_type_add_interface_static(game_1_player_type,
-				  TYPE_GAME,
-				  &iface_game);
-
-      g_type_add_interface_static(game_1_player_type,
-				  TYPE_IMONKEY_OBSERVER,
-				  &iface_imonkey_observer);
 
 
     }
@@ -206,44 +187,22 @@ GType game_1_player_get_type(void) {
     return game_1_player_type;
 }
 
-static void game_1_player_game_iface_init(GameClass * i) {
-  i->start = game_1_player_start;
-  i->stop = game_1_player_stop;
-  i->pause = game_1_player_pause;
-  i->get_state = game_1_player_get_state;
-  i->attach_observer = game_1_player_attach_observer;
-  i->detach_observer = game_1_player_detach_observer;
-}
-
-static void game_1_player_imonkey_observer_iface_init(IMonkeyObserverClass * i) {
-  imonkey_observer_class_virtual_init(i,
-				      game_1_player_game_lost,
-				      game_1_player_bubbles_exploded,
-				      game_1_player_bubble_shot,
-				      game_1_player_bubble_sticked,
-												  game_1_player_bubbles_waiting_changed);
-}
 
 
-static void game_1_player_bubbles_waiting_changed(IMonkeyObserver * bo,
-																  Monkey * monkey,
-																  int bubbles_count) {
-}
-static void game_1_player_bubble_sticked(IMonkeyObserver * i,Monkey * monkey,Bubble * b) {
-  Game1Player * game;
+static void game_1_player_bubble_sticked(Monkey * monkey,Bubble * b,
+					 Game1Player * game) {
 
-  g_assert( IS_GAME_1_PLAYER(i));
 
-  game = GAME_1_PLAYER( i );
+  g_assert( IS_GAME_1_PLAYER(game));
 
-  if( ( monkey_get_shot_count( monkey) % 5 ) == 0 ) {
+
+  if( ( monkey_get_shot_count( monkey) % 8 ) == 0 ) {
 
     monkey_set_board_down( monkey);
   }
 
 
 }
-
 
 
 static void
@@ -262,7 +221,7 @@ game_1_player_config_notify (GConfClient *client,
 }
 
 
-Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level) {
+Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level,gint score) {
   Game1Player * game;
 
 
@@ -297,25 +256,45 @@ Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level
   PRIVATE(game)->paused_block = 
     gdk_canvas_create_block_from_image(canvas,
 				       DATADIR"/monkey-bubble/gfx/pause.svg",
-				       460,240,
-				       0,0);
+				       200,200,
+				       100,100);
 
   PRIVATE(game)->paused_layer =
-    gdk_canvas_append_layer(canvas,120,140);
+    gdk_canvas_append_layer(canvas,0,0);
 
 
   PRIVATE(game)->clock = clock_new();
   PRIVATE(game)->timeout_id = 
     gtk_timeout_add (FRAME_DELAY, game_1_player_timeout, game);
   
-  PRIVATE(game)->observers = NULL;
   
   PRIVATE(game)->state = GAME_STOPPED;
 
   PRIVATE(game)->lost = FALSE;
   
-  monkey_attach_observer(PRIVATE(game)->monkey,
-			 IMONKEY_OBSERVER(game));
+  PRIVATE(game)->score = score;
+
+  gdk_view_set_points( PRIVATE(game)->display,score);
+
+  g_signal_connect( G_OBJECT( PRIVATE(game)->monkey),
+		    "bubble-sticked",
+		    G_CALLBACK(game_1_player_bubble_sticked),
+		    game);
+
+  g_signal_connect( G_OBJECT( PRIVATE(game)->monkey),
+		    "game-lost",
+		    G_CALLBACK(game_1_player_game_lost),
+		    game);
+
+  g_signal_connect( G_OBJECT( PRIVATE(game)->monkey),
+		    "bubbles-exploded",
+		    G_CALLBACK(game_1_player_bubbles_exploded),
+		    game);
+
+  g_signal_connect( G_OBJECT( PRIVATE(game)->monkey),
+		    "bubble-shot",
+		    G_CALLBACK(game_1_player_bubble_shot),
+		    game);
 
 
   game_1_player_add_bubble(game);
@@ -526,6 +505,14 @@ gboolean game_1_player_is_lost(Game1Player * g) {
 	 return PRIVATE(g)->lost;
 }
 
+
+gint game_1_player_get_score(Game1Player * g) {
+
+	 g_assert( GAME_1_PLAYER(g));
+
+	 return PRIVATE(g)->score;
+}
+
 static void game_1_player_pause(Game * game,gboolean pause) {
   Game1Player * g;
   g_assert( IS_GAME_1_PLAYER(game));
@@ -539,7 +526,7 @@ static void game_1_player_pause(Game * game,gboolean pause) {
     gdk_canvas_add_block(PRIVATE(g)->canvas,
 			 PRIVATE(g)->paused_layer,
 			 PRIVATE(g)->paused_block,
-			 0,0);
+			 320,240);
 
 	 game_1_player_fire_changed(g);
   } else {
@@ -562,17 +549,15 @@ static GameState game_1_player_get_state(Game * game) {
   return PRIVATE(g)->state;
 }
 
-static void game_1_player_game_lost(IMonkeyObserver *bo,Monkey * monkey) {
-  Game1Player * g;
-  g_assert( IS_GAME_1_PLAYER(bo));
+static void game_1_player_game_lost(Monkey * monkey,Game1Player * g) {
+  g_assert( IS_GAME_1_PLAYER(g));
 
-  g = GAME_1_PLAYER(bo);
 
   PRIVATE(g)->lost = TRUE;
 
   gdk_view_draw_lost( PRIVATE(g)->display );
 
-  game_1_player_stop( GAME(bo));
+  game_1_player_stop( GAME(g));
 
 
   PRIVATE(g)->state = GAME_FINISHED;
@@ -582,25 +567,46 @@ static void game_1_player_game_lost(IMonkeyObserver *bo,Monkey * monkey) {
     
 }
 
-static void game_1_player_bubbles_exploded(IMonkeyObserver * bo,
-					  Monkey * monkey,
-					  GList * exploded,
-					  GList * fallen) {
+static void game_1_player_bubbles_exploded(  Monkey * monkey,
+					     GList * exploded,
+					     GList * fallen,
+					     Game1Player * g) {
 
-	 Game1Player * g;
-	 g_assert( IS_GAME_1_PLAYER(bo));	 
-	 
-	 g = GAME_1_PLAYER(bo);
-	 if( monkey_is_empty( monkey) ) {
-		  
-		  PRIVATE(g)->state = GAME_FINISHED;
+  gint points;
 
-		  gdk_view_draw_win( PRIVATE(g)->display );
+  g_assert( IS_GAME_1_PLAYER(g));	 
 
-		  game_1_player_fire_changed(g);	
-		  game_1_player_stop(GAME(g));
-	 }
 
+    /**
+     * evaluate score :
+     * a exploded bubble = 100 pts
+     * a fall bubble = 200 pts
+     * a minimum of 300 pts to add to score
+     */
+
+  points = g_list_length(exploded)*100 + g_list_length(fallen)*200;
+  if( points > 300 ) {
+    game_1_player_add_to_score(g,points);
+  }    
+  
+  if( monkey_is_empty( monkey) ) {
+    
+    PRIVATE(g)->state = GAME_FINISHED;
+    
+    gdk_view_draw_win( PRIVATE(g)->display );
+    
+    game_1_player_fire_changed(g);	
+    game_1_player_stop(GAME(g));
+  }
+
+  
+}
+
+static void game_1_player_add_to_score(Game1Player * g,gint points) {
+  g_assert( IS_GAME_1_PLAYER(g));
+
+  PRIVATE(g)->score += points;
+  gdk_view_set_points(PRIVATE(g)->display,PRIVATE(g)->score);  
 }
 
 static void game_1_player_add_bubble(Game1Player * game) {
@@ -629,43 +635,16 @@ static void game_1_player_add_bubble(Game1Player * game) {
   shooter_add_bubble(monkey_get_shooter(monkey),bubble_new(count,0,0));
 
 }
-static void game_1_player_bubble_shot(IMonkeyObserver * bo,
-				      Monkey * monkey,
-				      Bubble * bubble) {
+static void game_1_player_bubble_shot( Monkey * monkey,
+				      Bubble * bubble,
+				       Game1Player * game) {
 
 
-  g_assert( IS_GAME_1_PLAYER(bo));
+  g_assert( IS_GAME_1_PLAYER(game));
 
-  game_1_player_add_bubble(GAME_1_PLAYER(bo));
+  game_1_player_add_bubble(GAME_1_PLAYER(game));
 }
 
 void game_1_player_fire_changed(Game1Player * game) {	
-	 GList * next;
-
-	 next = PRIVATE(game)->observers;
-
-	 while( next != NULL ) {
-		  
-		  IGameObserver * o = IGAME_OBSERVER(next->data);
-		  igame_observer_changed(o,GAME(game));
-		  next = g_list_next(next);
-	 }
-}
-
-void game_1_player_attach_observer(Game * game,IGameObserver *observer) {
-  Game1Player * g;
-  g_assert( IS_GAME_1_PLAYER(game));
-  
-  g = GAME_1_PLAYER(game);
-
-  PRIVATE(g)->observers = g_list_append( PRIVATE(g)->observers, observer);
-}
-
-void game_1_player_detach_observer(Game * game,IGameObserver *observer) {
-  Game1Player * g;
-  g_assert( IS_GAME_1_PLAYER(game));
-  
-  g = GAME_1_PLAYER(game);
-
-  PRIVATE(g)->observers = g_list_remove( PRIVATE(g)->observers, observer);
+  game_notify_changed( GAME(game));
 }

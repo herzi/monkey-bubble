@@ -7,7 +7,7 @@ dnl | autotool initialization |-----------------------------------------------
 dnl  -------------------------
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(monkey-bubble, 0.1.6)
+AM_INIT_AUTOMAKE(monkey-bubble, 0.1.7)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
@@ -72,12 +72,6 @@ PKG_CHECK_MODULES(MONKEY_SRV,[
 AC_SUBST(MONKEY_SRV_CFLAGS)
 AC_SUBST(MONKEY_SRV_LIBS)
 
-PKG_CHECK_MODULES(LIBNETCLTMONKEY_LA,[
-	gtk+-2.0
-	gthread-2.0
-	])
-AC_SUBST(LIBNETCLTMONKEY_LA_CFLAGS)
-AC_SUBST(LIBNETCLTMONKEY_LA_LIBS)
 
 PKG_CHECK_MODULES(UI,[
 	gtk+-2.0
@@ -96,6 +90,10 @@ dnl GConf stuff
 dnl ***********
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
 AM_GCONF_SOURCE_2
+
+
+# Check for utility programs 
+AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
 
 dnl --------------------------------------------------------------------------
 
@@ -154,7 +152,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name, for gettext])
 
 dnl Please keep this in alphabetical order
-ALL_LINGUAS="de fr"
+ALL_LINGUAS="de es eu fr"
 
 AM_GLIB_GNU_GETTEXT
 
@@ -192,7 +190,6 @@ AC_OUTPUT([
   src/view/Makefile
   src/audio/Makefile
   src/ui/Makefile
-  src/net/Makefile
   po/Makefile.in
 ])
 

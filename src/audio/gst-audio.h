@@ -40,6 +40,7 @@ typedef struct GstAudioPrivate GstAudioPrivate;
 
 
 typedef struct {
+  GObject parent_instance;
   GstAudioPrivate * private;
 } GstAudio ;
 

@@ -36,15 +36,6 @@ G_BEGIN_DECLS
 
 typedef struct BubblePrivate BubblePrivate;
 
-#define TYPE_IBUBBLE_OBSERVER        (ibubble_observer_get_type())
-
-#define IBUBBLE_OBSERVER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_IBUBBLE_OBSERVER,IBubbleObserver))
-#define IS_IBUBBLE_OBSERVER(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_IBUBBLE_OBSERVER))
-
-#define IBUBBLE_OBSERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_IBUBBLE_OBSERVER, IBubbleObserverClass))
-#define IBUBBLE_OBSERVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), TYPE_IBUBBLE_OBSERVER, IBubbleObserverClass))
-
-typedef struct IBubbleObserver IBubbleObserver;
 
 
 typedef struct {
@@ -53,7 +44,8 @@ typedef struct {
 } Bubble;
 
 typedef struct {
-  GObjectClass parent_class;
+    GObjectClass parent_class;
+    void (* bubble_changed) (Bubble * bubble);
 } BubbleClass;
 
 
@@ -78,29 +70,10 @@ void bubble_get_velocity(const Bubble * bubble,
 			    gdouble * vy);
 
 Color bubble_get_color(const Bubble * bubble);
-void bubble_attach_observer(Bubble * bubble,IBubbleObserver * bo);
-void bubble_detach_observer(Bubble * bubble,IBubbleObserver * bo);
 
 gboolean bubble_collide_bubble(const Bubble * bubble ,
 			       const Bubble * bubble_to_colliside );
 
-
-
-typedef struct IBubbleObserverPrivate IBubbleObserverPrivate;
-typedef struct {
-  GTypeInterface root_interface;
-  IBubbleObserverPrivate * private;
-
-} IBubbleObserverClass;
-
-
-GType ibubble_observer_get_type(void);
-
-void ibubble_observer_changed(IBubbleObserver * bo,
-				 Bubble * bubble);
-void ibubble_observer_class_virtual_init(IBubbleObserverClass * class,
-				   void (*  changed)(IBubbleObserver *bo,
-						     Bubble * bubble));
 
 G_END_DECLS
 

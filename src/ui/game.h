@@ -23,16 +23,13 @@
 #include <gtk/gtk.h>
 #include "monkey.h"
 
-typedef struct Game Game;
-typedef struct IGameObserver IGameObserver;
-
 #define TYPE_GAME        (game_get_type())
 
 #define GAME(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object),TYPE_GAME,Game))
 
 #define IS_GAME(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_GAME))
 
-#define GAME_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj),	TYPE_GAME, GameClass))
+#define GAME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),	TYPE_GAME, GameClass))
 
 
 #define GameState int
@@ -48,14 +45,20 @@ enum GameStateCode {
 	GAME_STOPPED		=6,
 };
 
+
+typedef struct Game {
+  GObject parent_instance;
+} Game;
+
 typedef struct {
-  GTypeInterface root_interface;
+  GObjectClass parent_class;
+
   void (*start)(Game * game);
   void (*stop)(Game * game);
   void (*pause)(Game * game,gboolean pause);
   GameState (*get_state)(Game * game);
-  void (*attach_observer)(Game * game,IGameObserver * o);
-  void (*detach_observer)(Game * game,IGameObserver * o);
+  void (*state_changed)(Game * game);
+
 } GameClass;
 
 
@@ -67,31 +70,8 @@ void game_pause(Game * game,gboolean pause);
 
 GameState game_get_state(Game * game);
 
-void game_attach_observer(Game * game,IGameObserver *observer);
-void game_detach_observer(Game * game,IGameObserver *observer);
-
-
-#define TYPE_IGAME_OBSERVER        (igame_observer_get_type())
-
-#define IGAME_OBSERVER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_IGAME_OBSERVER,IGameObserver))
-#define IS_IGAME_OBSERVER(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_IGAME_OBSERVER))
-
-#define IGAME_OBSERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_IGAME_OBSERVER, IGameObserverClass))
-#define IGAME_OBSERVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), TYPE_IGAME_OBSERVER, IGameObserverClass))
-
-typedef struct IGameObserverPrivate IGameObserverPrivate;
-typedef struct {
-  GTypeInterface root_interface;
-  struct IGameObserverPrivate * private;
-} IGameObserverClass;
-
-GType igame_observer_get_type(void);
-
-void igame_observer_class_virtual_init(IGameObserverClass * class,
-													void (* changed)(IGameObserver * observer,
-																		  Game * game));
-void igame_observer_changed(IGameObserver * observer,
-		   Game * game);
+// protected ?!
+void game_notify_changed(Game * game);
 
 G_END_DECLS
 

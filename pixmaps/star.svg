@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<svg
+   id="svg560"
+   sodipodi:version="0.33pre"
+   width="16pt"
+   height="16pt"
+   sodipodi:docbase="pixmaps/"
+   sodipodi:docname="pixmaps/star.svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs
+     id="defs562">
+    <linearGradient
+       id="linearGradient565">
+      <stop
+         style="stop-color:#ffdf00;stop-opacity:1;"
+         offset="0.000000"
+         id="stop566" />
+      <stop
+         style="stop-color:#ffff72;stop-opacity:0.321569;"
+         offset="1.000000"
+         id="stop567" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient565"
+       id="linearGradient568" />
+    <radialGradient
+       xlink:href="#linearGradient565"
+       id="radialGradient569" />
+  </defs>
+  <sodipodi:namedview
+     id="base" />
+  <polygon
+     sodipodi:type="star"
+     style="font-size:12;fill:url(#radialGradient569);fill-rule:evenodd;stroke-width:1pt;fill-opacity:1;"
+     id="polygon564"
+     sodipodi:sides="5"
+     sodipodi:cx="3.60462427"
+     sodipodi:cy="5.24144411"
+     sodipodi:r1="10.0556288"
+     sodipodi:r2="5.02781439"
+     sodipodi:arg1="0.40311551"
+     sodipodi:arg2="1.03143406"
+     points="12.8542,9.18613 6.18685,9.55549 2.71129,15.2573 0.299674,9.0304 -6.19709,7.48691 -1.02018,3.2691 -1.55984,-3.38665 4.05129,0.23351 10.2145,-2.33648 8.50548,4.11871 12.8542,9.18613 "
+     transform="translate(6.393108,3.944684)" />
+</svg>

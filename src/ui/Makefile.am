@@ -4,7 +4,6 @@ NULL=
 INCLUDES = \
 	$(UI_CFLAGS) \
 	-I../monkey \
-	-I../net \
 	-I../view \
 	-I../util  -DDATADIR=\""$(datadir)"\" \
 	-Wall -Werror
@@ -19,19 +18,15 @@ monkey_bubble_SOURCES = \
 	game-manager.c game-manager.h \
 	game-1-player-manager.c game-1-player-manager.h \
 	game-2-player-manager.c game-2-player-manager.h \
-	igame-observer.c \
 	main.c \
 	keyboard-properties.c keyboard-properties.h \
-	ui-main.c ui-main.h \
-	network-ui.c network-ui.h \
-	network-game.c network-game.h
+	ui-main.c ui-main.h 
 
-monkey_bubble_LDFLAGS=-pg  
+monkey_bubble_LDFLAGS=
 
 
 monkey_bubble_LDADD =  \
 	$(UI_LIBS) \
 	../monkey/libmonkey.la \
 	../view/libgdkview.la \
-	../net/libnetcltmonkey.la \
 	../util/libmonkeyutil.la 

@@ -22,8 +22,17 @@
 
 static GObjectClass* parent_class = NULL;
 
+enum {
+  BUBBLE_SHOT,
+  BUBBLE_WALL_COLLISION,
+  BUBBLE_BOARD_COLLISION,
+  GAME_LOST,
+  LAST_SIGNAL
+};
+
+static guint32 signals[LAST_SIGNAL];
+
 struct PlaygroundPrivate {
-  GList * observer_list;
   Board * board;
   Bubble * played_bubble;
   gdouble max_x;
@@ -39,9 +48,6 @@ static void playground_instance_init(Playground * playground) {
 static void playground_finalize(GObject* object) {
   Playground * playground = PLAYGROUND(object);
 
-  if(playground->private->observer_list != NULL) {
-    g_error("[Playground] All observer has not been removed");		
-  }
 
   g_object_unref( G_OBJECT(PRIVATE(playground)->board) );
 
@@ -62,6 +68,62 @@ static void playground_class_init (PlaygroundClass *klass) {
   parent_class = g_type_class_peek_parent(klass);
   object_class = G_OBJECT_CLASS(klass);
   object_class->finalize = playground_finalize;
+
+
+    signals[BUBBLE_SHOT] = 
+    g_signal_new( "bubble-shot",
+		  G_TYPE_FROM_CLASS(klass),
+		  G_SIGNAL_RUN_FIRST |
+		  G_SIGNAL_NO_RECURSE,
+		  G_STRUCT_OFFSET (PlaygroundClass,
+				   bubble_shot),
+		  NULL, NULL,
+		  g_cclosure_marshal_VOID__POINTER,
+		  G_TYPE_NONE, 
+		  1,
+		  G_TYPE_POINTER);
+
+
+    signals[BUBBLE_WALL_COLLISION] = 
+    g_signal_new( "bubble-wall-collision",
+		  G_TYPE_FROM_CLASS(klass),
+		  G_SIGNAL_RUN_FIRST |
+		  G_SIGNAL_NO_RECURSE,
+		  G_STRUCT_OFFSET (PlaygroundClass,
+				   bubble_wall_collision),
+		  NULL, NULL,
+		  g_cclosure_marshal_VOID__VOID,
+		  G_TYPE_NONE, 
+		  0,
+		  NULL);
+
+    signals[BUBBLE_BOARD_COLLISION] = 
+    g_signal_new( "bubble-board-collision",
+		  G_TYPE_FROM_CLASS(klass),
+		  G_SIGNAL_RUN_FIRST |
+		  G_SIGNAL_NO_RECURSE,
+		  G_STRUCT_OFFSET (PlaygroundClass,
+				   bubble_board_collision),
+		  NULL, NULL,
+		  g_cclosure_marshal_VOID__VOID,
+		  G_TYPE_NONE, 
+		  0,
+		  NULL);
+
+    signals[GAME_LOST] = 
+    g_signal_new( "game-lost",
+		  G_TYPE_FROM_CLASS(klass),
+		  G_SIGNAL_RUN_FIRST |
+		  G_SIGNAL_NO_RECURSE,
+		  G_STRUCT_OFFSET (PlaygroundClass,
+				   game_lost),
+		  NULL, NULL,
+		  g_cclosure_marshal_VOID__VOID,
+		  G_TYPE_NONE, 
+		  0,
+		  NULL);
+    
+    
 }
 
 
@@ -105,7 +167,6 @@ Playground * playground_new(gdouble max_x,gdouble min_x,const gchar * level_file
   PRIVATE(pg)->min_x = min_x;
   PRIVATE(pg)->board =  board_new( 40,level_filename,level );
   PRIVATE(pg)->played_bubble = NULL;
-  PRIVATE(pg)->observer_list = NULL;
   PRIVATE(pg)->time = 0;
   return pg;
 }
@@ -135,38 +196,26 @@ gboolean playground_is_ready_for_shoot(Playground * pl) {
 
 
 static void playground_notify_bubble_wall_collision(Playground * p) {
-  GList * next =  NULL;
 
   g_assert( IS_PLAYGROUND( p ));
 
-  next =PRIVATE(p)->observer_list;
+  g_signal_emit( G_OBJECT(p), signals[BUBBLE_WALL_COLLISION],0);
 
-  while( next != NULL ) {
-    iplayground_observer_bubble_wall_collision( IPLAYGROUND_OBSERVER(next->data),
-						p);
-    next = g_list_next(next);
-  }
 
 }
 
 static void playground_notify_lost(Playground * p) {
-  GList * next =  NULL;
 
   g_assert( IS_PLAYGROUND( p ));
 
-  next =PRIVATE(p)->observer_list;
+  g_signal_emit( G_OBJECT(p), signals[GAME_LOST],0);
 
-  while( next != NULL ) {
-    iplayground_observer_game_lost( IPLAYGROUND_OBSERVER(next->data),p);
-    next = g_list_next(next);
-  }
 
 }
 
 void playground_update(Playground * p,gint time) {
   gdouble x,y,vx,vy;
   Bubble * bubble;
-  GList * next =  NULL;
   g_assert( IS_PLAYGROUND( p ));
   
   PRIVATE(p)->time += time;
@@ -204,15 +253,9 @@ void playground_update(Playground * p,gint time) {
     
     bubble_set_position(bubble,x,y);
     
-    
     if( board_collide_bubble( PRIVATE(p)->board, bubble ) ) {
-      next =PRIVATE(p)->observer_list;
-      
-      while( next != NULL ) {
-	iplayground_observer_bubble_board_collision(IPLAYGROUND_OBSERVER(next->data),
-						    p);
-	next = g_list_next(next);
-      }
+      g_signal_emit( G_OBJECT(p), signals[BUBBLE_BOARD_COLLISION],0);
+
       
       board_stick_bubble(PRIVATE(p)->board,PRIVATE(p)->played_bubble,PRIVATE(p)->time);
       PRIVATE(p)->played_bubble = NULL;
@@ -225,35 +268,12 @@ void playground_update(Playground * p,gint time) {
 }
 
 void playground_shoot_bubble(Playground *p,Bubble * bubble) {
-  GList * next =  NULL;
   
   g_assert( IS_PLAYGROUND( p ));
   
   PRIVATE(p)->played_bubble = bubble;
   
-  next = PRIVATE(p)->observer_list;
 
-  while( next != NULL ) {
-    iplayground_observer_bubble_shot( (IPLAYGROUND_OBSERVER(next->data)),
-				      p,bubble);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(p), signals[BUBBLE_SHOT],0,bubble);
 }
 
-
-void playground_attach_observer(Playground *p , IPlaygroundObserver * po) {
-  g_assert( IS_PLAYGROUND( p ));
-  g_assert( IS_IPLAYGROUND_OBSERVER( po ));
-
-  PRIVATE(p)->observer_list = 
-    g_list_append(PRIVATE(p)->observer_list,
-		  po); 
-}
-
-void playground_detach_observer(Playground *p,IPlaygroundObserver * po) {
-  g_assert( IS_PLAYGROUND( p ));
-  g_assert( IS_IPLAYGROUND_OBSERVER( po ));
-
-  PRIVATE(p)->observer_list = g_list_remove( PRIVATE(p)->observer_list,
-					     po);
-}

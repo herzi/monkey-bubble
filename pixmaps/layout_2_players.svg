@@ -7,9 +7,9 @@
    height="480pt"
    xml:space="preserve"
    id="svg8051"
-   sodipodi:version="0.31"
-   sodipodi:docname="/home/lolo/cvs/mm/resources/gfx/decor_2_players.svg"
-   sodipodi:docbase="/home/lolo/cvs/mm/resources/gfx/"
+   sodipodi:version="0.33pre"
+   sodipodi:docname="pixmaps/layout_2_players.svg"
+   sodipodi:docbase="pixmaps/"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -52,10 +52,10 @@
   <rect
      style="font-size:12;fill:#2a4700;fill-rule:evenodd;stroke-width:1pt;fill-opacity:1;"
      id="rect39308"
-     width="805.784912"
-     height="600.026245"
-     x="4.797935"
-     y="5.419092" />
+     width="809.942749"
+     height="605.223539"
+     x="0.640081"
+     y="0.221802" />
   <g
      transform="matrix(0.0576645,0,0,0.0522061,-87.4816,11.8625)"
      id="g38188"

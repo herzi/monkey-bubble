@@ -19,23 +19,45 @@
 
 #include "game.h"
 
-static guint game_base_init_count = 0;
+enum {
+  STATE_CHANGED,
+  LAST_SIGNAL
+};
 
-static void game_base_init(GameClass* game) {
+static guint32 signals[LAST_SIGNAL];
 
-  game_base_init_count++;
+static GObjectClass* parent_class = NULL;
 
-  if (game_base_init_count == 1) {
-    /* add signals here */
-  }
+static void game_finalize(GObject * object) {
+
+  //  Game * game = GAME(object);
+
+ if (G_OBJECT_CLASS (parent_class)->finalize) {
+    (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  }  
 }
 
-static void game_base_finalize(GameClass* game) {
+static void game_instance_init(Game * game) {
+}
 
-  game_base_init_count--;
-  if (game_base_init_count == 0) {
-    /* destroy signals here */
-  }
+static void game_class_init(GameClass* klass) {
+
+    GObjectClass* object_class;
+    
+    parent_class = g_type_class_peek_parent(klass);
+    object_class = G_OBJECT_CLASS(klass);
+    object_class->finalize = game_finalize;
+    
+    signals[STATE_CHANGED] = g_signal_new ("state-changed",
+					   G_TYPE_FROM_CLASS (klass),
+					   G_SIGNAL_RUN_FIRST |
+					   G_SIGNAL_NO_RECURSE,
+					   G_STRUCT_OFFSET (GameClass, state_changed),
+					   NULL, NULL,
+					   g_cclosure_marshal_VOID__VOID,
+					   G_TYPE_NONE,
+					   0,NULL);
+    
 }
 
 GType game_get_type(void) {
@@ -47,16 +69,22 @@ GType game_get_type(void) {
   if (!game_type) {
     static const GTypeInfo game_info = {
       sizeof(GameClass),
-      (GBaseInitFunc) game_base_init,
-      (GBaseFinalizeFunc) game_base_finalize
+	NULL,           /* base_init */
+	NULL,           /* base_finalize */
+	(GClassInitFunc) game_class_init,
+	NULL,           /* class_finalize */
+	NULL,           /* class_data */
+	sizeof(Game),
+	1,              /* n_preallocs */
+	(GInstanceInitFunc) game_instance_init,
+
     };
-    
-    game_type = g_type_register_static(G_TYPE_INTERFACE, 
-				       "Game", 
-				       &game_info, 
-				       0);
-    
-    g_type_interface_add_prerequisite(game_type, G_TYPE_OBJECT);
+
+      
+    game_type = g_type_register_static(G_TYPE_OBJECT,
+				       "Game",
+				       &game_info, 0);
+
   }
   
   return game_type;
@@ -76,8 +104,8 @@ void game_start(Game * game) {
 
   g_assert(IS_GAME(game));
   g_assert(G_IS_OBJECT(game));
+  iface = GAME_GET_CLASS(game);
 
-  iface = GAME_GET_IFACE(game);
   iface->start(game);
 }
 
@@ -96,7 +124,7 @@ void game_stop(Game * game) {
   g_assert(IS_GAME(game));
   g_assert(G_IS_OBJECT(game));
 
-  iface = GAME_GET_IFACE(game);
+  iface = GAME_GET_CLASS(game);
   iface->stop(game);
 }
 
@@ -116,8 +144,8 @@ void game_pause(Game * game,gboolean pause) {
 
   g_assert(IS_GAME(game));
   g_assert(G_IS_OBJECT(game));
-
-  iface = GAME_GET_IFACE(game);
+  
+  iface = GAME_GET_CLASS(game);
   iface->pause(game,pause);
 }
 
@@ -132,35 +160,14 @@ GameState game_get_state(Game * game) {
 
 
   GameClass* iface = NULL;
-
   g_assert(IS_GAME(game));
   g_assert(G_IS_OBJECT(game));
 
-  iface = GAME_GET_IFACE(game);
+  iface = GAME_GET_CLASS(game);
 
   return iface->get_state(game);
 }
 
-void game_attach_observer(Game * game,IGameObserver * o) {
-
-
-  GameClass* iface = NULL;
-
-  g_assert(IS_GAME(game));
-  g_assert(G_IS_OBJECT(game));
-
-  iface = GAME_GET_IFACE(game);
-  iface->attach_observer(game,o);
-}
-
-void game_detach_observer(Game * game,IGameObserver * o) {
-
-
-  GameClass* iface = NULL;
-
-  g_assert(IS_GAME(game));
-  g_assert(G_IS_OBJECT(game));
-
-  iface = GAME_GET_IFACE(game);
-  iface->detach_observer(game,o);
+void game_notify_changed(Game * game) {
+  g_signal_emit( G_OBJECT(game),signals[STATE_CHANGED],0);
 }

@@ -1,3 +1,171 @@
+2003-12-22  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+        0.1.7 release
+	* configure.in:
+
+	A splash screen + correction on 
+	background images
+	* pixmaps/Makefile.am:
+	* pixmaps/layout_1_player.svg:
+	* pixmaps/layout_2_players.svg:
+	* pixmaps/splash.svg:
+
+	Add monkey-marshall.list to the dist list
+	* src/monkey/Makefile.am:
+
+	correction to make the splash working
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_draw_main),
+	* src/view/gdk-canvas.c: (gdk_canvas_configure),
+	
+2003-12-19  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	prepare for a new release
+
+	fix glade file, need some translation
+	* data/monkey-bubble.glade:
+
+	fix size rounding
+	* src/view/gdk-canvas.c:
+
+2003-12-19  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	Adaptation of the 1 player background for the score
+	management
+	* pixmaps/layout_1_player.svg:
+
+	* src/ui/game-1-player.c: (game_1_player_bubble_sticked):
+
+2003-12-18  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+        Change validate buttom to Close
+	* data/keybinding.glade:
+
+	update the roadmap
+	* html/roadmap.html:
+
+        begin of score management
+	* pixmaps/layout_1_player.svg:
+	* src/ui/game-1-player-manager.c:
+	* src/ui/game-1-player.c:
+	* src/ui/game-1-player.h:
+	* src/view/gdk-view.c:
+	* src/view/gdk-view.h:
+
+2003-12-18  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	keybinding Gnome HIG compliant
+	submitted by Hellen Claggett
+	* data/keybinding.glade:
+
+	css update
+	* html/css/monkey-bubble.css:
+
+2003-10-27  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	new gfx effect :)
+	* pixmaps/Makefile.am:
+	* pixmaps/star.svg:
+	* src/view/gdk-view.c:
+
+2003-10-24  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	some clean up
+	* pixmaps/frozen-bubble/Makefile.am:
+	* pixmaps/frozen-bubble/data:
+	* resources/gfx/frozen-bubble/data:
+	* src/monkey/monkey-marshal.list:
+	* src/monkey/shooter.c: 
+	* src/ui/Makefile.am:
+	* src/ui/game-1-player.c:
+	* src/ui/game-2-player.c:
+	* src/ui/game.c:
+	* src/ui/main.c:
+	* src/ui/ui-main.c:
+	* src/view/gdk-view.c:
+	* src/view/gdk-view.h:
+
+2003-10-24  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	glibazation
+	* configure.in:
+	* debian/changelog:
+	* debian/control:
+	* src/Makefile.am:
+	* src/monkey/Makefile.am:
+	* src/monkey/board.c:
+	* src/monkey/bubble.c: 
+	* src/monkey/bubble.h:
+	* src/monkey/iboard-observer.c:
+	* src/monkey/ibubble-observer.c:
+	* src/monkey/imonkey-observer.c:
+	* src/monkey/iplayground-observer.c:
+	* src/monkey/ishooter-observer.c:
+	* src/monkey/monkey.c: 
+	* src/monkey/monkey.h:
+	* src/monkey/playground.c:
+	* src/monkey/playground.h:
+	* src/monkey/shooter.c: 
+	* src/monkey/shooter.h:
+	* src/ui/Makefile.am:
+	* src/ui/game-1-player-manager.c: 
+	* src/ui/game-1-player.c:
+	* src/ui/game-1-player.h:
+	* src/ui/game-2-player-manager.c: 
+	* src/ui/game-2-player.c:
+	* src/ui/game-2-player.h:
+	* src/ui/game.c:
+	* src/ui/game.h:
+	* src/ui/igame-observer.c:
+	* src/ui/ui-main.c:
+
+2003-10-13  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+
+	* data/monkey-bubble.glade: fix error made with gnome
+	version of glade-2
+	* src/audio/gst-audio.c: gstreamer test ..
+	* src/audio/test.c: (key_pressed):
+
+	fix crash on window close
+	* src/ui/ui-main.c: (ui_main_new): 
+
+2003-10-11  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/audio/Makefile.am: gst-audio is not going to be installed from
+	now on
+
+2003-10-07  Sven Herzberg  <herzi@gnome-de.org>
+
+	* configure.in: added es and eu to ALL_LINGUAS
+
+2003-10-07  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	new pause pixmap
+	try and try again to get sound with gstreamer.. 
+
+	* pixmaps/pause.svg:
+	* src/audio/gst-audio.c: (eos), (gst_audio_create_channel),
+	(gst_audio_idle), (gst_audio_new), (gst_audio_play_shoot):
+	* src/audio/gst-audio.h:
+	* src/audio/test.c: (key_pressed), (main):
+	* src/ui/game-1-player.c: (game_1_player_new),
+	(game_1_player_pause):
+	* src/ui/game-2-player.c: (game_2_player_new),
+	(game_2_player_pause):
+
+003-10-06  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	update web site
+	* configure.in:
+	* html/downloads.html:
+	* html/index.html:
+	* html/links.html:
+	* po/de.po:
+	* po/fr.po:
+	
+	fix gcc 2.95 compilation
+	* src/view/gdk-view.c: (gdk_view_set_score):
+
 2003-10-06  Laurent Belmonte  <lolo3d@tuxfamily.org>
 
 	added french translation

@@ -33,17 +33,6 @@
 
 typedef struct BoardPrivate BoardPrivate;
 
-#define TYPE_IBOARD_OBSERVER        (iboard_observer_get_type())
-
-#define IBOARD_OBSERVER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_IBOARD_OBSERVER,IBoardObserver))
-#define IS_IBOARD_OBSERVER(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_IBOARD_OBSERVER))
-
-#define IBOARD_OBSERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_IBOARD_OBSERVER, IBoardObserverClass))
-#define IBOARD_OBSERVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), TYPE_IBOARD_OBSERVER, IBoardObserverClass))
-
-
-typedef struct IBoardObserver IBoardObserver;
-
 typedef struct {
   GObject parent_instance;
   BoardPrivate * private;
@@ -51,6 +40,30 @@ typedef struct {
 
 typedef struct {
   GObjectClass parent_class;
+  void (* bubbles_exploded ) (
+			      Board *board,
+			      GList * exploded,
+			      GList * fallen);
+  
+  void (* bubbles_added) (
+			  Board * board,
+			  GList * bubbles);
+  
+  void (* bubble_sticked)(
+			  Board * board,
+			  Bubble * bubble,
+			  gint stiked);
+
+  
+  void (* bubbles_inserted) (
+			     Board * board,
+			     Bubble ** bubbles,
+			     int count
+			     );
+
+
+  void (* down ) ( Board * board);
+
 } BoardClass;
 
 GType board_get_type(void);
@@ -87,57 +100,4 @@ void board_down( Board * board);
 
 int board_bubbles_count(Board * board);
 
-void board_attach_observer(Board * board,IBoardObserver * bo);
-void board_detach_observer(Board * board,IBoardObserver * bo);
-
-typedef struct IBoardObserverClassPrivate IBoardObserverClassPrivate;
-
-typedef struct {
-  GTypeInterface root_interface;
-  IBoardObserverClassPrivate * private;
-} IBoardObserverClass;
-
-
-GType iboard_observer_get_type(void);
-
-void iboard_observer_class_virtual_init(IBoardObserverClass * class,
-					void (* bubbles_exploded )(IBoardObserver * bo,
-								   Board *board,
-								   GList * exploded,
-								   GList * fallen),
-					void (* bubbles_added) (IBoardObserver * po,
-								Board * board,
-								GList * bubbles),
-					void (* bubble_sticked)(IBoardObserver * po,
-								Board * board,
-								Bubble * bubble,
-								gint stiked),
-					void (* bubbles_inserted) (IBoardObserver * po,
-								   Board * board,
-								   Bubble ** bubbles,
-								   int count),
-					void (* down ) (IBoardObserver * po,
-							Board * board));
-
-void iboard_observer_down(IBoardObserver * bo,
-			  Board * board);
-
-void iboard_observer_bubbles_exploded(IBoardObserver * bo,
-				     Board *board,
-				     GList * exploded,
-				     GList * fallen);
-
-void iboard_observer_bubbles_added(IBoardObserver * bo,
-				   Board * board,
-				   GList * bubbles);
-
-void iboard_observer_bubbles_inserted(IBoardObserver * bo,
-				      Board * board,
-				      Bubble ** bubbles,
-				      int count);
-
-void iboard_observer_bubble_sticked(IBoardObserver * bo,
-				    Board * board,
-				    Bubble * sticked_bubble,
-				    gint time);
 #endif

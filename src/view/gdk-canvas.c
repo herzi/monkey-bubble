@@ -20,7 +20,7 @@
 #include "gdk-canvas.h"
 #include <librsvg/rsvg.h>
 #include <locale.h>
-
+#include <math.h>
 #define PRIVATE(gdk_canvas) (gdk_canvas->private)
 
 static GtkDrawingAreaClass* parent_class = NULL;
@@ -255,6 +255,8 @@ gboolean gdk_canvas_configure(GtkWidget * widget,
     
   gdk_region_union_with_rect( PRIVATE(gdk_canvas)->region,
 			      &rect);
+
+  gdk_canvas_paint( gdk_canvas);
   return TRUE;
 }
 
@@ -272,8 +274,8 @@ void  gdk_canvas_scale_image_ghfunc(gpointer key,
   i->scale_x = PRIVATE(canvas)->scale_x;
   i->scale_y = PRIVATE(canvas)->scale_y;
 
-  i->scaled_width = (gdouble)i->x_size * i->scale_x;
-  i->scaled_height = (gdouble)i->y_size * i->scale_y;
+  i->scaled_width = ceil((gdouble)i->x_size * i->scale_x);
+  i->scaled_height = ceil((gdouble)i->y_size * i->scale_y);
 
 
   image_create_pixbuf(i,canvas);
@@ -304,7 +306,6 @@ gint gdk_canvas_expose(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 				   GDK_RGB_DITHER_NONE,
 				   pixels, rowstride,
 				   event->area.x, event->area.y);
-
   return TRUE;
 }
 
@@ -448,8 +449,8 @@ void create_pixbuf_normal(Image * i ) {
 	
   }
     
-  i->scaled_width = (gdouble)i->scale_x*i->x_size;
-  i->scaled_height = (gdouble)i->scale_y*i->y_size;
+  i->scaled_width = ceil(i->scale_x*(gdouble)i->x_size);
+  i->scaled_height = ceil(i->scale_y*(gdouble)i->y_size);
 
   i->scaled_pixbuf = gdk_pixbuf_scale_simple( i->original_pix,
 					      i->scaled_width,
@@ -470,8 +471,8 @@ void create_pixbuf_svg(Image * i ) {
 
 
 
-  i->scaled_width = (gdouble)i->scale_x*i->x_size;
-  i->scaled_height = (gdouble)i->scale_y*i->y_size;
+  i->scaled_width = ceil( i->scale_x* (gdouble) i->x_size );
+  i->scaled_height = ceil(i->scale_y*(gdouble)i->y_size);
 
     num_locale = g_strdup (setlocale (LC_NUMERIC, NULL));
     setlocale (LC_NUMERIC, "C");
@@ -539,6 +540,7 @@ void gdk_canvas_add_block(GdkCanvas * canvas,
   GdkRectangle rect;
   g_assert( IS_GDK_CANVAS( canvas ) );
 
+
   layer->block_list = g_list_append( layer->block_list,
 				     block);
 
@@ -546,8 +548,8 @@ void gdk_canvas_add_block(GdkCanvas * canvas,
 
     
   block_set_position(block,x,y);
-  block_get_rectangle(block,&rect);
 
+  block_get_rectangle(block,&rect);
 
   gdk_region_union_with_rect( PRIVATE(canvas)->region,
 			      &rect);
@@ -673,7 +675,6 @@ static void layer_delete(Layer * l) {
   next = l->block_list;
   while( next != NULL) {
     
-    g_free( next->data);
     next = g_list_next( next);	
   }
 

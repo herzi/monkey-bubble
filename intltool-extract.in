@@ -32,7 +32,7 @@
 ## Release information
 my $PROGRAM      = "intltool-extract";
 my $PACKAGE      = "intltool";
-my $VERSION      = "0.27.2";
+my $VERSION      = "0.28";
 
 ## Loaded modules
 use strict; 
@@ -46,6 +46,7 @@ my $HELP_ARG 	= "0";
 my $VERSION_ARG = "0";
 my $UPDATE_ARG  = "0";
 my $QUIET_ARG   = "0";
+my $SRCDIR_ARG	= ".";
 
 my $FILE;
 my $OUTFILE;
@@ -68,6 +69,7 @@ GetOptions (
             "version|v"  => \$VERSION_ARG,
             "update"     => \$UPDATE_ARG,
 	    "quiet|q"    => \$QUIET_ARG,
+	    "srcdir=s"	 => \$SRCDIR_ARG,
             ) or &error;
 
 &split_on_argument;
@@ -152,6 +154,7 @@ XML files. Read manpage (man ${PROGRAM}) for more info.
                     (conflicts with --update)
       --update      Writes output into the same directory the source file 
                     reside (conflicts with --local)
+      --srcdir      Root of the source tree
   -v, --version     Output version information and exit
   -h, --help        Display this help and exit
   -q, --quiet       Quiet mode
@@ -175,7 +178,7 @@ sub message {
 sub extract {
     &determine_type;
 
-    &convert ($FILE);
+    &convert;
 
     open OUT, ">$OUTFILE";
     &msg_write;
@@ -184,13 +187,13 @@ sub extract {
     print "Wrote $OUTFILE\n" unless $QUIET_ARG;
 }
 
-sub convert($) {
+sub convert {
 
     ## Reading the file
     {
 	local (*IN);
 	local $/; #slurp mode
-	open (IN, "<$FILE") || die "can't open $FILE: $!";
+	open (IN, "<$SRCDIR_ARG/$FILE") || die "can't open $SRCDIR_ARG/$FILE: $!";
 	$input = <IN>;
     }
 

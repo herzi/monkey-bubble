@@ -39,20 +39,20 @@ typedef struct Game1PlayerPrivate Game1PlayerPrivate;
 
 
 typedef struct {
-  GObject parent_instance;
+  Game parent_instance;
   Game1PlayerPrivate * private;
 } Game1Player;
 
 typedef struct {
-  GObjectClass parent_class;
+  GameClass parent_class;
 } Game1PlayerClass;
 
 
 GType game_1_player_get_type(void);
 
-Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas,int level);
+Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas,int level,gint score);
 
-
+gint game_1_player_get_score(Game1Player * g);
 gboolean game_1_player_is_lost(Game1Player * g);
 
 G_END_DECLS

@@ -1,28 +1,28 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Laurent Belmonte <lolo3d@tuxfamily.org>, 2003.
-#
-#, fuzzy
+# Basque translation of Monkey Bubble.
+# Copyright (C) 2003 THE Monkey Bubble'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Monkey Bubble package.
+# Mikel Olasagasti <hey_neken@mundurat.net>, 2003.
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: monkey-bubble\n"
+"Project-Id-Version: Monkey Bubble 0.1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-12-22 16:56+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Laurent Belmonte <lolo3d@tuxfamily.org>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2003-10-07 12:29+0200\n"
+"Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"Language-Team: Basque\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: monkey-bubble.desktop.in.h:1
 msgid "Bubbles"
-msgstr "Bubbles"
+msgstr "Burbuilak"
 
 #: monkey-bubble.desktop.in.h:2
 msgid "Monkey Bubbles Arcade Game"
-msgstr "Monkey Bubbles"
+msgstr "Monkey Bubble Arkade Jokoa"
 
 #: data/monkey-bubble.glade.h:1
 msgid "Monkey Bubble"
@@ -30,36 +30,37 @@ msgstr "Monkey Bubble"
 
 #: data/monkey-bubble.glade.h:2
 msgid "New 1 player"
-msgstr "1 joueur"
+msgstr "Berria - Jokalari 1"
 
 #: data/monkey-bubble.glade.h:3
 msgid "New 2 players"
-msgstr "2 joueurs"
+msgstr "Berria - 2 Jokalari"
 
 #: data/monkey-bubble.glade.h:4
+#, fuzzy
 msgid "Pause game"
-msgstr "Pause"
+msgstr "Jokua jarraitu"
 
 #: data/monkey-bubble.glade.h:5
 msgid "Resume game"
-msgstr "Reprendre"
+msgstr "Jokua jarraitu"
 
 #: data/monkey-bubble.glade.h:6
 msgid "Stop game"
-msgstr "Arreter"
+msgstr ""
 
 #: data/monkey-bubble.glade.h:7
 #, fuzzy
 msgid "_About"
-msgstr "A _propos"
+msgstr "Monkey Bubble-ri Buruz"
 
 #: data/monkey-bubble.glade.h:8
 msgid "_Game"
-msgstr "_Jeux"
+msgstr "_Jokua"
 
 #: data/monkey-bubble.glade.h:9
 msgid "_Help"
-msgstr "_Aide"
+msgstr "_Laguntza"
 
 #: data/monkey-bubble.glade.h:10
 msgid "_Settings"
@@ -79,7 +80,7 @@ msgstr ""
 
 #: data/keybinding.glade.h:4
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: data/keybinding.glade.h:5
 msgid "<span weight=\"bold\">Player 1 Controls</span>"
@@ -115,19 +116,19 @@ msgstr "l"
 
 #: data/monkey-bubble.schemas.in.h:6
 msgid "left key for player one"
-msgstr "gauche (joueur 1)"
+msgstr "ezker tekla lehen jokalariarentzat"
 
 #: data/monkey-bubble.schemas.in.h:7
 msgid "left key for player two"
-msgstr "gauche (joueur 2)"
+msgstr "ezker tekla 2. jokalariarentzat"
 
 #: data/monkey-bubble.schemas.in.h:8
 msgid "right key for player one"
-msgstr "droite (joueur 1)"
+msgstr "eskuin tekla lehen jokalariarentzat"
 
 #: data/monkey-bubble.schemas.in.h:9
 msgid "right key for player two"
-msgstr "droite (joueur 2)"
+msgstr "eskuin tekla 2. jokalariarentzat"
 
 #: data/monkey-bubble.schemas.in.h:10
 msgid "s"
@@ -135,27 +136,30 @@ msgstr "s"
 
 #: data/monkey-bubble.schemas.in.h:11
 msgid "shoot key for player one"
-msgstr "tir (joueur 1)"
+msgstr "jaurti tekla lehen jokalariarentzat"
 
 #: data/monkey-bubble.schemas.in.h:12
 msgid "shoot key for player two"
-msgstr "tir (joueur 2)"
+msgstr "jaurti tekla 2. jokalariarentzat"
 
 #: src/ui/ui-main.c:566
 msgid "translator_credits"
-msgstr "Crdits"
+msgstr "itzulpen kredituak"
+
+#~ msgid "Keybinding"
+#~ msgstr "Tekla loturak"
 
 #~ msgid "Left"
-#~ msgstr "Gauche"
+#~ msgstr "Ezkerra"
 
 #~ msgid "Player 1"
-#~ msgstr "Joueur 1"
+#~ msgstr "1 Jokalaria"
 
 #~ msgid "Player 2"
-#~ msgstr "Joueur 2"
+#~ msgstr "2. Jokalaria"
 
 #~ msgid "Right"
-#~ msgstr "Droite"
+#~ msgstr "Eskuina"
 
 #~ msgid "Shoot"
-#~ msgstr "Tir"
+#~ msgstr "Jaurti"

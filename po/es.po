@@ -1,28 +1,28 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Laurent Belmonte <lolo3d@tuxfamily.org>, 2003.
-#
-#, fuzzy
+# Basque translation of Monkey Bubble.
+# Copyright (C) 2003 THE Monkey Bubble'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Monkey Bubble package.
+# Mikel Olasagasti <hey_neken@mundurat.net>, 2003.
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: monkey-bubble\n"
+"Project-Id-Version: Monkey Bubble 0.1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-12-22 16:56+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Laurent Belmonte <lolo3d@tuxfamily.org>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2003-10-07 12:30+0200\n"
+"Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: monkey-bubble.desktop.in.h:1
 msgid "Bubbles"
-msgstr "Bubbles"
+msgstr "Burbujas"
 
 #: monkey-bubble.desktop.in.h:2
 msgid "Monkey Bubbles Arcade Game"
-msgstr "Monkey Bubbles"
+msgstr "Monkey Bubbles Juego Arcade"
 
 #: data/monkey-bubble.glade.h:1
 msgid "Monkey Bubble"
@@ -30,36 +30,37 @@ msgstr "Monkey Bubble"
 
 #: data/monkey-bubble.glade.h:2
 msgid "New 1 player"
-msgstr "1 joueur"
+msgstr "Nuevo 1 jugador"
 
 #: data/monkey-bubble.glade.h:3
 msgid "New 2 players"
-msgstr "2 joueurs"
+msgstr "Nuevo 2 jugadores"
 
 #: data/monkey-bubble.glade.h:4
+#, fuzzy
 msgid "Pause game"
-msgstr "Pause"
+msgstr "Continuar juego"
 
 #: data/monkey-bubble.glade.h:5
 msgid "Resume game"
-msgstr "Reprendre"
+msgstr "Continuar juego"
 
 #: data/monkey-bubble.glade.h:6
 msgid "Stop game"
-msgstr "Arreter"
+msgstr ""
 
 #: data/monkey-bubble.glade.h:7
 #, fuzzy
 msgid "_About"
-msgstr "A _propos"
+msgstr "Acerca de"
 
 #: data/monkey-bubble.glade.h:8
 msgid "_Game"
-msgstr "_Jeux"
+msgstr "_Juego"
 
 #: data/monkey-bubble.glade.h:9
 msgid "_Help"
-msgstr "_Aide"
+msgstr "_Ayuda"
 
 #: data/monkey-bubble.glade.h:10
 msgid "_Settings"
@@ -79,7 +80,7 @@ msgstr ""
 
 #: data/keybinding.glade.h:4
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: data/keybinding.glade.h:5
 msgid "<span weight=\"bold\">Player 1 Controls</span>"
@@ -115,19 +116,19 @@ msgstr "l"
 
 #: data/monkey-bubble.schemas.in.h:6
 msgid "left key for player one"
-msgstr "gauche (joueur 1)"
+msgstr "izquierda para jugador 1"
 
 #: data/monkey-bubble.schemas.in.h:7
 msgid "left key for player two"
-msgstr "gauche (joueur 2)"
+msgstr "izquierda para jugador 2"
 
 #: data/monkey-bubble.schemas.in.h:8
 msgid "right key for player one"
-msgstr "droite (joueur 1)"
+msgstr "derecha para jugador 1"
 
 #: data/monkey-bubble.schemas.in.h:9
 msgid "right key for player two"
-msgstr "droite (joueur 2)"
+msgstr "derecha para jugador 2"
 
 #: data/monkey-bubble.schemas.in.h:10
 msgid "s"
@@ -135,27 +136,30 @@ msgstr "s"
 
 #: data/monkey-bubble.schemas.in.h:11
 msgid "shoot key for player one"
-msgstr "tir (joueur 1)"
+msgstr "disparo para jugador 1"
 
 #: data/monkey-bubble.schemas.in.h:12
 msgid "shoot key for player two"
-msgstr "tir (joueur 2)"
+msgstr "disparo para jugador 2"
 
 #: src/ui/ui-main.c:566
 msgid "translator_credits"
-msgstr "Crdits"
+msgstr "creditos de _traduccion"
+
+#~ msgid "Keybinding"
+#~ msgstr "Teclas"
 
 #~ msgid "Left"
-#~ msgstr "Gauche"
+#~ msgstr "Izquierda"
 
 #~ msgid "Player 1"
-#~ msgstr "Joueur 1"
+#~ msgstr "Jugador 1"
 
 #~ msgid "Player 2"
-#~ msgstr "Joueur 2"
+#~ msgstr "Jugador 2"
 
 #~ msgid "Right"
-#~ msgstr "Droite"
+#~ msgstr "Derecha"
 
 #~ msgid "Shoot"
-#~ msgstr "Tir"
+#~ msgstr "Disparar"

@@ -32,14 +32,13 @@ struct Game1PlayerManagerPrivate {
   GtkWidget * window;
   Game1Player * current_game;
   int current_level;
+  gint current_score;
 };
 
-static void game_1_player_manager_game_changed(IGameObserver * bo,
-					       Game * game);
+static void game_1_player_manager_state_changed(Game * game,Game1PlayerManager * g);
 
 static void game_1_player_manager_start_level(Game1PlayerManager * g);
 
-static void game_1_player_manager_igame_observer_iface_init(IGameObserverClass * i);
 static void game_1_player_manager_game_manager_iface_init(GameManagerClass * i);
 
 static void game_1_player_manager_finalize(GObject* object);
@@ -74,14 +73,6 @@ GType game_1_player_manager_get_type(void) {
     };
 
 
-    static const GInterfaceInfo iface_igame_observer = {
-      (GInterfaceInitFunc) game_1_player_manager_igame_observer_iface_init,
-      NULL,
-      NULL
-    };
-      
-
-      
     static const GInterfaceInfo iface_game_manager = {
       (GInterfaceInitFunc) game_1_player_manager_game_manager_iface_init,
       NULL,
@@ -92,11 +83,6 @@ GType game_1_player_manager_get_type(void) {
 							"Game1PlayerManager",
 							&game_1_player_manager_info,
 							0);
-
-
-    g_type_add_interface_static(game_1_player_manager_type,
-				TYPE_IGAME_OBSERVER,
-				&iface_igame_observer);
 	 
 	 
     g_type_add_interface_static(game_1_player_manager_type,
@@ -124,17 +110,24 @@ Game1PlayerManager * game_1_player_manager_new(GtkWidget * window,GdkCanvas * ca
 
 static gboolean startnew_function(gpointer data) {
   Game1PlayerManager * manager;
+  UiMain * ui_main;
 
   manager = GAME_1_PLAYER_MANAGER(data);
 
+  ui_main = ui_main_get_instance();
 
   game_stop( GAME(PRIVATE(manager)->current_game));
 
-  game_detach_observer( GAME(PRIVATE(manager)->current_game),IGAME_OBSERVER(manager));
+  g_signal_handlers_disconnect_matched(  G_OBJECT( PRIVATE(manager)->current_game ),
+                                         G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,manager);
+
   g_object_unref( PRIVATE(manager)->current_game);
+
+  ui_main_set_game(ui_main,NULL);
 
 
   PRIVATE(manager)->current_level++;
+
   game_1_player_manager_start_level(manager);
   return FALSE;
 }
@@ -142,15 +135,20 @@ static gboolean startnew_function(gpointer data) {
 
 static gboolean restart_function(gpointer data) {
   Game1PlayerManager * manager;
+  UiMain * ui_main;
 
   manager = GAME_1_PLAYER_MANAGER(data);
 
+  ui_main = ui_main_get_instance();
 
   game_stop( GAME(PRIVATE(manager)->current_game));
 
-  game_detach_observer( GAME(PRIVATE(manager)->current_game),IGAME_OBSERVER(manager));
+  g_signal_handlers_disconnect_matched(  G_OBJECT( PRIVATE(manager)->current_game ),
+                                         G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,manager);
+
   g_object_unref( PRIVATE(manager)->current_game);
 
+  ui_main_set_game(ui_main,NULL);
 
   game_1_player_manager_start_level(manager);
   return FALSE;
@@ -160,7 +158,7 @@ static void game_1_player_manager_finalize(GObject* object) {
 
   Game1PlayerManager * game_1_player_manager = GAME_1_PLAYER_MANAGER(object);
 
-  g_print("game_1_player_manager finalize\n");
+  /* TODO : free current game */
   g_free(game_1_player_manager->private);
 
   if (G_OBJECT_CLASS (parent_class)->finalize) {
@@ -175,23 +173,14 @@ static void game_1_player_manager_game_manager_iface_init(GameManagerClass * i) 
 				  game_1_player_manager_stop);
 }
 
-static void game_1_player_manager_igame_observer_iface_init(IGameObserverClass * i) {
-
-  igame_observer_class_virtual_init(i,game_1_player_manager_game_changed);
-}
-
-static void game_1_player_manager_game_changed(IGameObserver * bo,
-					       Game * game) {
+static void game_1_player_manager_state_changed(Game * game,
+						Game1PlayerManager * manager) {
 
   UiMain * ui_main =  ui_main_get_instance();
 
-  Game1PlayerManager * manager;
 
-  manager = GAME_1_PLAYER_MANAGER(bo);
-  g_print("maanger state change\n");
   if( game_get_state( game ) == GAME_FINISHED ) {
-		  
-    g_print("game finished\n");
+    PRIVATE(manager)->current_score = game_1_player_get_score( GAME_1_PLAYER(game));
     if( game_1_player_is_lost( GAME_1_PLAYER(game) )) {
       ui_main_set_game(ui_main,NULL);	 
       g_timeout_add(2000,
@@ -206,7 +195,6 @@ static void game_1_player_manager_game_changed(IGameObserver * bo,
     }
   }
 				
-  g_print("state changed\n");
 }
 
 static void game_1_player_manager_start_level(Game1PlayerManager * g) {
@@ -219,13 +207,15 @@ static void game_1_player_manager_start_level(Game1PlayerManager * g) {
   ui_main_set_game(ui_main,
 		   GAME( game = game_1_player_new( PRIVATE(manager)->window,
 						   PRIVATE(manager)->canvas,
-						   PRIVATE(manager)->current_level)									 
+						   PRIVATE(manager)->current_level,
+						   PRIVATE(manager)->current_score)									 
 			 ));
 
 
   game_start( GAME(game) );
-
-  game_attach_observer(GAME(game),IGAME_OBSERVER(manager));
+  
+  g_signal_connect( G_OBJECT(game), "state-changed",
+		    G_CALLBACK(game_1_player_manager_state_changed),manager);
   PRIVATE(manager)->current_game = game;
   gdk_canvas_paint( PRIVATE(manager)->canvas);
 
@@ -238,6 +228,7 @@ void game_1_player_manager_start(GameManager * g) {
   manager = GAME_1_PLAYER_MANAGER(g);
 
   PRIVATE(manager)->current_level = 0;
+  PRIVATE(manager)->current_score = 0;
   game_1_player_manager_start_level(manager);
 
 }
@@ -250,8 +241,9 @@ void game_1_player_manager_stop(GameManager * g) {
   manager = GAME_1_PLAYER_MANAGER(g);
   game_stop( GAME(PRIVATE(manager)->current_game));
 
+  g_signal_handlers_disconnect_matched(  G_OBJECT( PRIVATE(manager)->current_game ),
+                                         G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,manager);
 
-  game_attach_observer(GAME(PRIVATE(manager)->current_game),IGAME_OBSERVER(manager));
   g_object_unref( PRIVATE(manager)->current_game);
 
   ui_main_set_game(ui_main,NULL);

@@ -8,7 +8,7 @@ INCLUDES = \
 
 lib_LTLIBRARIES = libgstaudio.la
 
-bin_PROGRAMS = gsttest
+noinst_PROGRAMS = gsttest
 
 gsttest_SOURCES = \
 	gst-audio.h gst-audio.c \

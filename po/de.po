@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: monkey-bubble\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-06 12:32+0200\n"
+"POT-Creation-Date: 2003-12-22 16:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Sven Herzberg <herzi@gnome-de.org>\n"
 "Language-Team: German GNOME Translators <gnome-de@gnome.org>\n"
@@ -25,59 +25,72 @@ msgid "Monkey Bubbles Arcade Game"
 msgstr "Monkey-Bubbles Arcade-Game"
 
 #: data/monkey-bubble.glade.h:1
-msgid "About"
-msgstr "_Info..."
-
-#: data/monkey-bubble.glade.h:2
 msgid "Monkey Bubble"
 msgstr "Monkey Bubble"
 
-#: data/monkey-bubble.glade.h:3
+#: data/monkey-bubble.glade.h:2
 msgid "New 1 player"
 msgstr "1-Spieler-Spiel"
 
-#: data/monkey-bubble.glade.h:4
+#: data/monkey-bubble.glade.h:3
 msgid "New 2 players"
 msgstr "2-Spieler-Spiel"
+
+#: data/monkey-bubble.glade.h:4
+msgid "Pause game"
+msgstr "Spiel pausieren"
 
 #: data/monkey-bubble.glade.h:5
 msgid "Resume game"
 msgstr "Spiel fortfahren"
 
 #: data/monkey-bubble.glade.h:6
+msgid "Stop game"
+msgstr "Spiel beenden"
+
+#: data/monkey-bubble.glade.h:7
+#, fuzzy
+msgid "_About"
+msgstr "_Info..."
+
+#: data/monkey-bubble.glade.h:8
 msgid "_Game"
 msgstr "_Spiel"
 
-#: data/monkey-bubble.glade.h:7
+#: data/monkey-bubble.glade.h:9
 msgid "_Help"
 msgstr "_Hilfe"
 
+#: data/monkey-bubble.glade.h:10
+msgid "_Settings"
+msgstr ""
+
 #: data/keybinding.glade.h:1
-msgid "*"
+msgid "    Aim Left:"
 msgstr ""
 
 #: data/keybinding.glade.h:2
-msgid "Keybinding"
+msgid "    Aim Right:"
 msgstr ""
 
 #: data/keybinding.glade.h:3
-msgid "Left"
+msgid "    Launch Bubble:"
 msgstr ""
 
 #: data/keybinding.glade.h:4
-msgid "Player 1"
+msgid "*"
 msgstr ""
 
 #: data/keybinding.glade.h:5
-msgid "Player 2"
+msgid "<span weight=\"bold\">Player 1 Controls</span>"
 msgstr ""
 
 #: data/keybinding.glade.h:6
-msgid "Right"
+msgid "<span weight=\"bold\">Player 2 Controls</span>"
 msgstr ""
 
 #: data/keybinding.glade.h:7
-msgid "Shoot"
+msgid "Configure Controls"
 msgstr ""
 
 #: data/monkey-bubble.schemas.in.h:1
@@ -128,12 +141,6 @@ msgstr "Schusstaste (Spieler 1)"
 msgid "shoot key for player two"
 msgstr "Schusstaste (Spieler 2)"
 
-#: src/ui/ui-main.c:601
+#: src/ui/ui-main.c:566
 msgid "translator_credits"
 msgstr "Sven Herzberg <herzi@gnome-de.org>"
-
-#~ msgid "Pause game"
-#~ msgstr "Spiel pausieren"
-
-#~ msgid "Stop game"
-#~ msgstr "Spiel beenden"

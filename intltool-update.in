@@ -29,7 +29,7 @@
 
 ## Release information
 my $PROGRAM = "intltool-update";
-my $VERSION = "0.27.2";
+my $VERSION = "0.28";
 my $PACKAGE = "intltool";
 
 ## Loaded modules
@@ -81,6 +81,13 @@ my $ini_extension =
 
 ## Always flush buffer when printing
 $| = 1;
+
+## Sometimes the source tree will be rooted somewhere else.
+my $SRCDIR = ".";
+my $POTFILES_in;
+
+$SRCDIR = $ENV{"srcdir"} if $ENV{"srcdir"};
+$POTFILES_in = "<$SRCDIR/POTFILES.in";
 
 ## Handle options
 GetOptions 
@@ -291,7 +298,7 @@ sub find_leftout_files
 	}, "..";
 
 
-    open POTFILES, "<POTFILES.in" or die "$PROGRAM:  there's no POTFILES.in!\n";
+    open POTFILES, $POTFILES_in or die "$PROGRAM:  there's no POTFILES.in!\n";
     @buf_potfiles = grep !/^(#|\s*$)/, <POTFILES>;
     close POTFILES;
 
@@ -518,7 +525,7 @@ sub generate_headers
     }
     else
     {
-	open (FILE, "<POTFILES.in") or die "$PROGRAM: POTFILES.in not found.\n";
+	open (FILE, $POTFILES_in) or die "$PROGRAM: POTFILES.in not found.\n";
 	
 	while (<FILE>) 
 	{
@@ -538,13 +545,13 @@ sub generate_headers
 
 	       if ($VERBOSE)
 	       {
-		   system ($EXTRACT, "--update", 
+		   system ($EXTRACT, "--update", "--srcdir=$SRCDIR",
 			   "--type=$gettext_type", $filename);
 	       } 
 	       else 
 	       {
 	 	   system ($EXTRACT, "--update", "--type=$gettext_type", 
-			   "--quiet", $filename);
+			   "--srcdir=$SRCDIR", "--quiet", $filename);
 	       }
 	   }
        }
@@ -571,14 +578,13 @@ sub generate_po_template
 
     print "Building $MODULE.pot...\n" if $VERBOSE;
 
-    open INFILE, "<POTFILES.in";
+    open INFILE, $POTFILES_in;
     unlink "POTFILES.in.temp";
     open OUTFILE, ">POTFILES.in.temp";
 
     my $gettext_support_nonascii = 0;
 
     # checks for GNU gettext >= 0.12
-    # don't use argument list, since shell interpretation is desired here
     my $dummy = `$XGETTEXT --version --from-code=UTF-8 >/dev/null 2>/dev/null`;
     if ($? == 0)
     {
@@ -590,7 +596,7 @@ sub generate_po_template
 	print STDERR "WARNING: This version of gettext does not support extracting non-ASCII\n".
 		     "         strings. That means you should install a version of gettext\n".
 		     "         that supports non-ASCII strings (such as GNU gettext >= 0.12),\n".
-		     "         or have to let non-ASCII strings untranslated.\n";
+		     "         or have to let non-ASCII strings untranslated. (If there is any)\n";
     }
 
     my $encoding = "ASCII";
@@ -619,7 +625,11 @@ sub generate_po_template
 	} 
 	else 
 	{
-	    print OUTFILE "$_\n";
+	    if ($SRCDIR eq ".") {
+	        print OUTFILE "$_\n";
+	    } else {
+	        print OUTFILE "$SRCDIR/../$_\n";
+	    }
 	    $gettext_code = &determine_code ("../$_") if ($gettext_support_nonascii and not defined $forced_gettext_code);
 	}
 

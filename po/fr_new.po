@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: monkey-bubble\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-22 16:56+0100\n"
+"POT-Creation-Date: 2003-12-19 17:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Laurent Belmonte <lolo3d@tuxfamily.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,19 +63,19 @@ msgstr "_Aide"
 
 #: data/monkey-bubble.glade.h:10
 msgid "_Settings"
-msgstr ""
+msgstr "Paramètres"
 
 #: data/keybinding.glade.h:1
 msgid "    Aim Left:"
-msgstr ""
+msgstr "Gauche"
 
 #: data/keybinding.glade.h:2
 msgid "    Aim Right:"
-msgstr ""
+msgstr "Droite"
 
 #: data/keybinding.glade.h:3
 msgid "    Launch Bubble:"
-msgstr ""
+msgstr "Tir"
 
 #: data/keybinding.glade.h:4
 msgid "*"
@@ -83,15 +83,15 @@ msgstr ""
 
 #: data/keybinding.glade.h:5
 msgid "<span weight=\"bold\">Player 1 Controls</span>"
-msgstr ""
+msgstr "<span weight=\"bold\">Joueur 1</span>"
 
 #: data/keybinding.glade.h:6
 msgid "<span weight=\"bold\">Player 2 Controls</span>"
-msgstr ""
+msgstr "<span weight=\"bold\">Joueur 2</span>"
 
 #: data/keybinding.glade.h:7
 msgid "Configure Controls"
-msgstr ""
+msgstr "Configuration contrôles claviers"
 
 #: data/monkey-bubble.schemas.in.h:1
 msgid "d"
@@ -141,9 +141,9 @@ msgstr "tir (joueur 1)"
 msgid "shoot key for player two"
 msgstr "tir (joueur 2)"
 
-#: src/ui/ui-main.c:566
+#: src/ui/ui-main.c:580
 msgid "translator_credits"
-msgstr "Crdits"
+msgstr "Crédits"
 
 #~ msgid "Left"
 #~ msgstr "Gauche"

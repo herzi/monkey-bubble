@@ -9,6 +9,7 @@ gfx_DATA = \
 	pane.svg pause.svg \
 	monkeys.svg snake-body.svg \
 	harm.svg lost.svg win.svg \
-	monkey-bubble-icon.xpm monkey.png
+	monkey-bubble-icon.xpm monkey.png \
+	star.svg splash.svg
 
 EXTRA_DIST = $(gfx_DATA)

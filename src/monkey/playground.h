@@ -37,16 +37,6 @@ G_BEGIN_DECLS
 
 typedef struct PlaygroundPrivate PlaygroundPrivate;
 
-#define TYPE_IPLAYGROUND_OBSERVER        (iplayground_observer_get_type())
-
-#define IPLAYGROUND_OBSERVER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_IPLAYGROUND_OBSERVER,IPlaygroundObserver))
-#define IS_IPLAYGROUND_OBSERVER(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_IPLAYGROUND_OBSERVER))
-
-#define IPLAYGROUND_OBSERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_IPLAYGROUND_OBSERVER, IPlaygroundObserverClass))
-#define IPLAYGROUND_OBSERVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE  ((obj), TYPE_IPLAYGROUND_OBSERVER, IPlaygroundObserverClass))
-
-typedef struct IPlaygroundObserver IPlaygroundObserver;
-
 typedef struct {
   GObject parent_instance;
   PlaygroundPrivate * private;
@@ -54,6 +44,15 @@ typedef struct {
 
 typedef struct {
   GObjectClass parent_class;
+  void (* bubble_shot )( Playground *pg,
+			 Bubble * b);
+    
+  void (* bubble_wall_collision )(Playground *pg);
+
+  void (* bubble_board_collision )(Playground *pg);
+
+  void (* game_lost)(Playground * pg);
+
 } PlaygroundClass;
 
 GType playground_get_type(void);
@@ -65,39 +64,4 @@ gboolean playground_is_ready_for_shoot(Playground * playground);
 Board * playground_get_board(Playground * playground );
 void playground_update(Playground * playground,gint time);
 void playground_shoot_bubble(Playground *pl,Bubble * b);
-void playground_attach_observer(Playground *pl,IPlaygroundObserver * po);
-void playground_detach_observer(Playground *pl,IPlaygroundObserver * po);
-
-
-typedef struct IPlaygroundObserverClassPrivate IPlaygroundObserverClassPrivate;
-typedef struct {
-  GTypeInterface root_interface;
-  IPlaygroundObserverClassPrivate * private;
-} IPlaygroundObserverClass;
-
-
-GType iplayground_observer_get_type(void);
-
-void iplayground_observer_class_virtual_init(IPlaygroundObserverClass * i,
-					     void (* bubble_shot )(IPlaygroundObserver *po,
-								   Playground *pg,
-								   Bubble * b),					     
-					     void (* bubble_wall_collision )(IPlaygroundObserver * po,
-									     Playground *pg),
-					     void (* bubble_board_collision )(IPlaygroundObserver * po,
-									      Playground *pg),
-					     void (* game_lost)(IPlaygroundObserver * po,
-								Playground * pg));
-void iplayground_observer_bubble_shot(IPlaygroundObserver *po,
-				      Playground *pg,
-				      Bubble * b);
-
-void iplayground_observer_bubble_wall_collision(IPlaygroundObserver * po,
-						Playground *pg);
-
-void iplayground_observer_bubble_board_collision(IPlaygroundObserver *po,
-						 Playground * pg);
-
-void iplayground_observer_game_lost(IPlaygroundObserver * po,	
-				    Playground * pg);
 #endif

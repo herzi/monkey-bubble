@@ -35,17 +35,6 @@ G_BEGIN_DECLS
 
 typedef struct ShooterPrivate ShooterPrivate;
 
-#define TYPE_ISHOOTER_OBSERVER        (ishooter_observer_get_type())
-
-#define ISHOOTER_OBSERVER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_ISHOOTER_OBSERVER,IShooterObserver))
-#define IS_ISHOOTER_OBSERVER(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_ISHOOTER_OBSERVER))
-
-#define ISHOOTER_OBSERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_ISHOOTER_OBSERVER, IShooterObserverClass))
-
-#define ISHOOTER_OBSERVER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), TYPE_ISHOOTER_OBSERVER, IShooterObserverClass))
-
-typedef struct IShooterObserver IShooterObserver;
-
 typedef struct {
   GObject parent_instance;
   ShooterPrivate * private;
@@ -53,6 +42,9 @@ typedef struct {
 
 typedef struct {
   GObjectClass parent_class;
+  void (* rotated) (Shooter * shooter);
+  void (* bubble_added) (Shooter * shooter,Bubble * b);
+  void (* shoot) (Shooter * shooter,Bubble * b);
 } ShooterClass;
 
 GType shooter_get_type(void);
@@ -74,38 +66,5 @@ Bubble * shooter_get_waiting_bubble(Shooter *s);
 gdouble shooter_get_angle(Shooter * s);
 
 void shooter_set_angle(Shooter *s,gdouble angle);
-void shooter_attach_observer(Shooter * s,IShooterObserver *so);
-void shooter_detach_observer(Shooter * s,IShooterObserver *so);
 
-typedef struct IShooterObserverClassPrivate IShooterObserverClassPrivate;
-
-typedef struct {
-  GTypeInterface root_interface;
-  IShooterObserverClassPrivate * private;
-
-} IShooterObserverClass;
-
-
-GType ishooter_observer_get_type(void);
-
-void ishooter_observer_class_virtual_init(IShooterObserverClass * class,
-					  void (* rotated) (IShooterObserver * so,
-							    Shooter * shooter),
-
-					  void (* shoot) (IShooterObserver * so,
-							  Shooter * shooter,
-							  Bubble * b),
-					  void (* bubble_added) (IShooterObserver * so,
-								 Shooter * s,
-								 Bubble * b));
-void ishooter_observer_rotated(IShooterObserver * so,
-			      Shooter * shooter);
-
-void ishooter_observer_shoot (IShooterObserver * so,
-			      Shooter * shooter,
-			      Bubble * b);
-
-void ishooter_observer_bubble_added(IShooterObserver *so,
-				    Shooter * shooter,
-				    Bubble * b);
 #endif

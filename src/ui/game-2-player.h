@@ -41,12 +41,12 @@ typedef struct Game2PlayerPrivate Game2PlayerPrivate;
 
 
 typedef struct {
-  GObject parent_instance;
+  Game parent_instance;
   Game2PlayerPrivate * private;
 } Game2Player;
 
 typedef struct {
-  GObjectClass parent_class;
+  GameClass parent_class;
 } Game2PlayerClass;
 
 

@@ -1,4 +1,4 @@
 
 NULL=
 
-SUBDIRS = util monkey view audio net ui
+SUBDIRS = util monkey view audio ui

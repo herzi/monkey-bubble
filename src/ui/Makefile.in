@@ -78,6 +78,7 @@ GCONFTOOL = @GCONFTOOL@
 GCONF_SCHEMA_CONFIG_SOURCE = @GCONF_SCHEMA_CONFIG_SOURCE@
 GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GLIB_GENMARSHAL = @GLIB_GENMARSHAL@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
 GTKDOC = @GTKDOC@
@@ -91,6 +92,7 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
+INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
@@ -115,8 +117,6 @@ LIBMONKEYUTIL_LA_CFLAGS = @LIBMONKEYUTIL_LA_CFLAGS@
 LIBMONKEYUTIL_LA_LIBS = @LIBMONKEYUTIL_LA_LIBS@
 LIBMONKEY_LA_CFLAGS = @LIBMONKEY_LA_CFLAGS@
 LIBMONKEY_LA_LIBS = @LIBMONKEY_LA_LIBS@
-LIBNETCLTMONKEY_LA_CFLAGS = @LIBNETCLTMONKEY_LA_CFLAGS@
-LIBNETCLTMONKEY_LA_LIBS = @LIBNETCLTMONKEY_LA_LIBS@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIB = @LTLIB@
@@ -143,17 +143,17 @@ VERSION = @VERSION@
 
 NULL = 
 
-INCLUDES =  	$(UI_CFLAGS) 	-I../monkey 	-I../net 	-I../view 	-I../util  -DDATADIR=\""$(datadir)"\" 	-Wall -Werror
+INCLUDES =  	$(UI_CFLAGS) 	-I../monkey 	-I../view 	-I../util  -DDATADIR=\""$(datadir)"\" 	-Wall -Werror
 
 
 bin_PROGRAMS = monkey-bubble
 
-monkey_bubble_SOURCES =  	game.c game.h 	game-1-player.c game-1-player.h 	game-2-player.c game-2-player.h 	game-manager.c game-manager.h 	game-1-player-manager.c game-1-player-manager.h 	game-2-player-manager.c game-2-player-manager.h 	igame-observer.c 	main.c 	keyboard-properties.c keyboard-properties.h 	ui-main.c ui-main.h 	network-ui.c network-ui.h 	network-game.c network-game.h
+monkey_bubble_SOURCES =  	game.c game.h 	game-1-player.c game-1-player.h 	game-2-player.c game-2-player.h 	game-manager.c game-manager.h 	game-1-player-manager.c game-1-player-manager.h 	game-2-player-manager.c game-2-player-manager.h 	main.c 	keyboard-properties.c keyboard-properties.h 	ui-main.c ui-main.h 
 
 
-monkey_bubble_LDFLAGS = -pg  
+monkey_bubble_LDFLAGS = 
 
-monkey_bubble_LDADD =  	$(UI_LIBS) 	../monkey/libmonkey.la 	../view/libgdkview.la 	../net/libnetcltmonkey.la 	../util/libmonkeyutil.la 
+monkey_bubble_LDADD =  	$(UI_LIBS) 	../monkey/libmonkey.la 	../view/libgdkview.la 	../util/libmonkeyutil.la 
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
@@ -169,11 +169,9 @@ LIBS = @LIBS@
 monkey_bubble_OBJECTS =  game.$(OBJEXT) game-1-player.$(OBJEXT) \
 game-2-player.$(OBJEXT) game-manager.$(OBJEXT) \
 game-1-player-manager.$(OBJEXT) game-2-player-manager.$(OBJEXT) \
-igame-observer.$(OBJEXT) main.$(OBJEXT) keyboard-properties.$(OBJEXT) \
-ui-main.$(OBJEXT) network-ui.$(OBJEXT) network-game.$(OBJEXT)
+main.$(OBJEXT) keyboard-properties.$(OBJEXT) ui-main.$(OBJEXT)
 monkey_bubble_DEPENDENCIES =  ../monkey/libmonkey.la \
-../view/libgdkview.la ../net/libnetcltmonkey.la \
-../util/libmonkeyutil.la
+../view/libgdkview.la ../util/libmonkeyutil.la
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -339,32 +337,17 @@ game-manager.o: game-manager.c game-manager.h
 game.o: game.c game.h ../monkey/monkey.h ../monkey/playground.h \
 	../monkey/bubble.h ../monkey/color.h ../monkey/board.h \
 	../monkey/shooter.h
-igame-observer.o: igame-observer.c game.h ../monkey/monkey.h \
-	../monkey/playground.h ../monkey/bubble.h ../monkey/color.h \
-	../monkey/board.h ../monkey/shooter.h
 keyboard-properties.o: keyboard-properties.c keyboard-properties.h
 main.o: main.c ../../config.h ../monkey/bubble.h ../monkey/color.h \
 	../monkey/playground.h ../monkey/board.h ../monkey/monkey.h \
 	../monkey/shooter.h ui-main.h ../view/gdk-canvas.h game.h \
 	../view/gdk-view.h
-network-game.o: network-game.c network-game.h ../view/gdk-canvas.h \
-	game.h ../monkey/monkey.h ../monkey/playground.h \
-	../monkey/bubble.h ../monkey/color.h ../monkey/board.h \
-	../monkey/shooter.h ../net/monkey-server.h \
-	../net/monkey-message.h ../net/monkey-network.h network-ui.h \
-	../net/monkey-client.h ../view/gdk-view.h ../util/clock.h
-network-ui.o: network-ui.c network-ui.h network-game.h \
-	../view/gdk-canvas.h game.h ../monkey/monkey.h \
-	../monkey/playground.h ../monkey/bubble.h ../monkey/color.h \
-	../monkey/board.h ../monkey/shooter.h ../net/monkey-server.h \
-	../net/monkey-message.h ../net/monkey-network.h ui-main.h
 ui-main.o: ui-main.c ../../config.h ui-main.h ../view/gdk-canvas.h \
 	game.h ../monkey/monkey.h ../monkey/playground.h \
 	../monkey/bubble.h ../monkey/color.h ../monkey/board.h \
 	../monkey/shooter.h game-1-player.h game-1-player-manager.h \
 	game-manager.h game-2-player-manager.h game-2-player.h \
-	network-game.h ../net/monkey-server.h ../net/monkey-message.h \
-	../net/monkey-network.h network-ui.h keyboard-properties.h
+	keyboard-properties.h
 
 info-am:
 info: info-am

@@ -20,15 +20,25 @@
 #include "monkey.h"
 #include <math.h>
 #include <stdlib.h>
-
+#include "monkey-marshal.h"
 
 #define PRIVATE(monkey) (monkey->private )
 #define MAX_UPDATE_TIME 1
  
 static GObjectClass* parent_class = NULL;
 
+enum {
+  GAME_LOST,
+  BUBBLES_EXPLODED,
+  BUBBLE_SHOT,
+  BUBBLE_STICKED,
+  BUBBLES_WAITING_CHANGED,
+  LAST_SIGNAL
+};
+
+static guint32 signals[LAST_SIGNAL];
+
 struct MonkeyPrivate {
-  GList * observer_list;
   Playground * playground;
   Shooter * shooter;  
   gint left_pressed;
@@ -47,32 +57,21 @@ static void monkey_finalize(GObject* object);
 static void monkey_update_shooter(Monkey * monkey,gint time);
 static void monkey_add_waiting_row(Monkey * monkey);
 
-static void monkey_iplayground_observer_iface_init(IPlaygroundObserverClass * i);
-static void monkey_iboard_observer_iface_init(IBoardObserverClass * i);
 
-static void monkey_bubble_sticked (IBoardObserver * bo,
-				   Board *board,Bubble * bubble,
-				   gint time);
+static void monkey_bubble_sticked ( Board *board,Bubble * bubble,
+				   gint time,
+				    Monkey * monkey);
 
-static void monkey_bubbles_exploded (IBoardObserver * bo,
-				     Board *board,
+static void monkey_bubbles_exploded ( Board *board,
 				     GList * exploded,
-				     GList * fallen);
+				     GList * fallen,
+				      Monkey * monkey);
 
-static void monkey_board_down(IBoardObserver * bo,
-			      Board *board);
-
-static void monkey_board_bubbles_added(IBoardObserver * bo,
-				       Board *board,
-				       GList * exploded);
 
 static void monkey_add_new_waiting_row(Monkey * monkey);
-static void monkey_playground_lost(IPlaygroundObserver * po,
-				   Playground * pg);
-static void monkey_bubble_wall_collision (IPlaygroundObserver * po,Playground *pg);
-static void monkey_bubble_board_collision(IPlaygroundObserver * po,Playground *pg);
+static void monkey_playground_lost(Playground * pg,Monkey * monkey);
 
-static void monkey_playground_shot(IPlaygroundObserver *po,Playground *pg,Bubble * b);
+static void monkey_playground_shot(Playground *pg,Bubble * b,Monkey * monkey);
 
 static void monkey_notify_game_lost(Monkey * monkey);
 static void monkey_notify_bubble_shot(Monkey * monkey,Bubble * b);
@@ -80,11 +79,6 @@ static void monkey_notify_bubbles_exploded(Monkey * monkey,
 					   GList * exploded,
 					   GList * fallen);
 
-
-static void monkey_board_bubbles_inserted(IBoardObserver * bo,
-				       Board *board,
-					Bubble ** bubbles,
-					  int count);
 
 static gboolean monkey_has_waiting_row(Monkey * monkey);
 
@@ -99,6 +93,58 @@ static void monkey_class_init (MonkeyClass *klass) {
   parent_class = g_type_class_peek_parent(klass);
   object_class = G_OBJECT_CLASS(klass);
   object_class->finalize = monkey_finalize;
+
+    signals[GAME_LOST]= g_signal_new ("game-lost",
+				      G_TYPE_FROM_CLASS (klass),
+				      G_SIGNAL_RUN_FIRST |
+				      G_SIGNAL_NO_RECURSE,
+				      G_STRUCT_OFFSET (MonkeyClass, game_lost),
+					     NULL, NULL,
+					     g_cclosure_marshal_VOID__VOID,
+					     G_TYPE_NONE,
+				      0,NULL);
+
+
+    signals[BUBBLES_EXPLODED]= g_signal_new ("bubbles-exploded",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (MonkeyClass, bubbles_exploded),
+					     NULL, NULL,
+					     monkey_marshal_VOID__POINTER_POINTER,
+					     G_TYPE_NONE,
+					     2, G_TYPE_POINTER,G_TYPE_POINTER);
+
+    signals[BUBBLE_SHOT]= g_signal_new ("bubble-shot",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (MonkeyClass, bubble_shot),
+					     NULL, NULL,
+					g_cclosure_marshal_VOID__POINTER,
+					G_TYPE_NONE,
+					     1, G_TYPE_POINTER);
+
+    signals[BUBBLE_STICKED]= g_signal_new ("bubble-sticked",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (MonkeyClass, bubble_sticked),
+					     NULL, NULL,
+					     g_cclosure_marshal_VOID__POINTER,
+					     G_TYPE_NONE,
+					     1, G_TYPE_POINTER);
+
+
+    signals[BUBBLES_WAITING_CHANGED]= g_signal_new ("bubbles-waiting-changed",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (MonkeyClass, bubbles_waiting_changed),
+						    NULL, NULL,
+						    g_cclosure_marshal_VOID__INT,
+						    G_TYPE_NONE,
+						    1, G_TYPE_INT);
 }
 
 
@@ -119,35 +165,12 @@ GType monkey_get_type(void) {
     };
 
 
-    static const GInterfaceInfo iface_iplayground_observer = {
-      (GInterfaceInitFunc) monkey_iplayground_observer_iface_init,
-      NULL,
-      NULL
-    };
-      
-
-      
-    static const GInterfaceInfo iface_iboard_observer = {
-      (GInterfaceInitFunc) monkey_iboard_observer_iface_init,
-      NULL,
-      NULL
-    };
-      
     monkey_type = g_type_register_static(G_TYPE_OBJECT,
 					 "Monkey",
 					 &monkey_info,
 					 0);
 
 
-    g_type_add_interface_static(monkey_type,
-				TYPE_IPLAYGROUND_OBSERVER,
-				&iface_iplayground_observer);
-
-
-    g_type_add_interface_static(monkey_type,
-				TYPE_IBOARD_OBSERVER,
-				&iface_iboard_observer);
-      
       
   }
     
@@ -166,9 +189,6 @@ Monkey * monkey_new_level_from_file(const gchar * filename,int level) {
 					  -M_PI/2+0.01,M_PI/2-0.01,0.5);
 
   PRIVATE(monkey)->shot_count = 0;
-  //  shooter_add_bubble( PRIVATE(monkey)->shooter, bubble_new(1,0,0));
-
-  //shooter_add_bubble( PRIVATE(monkey)->shooter, bubble_new(1,0,0));
 
   PRIVATE(monkey)->left_pressed = 0;
   PRIVATE(monkey)->left_pressed_time = 0;
@@ -178,18 +198,24 @@ Monkey * monkey_new_level_from_file(const gchar * filename,int level) {
 
   PRIVATE(monkey)->last_stiked = 0;
 
-  PRIVATE(monkey)->observer_list = NULL;
   
 
   PRIVATE(monkey)->to_add = NULL;
 
 
-  playground_attach_observer(PRIVATE(monkey)->playground,
-			     IPLAYGROUND_OBSERVER(monkey));
   
-  
-  board_attach_observer(playground_get_board(PRIVATE(monkey)->playground),
-			IBOARD_OBSERVER(monkey));
+  g_signal_connect( G_OBJECT( playground_get_board(PRIVATE(monkey)->playground)),
+		    "bubbles-exploded",G_CALLBACK(monkey_bubbles_exploded),monkey);
+
+
+  g_signal_connect( G_OBJECT( playground_get_board(PRIVATE(monkey)->playground)),
+		    "bubble-sticked",G_CALLBACK(monkey_bubble_sticked),monkey);
+
+  g_signal_connect( G_OBJECT( PRIVATE(monkey)->playground),
+		    "bubble-shot",G_CALLBACK(monkey_playground_shot),monkey);
+
+  g_signal_connect( G_OBJECT( PRIVATE(monkey)->playground),
+		    "game-lost",G_CALLBACK(monkey_playground_lost),monkey);
   return monkey;
 }
 
@@ -205,14 +231,14 @@ static void monkey_finalize(GObject* object) {
   Bubble ** bubbles;
   Monkey * monkey = MONKEY(object);
   
-  g_assert( PRIVATE(monkey)->observer_list == NULL);
 
 
-  playground_detach_observer( PRIVATE(monkey)->playground,
-			      IPLAYGROUND_OBSERVER(monkey));
+  g_signal_handlers_disconnect_matched(  G_OBJECT(PRIVATE(monkey)->playground) ,
+					 G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey);
 
-  board_detach_observer( playground_get_board(PRIVATE(monkey)->playground),
-			 IBOARD_OBSERVER(monkey));
+
+  g_signal_handlers_disconnect_matched(  G_OBJECT( playground_get_board(PRIVATE(monkey)->playground) ),
+					 G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey);
 
   g_object_unref( G_OBJECT(PRIVATE(monkey)->playground));
   g_object_unref( G_OBJECT(PRIVATE(monkey)->shooter));
@@ -390,24 +416,11 @@ Playground * monkey_get_playground(Monkey * monkey) {
 
   return PRIVATE(monkey)->playground;
 }
-
-
-
-
-static void monkey_iplayground_observer_iface_init(IPlaygroundObserverClass * i) {
-  iplayground_observer_class_virtual_init(i,
-					  monkey_playground_shot,
-					  monkey_bubble_wall_collision,
-					  monkey_bubble_board_collision,
-					  monkey_playground_lost);
-
-}
   
 
 static void monkey_notify_bubbles_waiting_changed(Monkey * monkey) {
 
   GList * next;
-  IMonkeyObserver * mo;
   Bubble ** bubbles;
   int i;
   int count;
@@ -428,15 +441,9 @@ static void monkey_notify_bubbles_waiting_changed(Monkey * monkey) {
   }
 
 
-  next = PRIVATE(monkey)->observer_list;
-  
-  while( next != NULL ) {
-    
-    mo = IMONKEY_OBSERVER(next->data);
-    imonkey_observer_bubbles_waiting_changed(mo,monkey,count);
-    next = g_list_next(next);
-  }
 
+  g_signal_emit( G_OBJECT(monkey),signals[BUBBLES_WAITING_CHANGED],0,count);
+  
 
 }
 
@@ -445,69 +452,28 @@ static void monkey_notify_bubbles_exploded(Monkey * monkey,
 					   GList * exploded,
 					   GList * fallen) {
 
-  GList * next;
-  IMonkeyObserver * mo;
   
-  next = PRIVATE(monkey)->observer_list;
-  
-  while( next != NULL ) {
-    
-    mo = IMONKEY_OBSERVER(next->data);
-    imonkey_observer_bubbles_exploded(mo,monkey,exploded,fallen);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(monkey),signals[BUBBLES_EXPLODED],0,exploded,fallen);
+
   
 }
 
 
 static void monkey_notify_bubble_shot(Monkey * monkey,Bubble * b) {
-  GList * next;
-  IMonkeyObserver * mo;
-
-  next = PRIVATE(monkey)->observer_list;
-
-  while( next != NULL ) {
-    mo = IMONKEY_OBSERVER(next->data);
-    imonkey_observer_bubble_shot(mo,monkey,b);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(monkey),signals[BUBBLE_SHOT],0,b);
 }
 
 static void monkey_notify_bubble_sticked(Monkey * monkey,Bubble * b) {
-  GList * next;
-  IMonkeyObserver * mo;
-
-  next = PRIVATE(monkey)->observer_list;
-
-  while( next != NULL ) {
-    mo = IMONKEY_OBSERVER(next->data);
-    imonkey_observer_bubble_sticked(mo,monkey,b);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(monkey),signals[BUBBLE_STICKED],0,b);
 }
 
 static void monkey_notify_game_lost(Monkey * monkey) {
-  GList * next;
-  IMonkeyObserver * mo;
-
-  next = PRIVATE(monkey)->observer_list;
-
-  while( next != NULL ) {
-    
-    mo = IMONKEY_OBSERVER(next->data);
-    imonkey_observer_game_lost(mo,monkey);
-    next = g_list_next(next);
-  }
-
+  g_signal_emit( G_OBJECT(monkey),signals[GAME_LOST],0);
 }
 
-static void monkey_playground_shot(IPlaygroundObserver *po,Playground *pg,Bubble * b) {
-  Monkey * monkey;
+static void monkey_playground_shot(Playground *pg,Bubble * b,Monkey * monkey) {
+  g_assert( IS_MONKEY(monkey) );
 
-
-  g_assert( IS_MONKEY(po) );
-
-  monkey = MONKEY(po);
 
   monkey_notify_bubble_shot(monkey,b);
   
@@ -515,42 +481,20 @@ static void monkey_playground_shot(IPlaygroundObserver *po,Playground *pg,Bubble
 }
 
 
-static void monkey_bubble_wall_collision (IPlaygroundObserver * po,Playground *pg) {
-}
+static void monkey_playground_lost(Playground * pg,
+				   Monkey * monkey) {
 
-static void monkey_bubble_board_collision(IPlaygroundObserver * po,Playground *pg) {
-}
+  g_assert( IS_MONKEY(monkey) );
 
-static void monkey_playground_lost(IPlaygroundObserver * po,
-				   Playground * pg) {
-
-  Monkey * monkey;
-  g_assert( IS_MONKEY(po) );
-
-  monkey = MONKEY(po);
   monkey_notify_game_lost(monkey);
 
 }
 
-static void monkey_iboard_observer_iface_init(IBoardObserverClass * i) {
-  iboard_observer_class_virtual_init(i,
-				     monkey_bubbles_exploded,
-				     monkey_board_bubbles_added,
-				     monkey_bubble_sticked,
-				     monkey_board_bubbles_inserted,
-				     monkey_board_down);
-}
 
+static void monkey_bubble_sticked (Board * board,Bubble * bubble,gint time,Monkey * monkey) {
 
+  g_assert( IS_MONKEY(monkey) );
 
-static void monkey_bubble_sticked (IBoardObserver * bo,
-				   Board *board,Bubble * bubble,
-				   gint time) {
-
-  Monkey * monkey;
-  g_assert( IS_MONKEY(bo) );
-
-  monkey = MONKEY(bo);
   monkey_add_waiting_row(monkey);
   monkey_notify_bubbles_waiting_changed(monkey);
   PRIVATE(monkey)->last_stiked = time;
@@ -559,15 +503,14 @@ static void monkey_bubble_sticked (IBoardObserver * bo,
 }
 
 
-static void monkey_bubbles_exploded (IBoardObserver * bo,
-				     Board *board,
+static void monkey_bubbles_exploded (Board *board,
 				     GList * exploded,
-				     GList * fallen) {
+				     GList * fallen,
+				     Monkey * monkey) {
 
-  Monkey * monkey;
-  g_assert( IS_MONKEY(bo) );
+  g_assert( IS_MONKEY(monkey) );
   g_assert( IS_BOARD(board));
-  monkey = MONKEY(bo);
+
   monkey_notify_bubbles_exploded(monkey,
 				 exploded,
 				 fallen);
@@ -730,44 +673,6 @@ void monkey_insert_bubbles(Monkey * monkey,Bubble ** bubbles_8) {
 
   board_insert_bubbles( playground_get_board( PRIVATE(monkey)->playground),
 			bubbles_8);
-}
-
-
-static void monkey_board_down(IBoardObserver * bo,
-				       Board *board) {
-
-}
-
-
-static void monkey_board_bubbles_added(IBoardObserver * bo,
-				       Board *board,
-				       GList * exploded) {
-}
-
-static void monkey_board_bubbles_inserted(IBoardObserver * bo,
-					  Board *board,
-					  Bubble ** bubbles,
-					  int count) {
-}
-/* TODO : */
-void monkey_attach_observer(Monkey * monkey,IMonkeyObserver * mo) {
-
-  g_assert( IS_MONKEY(monkey) );
-
-  PRIVATE(monkey)->observer_list =
-    g_list_append(PRIVATE(monkey)->observer_list,
-		  mo);
-}
-
-void monkey_detach_observer(Monkey * monkey,IMonkeyObserver * mo) {
-
-
-  g_assert( IS_MONKEY(monkey) );
-
-  PRIVATE(monkey)->observer_list =
-    g_list_remove(PRIVATE(monkey)->observer_list,
-		  mo);
-
 }
 
 

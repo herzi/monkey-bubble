@@ -30,10 +30,15 @@ struct BubblePrivate {
   gdouble vx,vy;
   Color  color;
   guint life_time;
-  GList * observer_list;
 
 };
 
+enum {
+    BUBBLE_CHANGED,
+    LAST_SIGNAL
+};
+
+static guint32 signals[LAST_SIGNAL];
 
 
 static void bubble_instance_init(Bubble * bubble) {
@@ -43,9 +48,6 @@ static void bubble_instance_init(Bubble * bubble) {
 static void bubble_finalize(GObject* object) {
   Bubble * bubble = BUBBLE(object);
 
-  if(PRIVATE(bubble)->observer_list != NULL) {
-    g_error("[BUBBLE] All observer has not been removed");		
-  }
 
   g_free(PRIVATE(bubble));
 
@@ -61,6 +63,17 @@ static void bubble_class_init (BubbleClass *klass) {
     parent_class = g_type_class_peek_parent(klass);
     object_class = G_OBJECT_CLASS(klass);
     object_class->finalize = bubble_finalize;
+
+    signals[BUBBLE_CHANGED] = g_signal_new( "bubble-changed",
+					    G_TYPE_FROM_CLASS(klass),
+					    G_SIGNAL_RUN_FIRST |
+					    G_SIGNAL_NO_RECURSE,
+					    G_STRUCT_OFFSET (BubbleClass, bubble_changed),
+					    NULL, NULL,
+					    g_cclosure_marshal_VOID__VOID,
+					    G_TYPE_NONE, 
+					    0,
+					    NULL);
 }
 
 
@@ -103,7 +116,6 @@ Bubble * bubble_new( Color  color,gdouble x,gdouble y) {
   PRIVATE(bubble)->vx = 0;
   PRIVATE(bubble)->vy = 0;
   PRIVATE(bubble)->life_time = 0;
-  PRIVATE(bubble)->observer_list = NULL;
 
   return bubble;
 }
@@ -158,33 +170,13 @@ gboolean bubble_collide_bubble(const Bubble * bubble ,
   }
 }
 
-void bubble_attach_observer(Bubble * bubble,IBubbleObserver * bo) {
-  g_assert(IS_BUBBLE(bubble));
-  g_assert(IS_IBUBBLE_OBSERVER(bo));
-
-  PRIVATE(bubble)->observer_list = 
-    g_list_append(PRIVATE(bubble)->observer_list, bo);
-}
-
-void bubble_detach_observer(Bubble * bubble,IBubbleObserver * bo) {
-  g_assert(IS_BUBBLE(bubble));
-  g_assert(IS_IBUBBLE_OBSERVER(bo));
-
-  PRIVATE(bubble)->observer_list = 
-    g_list_remove(PRIVATE(bubble)->observer_list,bo);
-}
 
 
 static void bubble_notify(Bubble * bubble) {
-  GList * next;
+
   g_assert(IS_BUBBLE(bubble));
   
-  next = PRIVATE(bubble)->observer_list;
-  while( next != NULL ) {
-    ibubble_observer_changed( ((IBubbleObserver *)next->data),
-			      bubble);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(bubble), signals[BUBBLE_CHANGED],0);
 }
 
 

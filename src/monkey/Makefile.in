@@ -78,6 +78,7 @@ GCONFTOOL = @GCONFTOOL@
 GCONF_SCHEMA_CONFIG_SOURCE = @GCONF_SCHEMA_CONFIG_SOURCE@
 GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+GLIB_GENMARSHAL = @GLIB_GENMARSHAL@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
 GTKDOC = @GTKDOC@
@@ -91,6 +92,7 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
+INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
@@ -115,8 +117,6 @@ LIBMONKEYUTIL_LA_CFLAGS = @LIBMONKEYUTIL_LA_CFLAGS@
 LIBMONKEYUTIL_LA_LIBS = @LIBMONKEYUTIL_LA_LIBS@
 LIBMONKEY_LA_CFLAGS = @LIBMONKEY_LA_CFLAGS@
 LIBMONKEY_LA_LIBS = @LIBMONKEY_LA_LIBS@
-LIBNETCLTMONKEY_LA_CFLAGS = @LIBNETCLTMONKEY_LA_CFLAGS@
-LIBNETCLTMONKEY_LA_LIBS = @LIBNETCLTMONKEY_LA_LIBS@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIB = @LTLIB@
@@ -148,13 +148,15 @@ INCLUDES =  	$(LIBMONKEY_LA_CFLAGS) 	-Wall -Werror -g
 
 lib_LTLIBRARIES = libmonkey.la
 
-libmonkey_la_SOURCES =  	bubble.c bubble.h 	ibubble-observer.c 	shooter.c shooter.h 	ishooter-observer.c 	board.c board.h 	iboard-observer.c 	playground.c playground.h 	monkey.c monkey.h 	imonkey-observer.c 	iplayground-observer.c 	point.h color.h 
+libmonkey_la_SOURCES =  	bubble.c bubble.h 	shooter.c shooter.h 	board.c board.h 	playground.c playground.h 	monkey.c monkey.h 	point.h color.h 	monkey-marshal.c monkey-marshal.h
 
 
 libmonkey_la_LDFLAGS = 
 
 libmonkey_la_LIBADD =  	$(LIBMONKEY_LA_LIBS)
 
+
+EXTRA_DIST = monkey-marshal.list
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
@@ -166,9 +168,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libmonkey_la_DEPENDENCIES = 
-libmonkey_la_OBJECTS =  bubble.lo ibubble-observer.lo shooter.lo \
-ishooter-observer.lo board.lo iboard-observer.lo playground.lo \
-monkey.lo imonkey-observer.lo iplayground-observer.lo
+libmonkey_la_OBJECTS =  bubble.lo shooter.lo board.lo playground.lo \
+monkey.lo monkey-marshal.lo
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -311,20 +312,12 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-board.lo board.o : board.c board.h bubble.h color.h point.h
+board.lo board.o : board.c board.h bubble.h color.h point.h \
+	monkey-marshal.h
 bubble.lo bubble.o : bubble.c bubble.h color.h
-iboard-observer.lo iboard-observer.o : iboard-observer.c board.h \
-	bubble.h color.h
-ibubble-observer.lo ibubble-observer.o : ibubble-observer.c bubble.h \
-	color.h
-imonkey-observer.lo imonkey-observer.o : imonkey-observer.c monkey.h \
-	playground.h bubble.h color.h board.h shooter.h
-iplayground-observer.lo iplayground-observer.o : iplayground-observer.c \
-	playground.h bubble.h color.h board.h
-ishooter-observer.lo ishooter-observer.o : ishooter-observer.c shooter.h \
-	bubble.h color.h
+monkey-marshal.lo monkey-marshal.o : monkey-marshal.c monkey-marshal.h
 monkey.lo monkey.o : monkey.c monkey.h playground.h bubble.h color.h \
-	board.h shooter.h
+	board.h shooter.h monkey-marshal.h
 playground.lo playground.o : playground.c playground.h bubble.h color.h \
 	board.h
 shooter.lo shooter.o : shooter.c shooter.h bubble.h color.h
@@ -405,6 +398,12 @@ all-redirect all-am all installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+
+monkey-marshal.c: monkey-marshal.list $(GLIB_GENMARSHAL)
+	echo "#include <monkey-marshal.h>" > $@ && $(GLIB_GENMARSHAL) $< --body --prefix=monkey_marshal >> $@
+
+monkey-marshal.h: monkey-marshal.list $(GLIB_GENMARSHAL)
+	$(GLIB_GENMARSHAL) $< --header --prefix=monkey_marshal > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

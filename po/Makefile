@@ -14,7 +14,7 @@
 
 GETTEXT_PACKAGE = monkey-bubble
 PACKAGE = monkey-bubble
-VERSION = 0.1.4
+VERSION = 0.1.7
 
 SHELL = /bin/sh
 
@@ -56,8 +56,8 @@ INCLUDES = -I.. -I$(top_srcdir)/intl
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
 SOURCES = 
-POFILES =  de.po fr.po
-GMOFILES =  de.gmo fr.gmo
+POFILES =  de.po es.po eu.po fr.po
+GMOFILES =  de.gmo es.gmo eu.gmo fr.gmo
 DISTFILES = ChangeLog Makefile.in.in POTFILES.in $(GETTEXT_PACKAGE).pot \
 $(POFILES) $(GMOFILES) $(SOURCES)
 
@@ -68,7 +68,7 @@ POTFILES = \
 	../data/monkey-bubble.schemas.in \
 	../src/ui/ui-main.c
 
-CATALOGS =  de.gmo fr.gmo
+CATALOGS =  de.gmo es.gmo eu.gmo fr.gmo
 CATOBJEXT = .gmo
 INSTOBJEXT = .mo
 

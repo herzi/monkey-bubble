@@ -18,6 +18,7 @@
  */
 #include "board.h"
 #include "point.h"
+#include "monkey-marshal.h"
 
 #define PRIVATE(board) (board->private)
 #define QUADRANT_INITIAL  0
@@ -28,6 +29,17 @@
 #define ROW_COUNT 13
 #define BUBBLE_RADIUS 16
 static GObjectClass* parent_class = NULL;
+
+enum {
+  BUBBLES_EXPLODED,
+  BUBBLES_ADDED,
+  BUBBLE_STICKED,
+  BUBBLES_INSERTED,
+  DOWN,
+  LAST_SIGNAL
+};
+
+static guint32 signals[LAST_SIGNAL];
 
 static void board_get_bubble_position(Board * board,
 				      gint cell_x,gint cell_y,
@@ -93,7 +105,6 @@ struct BoardPrivate {
   gdouble y_min;
   gint min_row;
   Bubble ** bubble_array;
-  GList * observer_list;
   gint odd;
   gdouble x_center;
   gdouble y_center;
@@ -109,10 +120,6 @@ static void board_instance_init(Board * board) {
 static void board_finalize(GObject* object) {
   int i;
   Board * board = BOARD(object);
-
-  if(PRIVATE(board)->observer_list != NULL) {
-    g_error("[Board] All observer has not been removed");		
-  }
 
   for( i= 0; i< ROW_COUNT*COLUMN_COUNT;i++) {
     
@@ -136,6 +143,64 @@ static void board_class_init (BoardClass *klass) {
   parent_class = g_type_class_peek_parent(klass);
   object_class = G_OBJECT_CLASS(klass);
   object_class->finalize = board_finalize;
+
+    signals[BUBBLES_EXPLODED]= g_signal_new ("bubbles-exploded",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (BoardClass, bubbles_exploded),
+					     NULL, NULL,
+					     monkey_marshal_VOID__POINTER_POINTER,
+					     G_TYPE_NONE,
+					     2, G_TYPE_POINTER,G_TYPE_POINTER);
+
+
+    signals[BUBBLES_ADDED]= g_signal_new ("bubbles-added",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (BoardClass, bubbles_added),
+					     NULL, NULL,
+					     g_cclosure_marshal_VOID__POINTER,
+					     G_TYPE_NONE,
+					     1, G_TYPE_POINTER);
+
+
+
+    signals[BUBBLE_STICKED]= g_signal_new ("bubble-sticked",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (BoardClass, bubble_sticked),
+					     NULL, NULL,
+					     monkey_marshal_VOID__POINTER_INT,
+					     G_TYPE_NONE,
+					     2, G_TYPE_POINTER,G_TYPE_INT);
+
+
+    signals[BUBBLES_INSERTED]= g_signal_new ("bubbles-inserted",
+					     G_TYPE_FROM_CLASS (klass),
+					     G_SIGNAL_RUN_FIRST |
+					     G_SIGNAL_NO_RECURSE,
+					     G_STRUCT_OFFSET (BoardClass, bubbles_exploded),
+					     NULL, NULL,
+					     monkey_marshal_VOID__POINTER_INT,
+					     G_TYPE_NONE,
+					     2, G_TYPE_POINTER,G_TYPE_INT);
+
+
+    signals[DOWN] = g_signal_new( "down",
+				  G_TYPE_FROM_CLASS(klass),
+				  G_SIGNAL_RUN_FIRST |
+				  G_SIGNAL_NO_RECURSE,
+				  G_STRUCT_OFFSET (BoardClass, down),
+				  NULL, NULL,
+				  g_cclosure_marshal_VOID__VOID,
+				  G_TYPE_NONE, 
+				  0,
+				  NULL);
+
+
 }
 
 
@@ -174,7 +239,6 @@ Board * board_new(gdouble y_min ,const gchar * level_filename,gint level) {
 
   PRIVATE(b)->y_min = y_min;
 
-  PRIVATE(b)->observer_list = NULL;
   PRIVATE(b)->bubble_array = 
     g_malloc( sizeof( Bubble * )*ROW_COUNT*COLUMN_COUNT);
   
@@ -478,22 +542,6 @@ void board_down(Board * board) {
   PRIVATE( board )->min_row++;
 
   board_notify_down(board);
-}
-
-void board_attach_observer(Board * board,IBoardObserver * bo) {
-  g_assert(IS_BOARD(board));
-  g_assert(IS_IBOARD_OBSERVER(bo));
-
-  PRIVATE(board)->observer_list = 
-    g_list_append(PRIVATE(board)->observer_list, bo);
-}
-
-void board_detach_observer(Board * board,IBoardObserver * bo) {
-  g_assert(IS_BOARD(board));
-  g_assert(IS_IBOARD_OBSERVER(bo));
-
-  PRIVATE(board)->observer_list = 
-    g_list_remove(PRIVATE(board)->observer_list,bo);
 }
 
 
@@ -907,17 +955,8 @@ void board_add_bubbles(Board *board,
 static void board_notify_bubbles_exploded(Board * board,
 					  GList * exploded,
 					  GList * fallen) {
-  GList * next;
-  IBoardObserver * bo;
 
-  next = PRIVATE(board)->observer_list;
-
-  while( next != NULL ) {
-    bo = IBOARD_OBSERVER( next->data );
-    iboard_observer_bubbles_exploded(bo,board,exploded,fallen);
-
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(board),signals[BUBBLES_EXPLODED],0,exploded,fallen);
     
 }
 
@@ -971,18 +1010,9 @@ static void board_notify_bubble_sticked(Board * board,
 					Bubble * bubble,
 					gint time) {
 
-  GList * next;
-  IBoardObserver * bo;
 
-  next = PRIVATE(board)->observer_list;
+  g_signal_emit( G_OBJECT(board),signals[BUBBLE_STICKED],0,bubble,time);
 
-  while( next != NULL ) {
-    bo = IBOARD_OBSERVER( next->data );
-    iboard_observer_bubble_sticked(bo,board,bubble,
-				   time);
-
-    next = g_list_next(next);
-  }
     
 }
 
@@ -990,34 +1020,16 @@ static void board_notify_bubble_sticked(Board * board,
 static void board_notify_bubbles_added(Board * board,
 				       GList * bubbles) {
 
-  GList * next;
-  IBoardObserver * bo;
 
-  next = PRIVATE(board)->observer_list;
+  g_signal_emit( G_OBJECT(board),signals[BUBBLES_ADDED],0,bubbles);
 
-  while( next != NULL ) {
-    bo = IBOARD_OBSERVER( next->data );
-    iboard_observer_bubbles_added(bo,board,bubbles);
-
-    next = g_list_next(next);
-  }
     
 }
 
 
 static void board_notify_down(Board * board) {
-
-  GList * next;
-  IBoardObserver * bo;
   
-  next = PRIVATE(board)->observer_list;
-
-  while( next != NULL ) {
-    bo = IBOARD_OBSERVER( next->data );
-    iboard_observer_down(bo,board);
-
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(board),signals[DOWN],0);
     
 }
 
@@ -1025,16 +1037,6 @@ static void board_notify_bubbles_inserted(Board * board,
 					  Bubble ** bubbles,
 					  int count) {
 
-  GList * next;
-  IBoardObserver * bo;
-
-  next = PRIVATE(board)->observer_list;
-
-  while( next != NULL ) {
-    bo = IBOARD_OBSERVER( next->data );
-    iboard_observer_bubbles_inserted(bo,board,bubbles,count);
-
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(board),signals[BUBBLES_INSERTED],0,bubbles,count);
     
 }

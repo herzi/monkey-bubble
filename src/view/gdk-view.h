@@ -57,11 +57,10 @@ void gdk_view_update(GdkView * gdk_view,
 
 void gdk_view_set_gems_count(GdkView * d,int gems);
 void gdk_view_set_score(GdkView * d,int score);
-
+void gdk_view_set_points(GdkView * d,int points);
 void gdk_view_set_waiting_bubbles(GdkView * d,int bubbles);
 
 
-void HACK_load_contents();
 void gdk_view_draw_lost(GdkView *d);
 void gdk_view_draw_win(GdkView *d);
 

@@ -31,9 +31,16 @@ struct ShooterPrivate {
   gdouble shoot_speed;
   Bubble * current_bubble;
   Bubble * waiting_bubble;
-  GList * observer_list;
 };
 
+enum {
+  ROTATED,
+  BUBBLE_ADDED,
+  SHOOT,
+  LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL];
 
 static void shooter_notify_rotated(Shooter * s);
 static void shooter_notify_bubble_added(Shooter * s,
@@ -48,10 +55,6 @@ static void shooter_instance_init(Shooter * shooter) {
 
 static void shooter_finalize(GObject* object) {
   Shooter * shooter = SHOOTER(object);
-
-  if(PRIVATE(shooter)->observer_list != NULL) {
-    g_error("[Shooter] All observer has not been removed");		
-  }
 
 
   if( PRIVATE(shooter)->current_bubble != NULL ) {
@@ -76,6 +79,40 @@ static void shooter_class_init (ShooterClass *klass) {
   parent_class = g_type_class_peek_parent(klass);
   object_class = G_OBJECT_CLASS(klass);
   object_class->finalize = shooter_finalize;
+
+  signals[ROTATED] = g_signal_new("rotated",				  
+				  G_TYPE_FROM_CLASS(klass),
+				  G_SIGNAL_RUN_FIRST |
+				  G_SIGNAL_NO_RECURSE,
+				  G_STRUCT_OFFSET (ShooterClass, rotated),
+				  NULL, NULL,
+				  g_cclosure_marshal_VOID__VOID,
+				  G_TYPE_NONE, 
+				  0,
+				  NULL);
+
+
+  signals[BUBBLE_ADDED] = g_signal_new("bubble-added",				  
+				  G_TYPE_FROM_CLASS(klass),
+				  G_SIGNAL_RUN_FIRST |
+				  G_SIGNAL_NO_RECURSE,
+				  G_STRUCT_OFFSET (ShooterClass, bubble_added),
+				  NULL, NULL,
+				  g_cclosure_marshal_VOID__POINTER,
+				  G_TYPE_NONE, 
+				  1,
+				  G_TYPE_POINTER);
+
+  signals[SHOOT] = g_signal_new("shoot",				  
+				G_TYPE_FROM_CLASS(klass),
+				G_SIGNAL_RUN_FIRST |
+				G_SIGNAL_NO_RECURSE,
+				G_STRUCT_OFFSET (ShooterClass, shoot),
+				NULL, NULL,
+				g_cclosure_marshal_VOID__POINTER,
+				G_TYPE_NONE, 
+				1,
+				G_TYPE_POINTER);
 }
 
 
@@ -123,10 +160,10 @@ Shooter * shooter_new(gdouble x_pos,
   PRIVATE(s)->angle = 0;
   PRIVATE(s)->current_bubble = NULL;
   PRIVATE(s)->waiting_bubble = NULL;
-  PRIVATE(s)->observer_list = NULL;
 
   return s;
 }
+
 
 
 void shooter_add_bubble(Shooter * s,Bubble *b) {
@@ -223,58 +260,19 @@ Bubble * shooter_shoot(Shooter * s) {
 }
 
 
-void shooter_attach_observer(Shooter * s,IShooterObserver *so) {
-  g_assert(IS_SHOOTER(s));
-  g_assert(IS_ISHOOTER_OBSERVER(so));
-
-  PRIVATE(s)->observer_list = 
-    g_list_append(PRIVATE(s)->observer_list,so);
-}
-
-void shooter_detach_observer(Shooter * s,IShooterObserver *so) {
-  g_assert(IS_SHOOTER(s));
-  g_assert(IS_ISHOOTER_OBSERVER(so));
-
-  PRIVATE(s)->observer_list = 
-    g_list_remove(PRIVATE(s)->observer_list,so);
-}
-
 static void shooter_notify_bubble_added(Shooter * s,
 					Bubble * bubble) {
-  GList * next;
-  IShooterObserver * so;
 
-  next = PRIVATE(s)->observer_list;
-
-  while( next != NULL ) {
-    so = ISHOOTER_OBSERVER(next->data);
-    ishooter_observer_bubble_added(so,s,bubble);
-    next = g_list_next(next);
-  }
+  g_signal_emit( G_OBJECT(s), signals[BUBBLE_ADDED],0,bubble);
 
 }
 
 static void shooter_notify_rotated(Shooter * s) {
-  GList * next;
 
-  next = PRIVATE(s)->observer_list;
-  while( next != NULL ) {
-    ishooter_observer_rotated( ISHOOTER_OBSERVER (next->data),
-			       s);
-    next = g_list_next( next);
-  }
-
+  g_signal_emit( G_OBJECT(s), signals[ROTATED],0);
 }
 
 static void shooter_notify_shoot(Shooter * s,
 				 Bubble * b) {
-  GList * next;
-  next = PRIVATE(s)->observer_list;
-  while( next != NULL ) {
-    ishooter_observer_shoot( ISHOOTER_OBSERVER (next->data),
-			     s,b);
-    next = g_list_next( next);
-  }
-
-  
+  g_signal_emit( G_OBJECT(s), signals[SHOOT],0,b);  
 }

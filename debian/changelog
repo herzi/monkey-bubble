@@ -1,3 +1,25 @@
+monkey-bubble (0.1.6-1) unstable; urgency=low
+                  
+   * i18n 
+   * made keybinding configuarable
+
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Mon, 06 Oct 2003 15:04:03 +0200
+
+monkey-bubble (0.1.5-1) unstable; urgency=low
+                  
+   * some test on gstreamer
+   * fix 2 player bug
+   * some cleanup
+
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Mon, 29 Sep 2003 10:04:03 +0200
+
+monkey-bubble (0.1.4-1) unstable; urgency=low
+                  
+   * Some bugfix,cleanup.
+   * Some polish, less dependencies on fb gfx
+                                                              
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Wed, 26 Sep 2003 16:11:03 +0200
+
 monkey-bubble (0.1.3-1) unstable; urgency=low
                   
    * Some bugfix,cleanup.
