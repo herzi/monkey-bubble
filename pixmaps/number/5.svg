@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<svg
+   id="svg39668"
+   sodipodi:version="0.31"
+   width="128pt"
+   height="128pt"
+   sodipodi:docbase="/home/lolo/cvs/mm/resources/gfx/"
+   sodipodi:docname="/home/lolo/cvs/mm/resources/gfx/5.svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs
+     id="defs39670" />
+  <sodipodi:namedview
+     id="base" />
+  <path
+     style="fill:#003f77;fill-rule:nonzero;stroke:none;fill-opacity:0.996078;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;"
+     id="path39496"
+     d="M 582.442 786.749 C 560.734 783.217 539.355 779.808 517.346 778.274 C 501.383 777.579 509.597 777.844 492.703 777.513 L 492.661 760.962 C 509.996 760.55 501.536 760.713 518.058 760.463 C 537.077 760.567 566.456 767.04 582.442 764.44 L 582.442 786.749 z "
+     transform="matrix(0.967854,0,0,0.857639,-438.109,-619.06)" />
+  <path
+     style="fill:#003f77;fill-rule:nonzero;stroke:none;fill-opacity:0.996078;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;"
+     id="path39497"
+     d="M 516.867 772.434 C 515.214 781.817 514.519 791.543 513.107 800.993 C 512.373 806.169 511.672 811.35 510.937 816.526 L 489.849 813.917 C 490.502 808.721 491.105 803.519 491.727 798.319 C 492.721 790.141 495.117 780.711 493.659 772.434 L 516.867 772.434 z "
+     transform="matrix(0.967854,0,0,0.857639,-438.109,-619.06)" />
+  <path
+     style="fill:#003f77;fill-rule:nonzero;stroke:none;fill-opacity:0.996078;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;"
+     id="path39500"
+     d="M 487.222 820.592 C 494.668 804.146 520.974 799.969 537.66 797.514 C 568.266 794.936 598.284 810.392 583.408 845.124 C 566.8 873.237 534.914 899.836 500.45 895.666 L 503.705 875.626 C 528.166 880.724 553.35 857.083 564.331 837.614 C 571.969 819.525 556.271 816.255 540.819 817.408 C 525.126 819.703 502.363 839.104 510.43 820.592 L 487.222 820.592 z "
+     transform="matrix(0.967854,0,0,0.857639,-438.109,-619.06)" />
+</svg>

@@ -1,0 +1,199 @@
+dnl
+dnl configure.in for monkey-bubble
+dnl
+
+dnl  -------------------------
+dnl | autotool initialization |-----------------------------------------------
+dnl  -------------------------
+
+AC_INIT(configure.in)
+AM_INIT_AUTOMAKE(monkey-bubble, 0.1.6)
+AM_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE
+
+dnl --------------------------------------------------------------------------
+
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+
+dnl Initialize libtool
+AM_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+AC_PROG_INTLTOOL
+
+dnl  ----------------------
+dnl | library dependencies |--------------------------------------------------
+dnl  ----------------------
+
+dnl Versions shared with the (upcoming) .spec file.
+GTK_REQUIRED=2.0.0
+G_THREAD_REQUIRED=2.0.0
+
+AC_SUBST(GTK_REQUIRED)
+AC_SUBST(G_THREAD_REQUIRED)
+
+PKG_CHECK_MODULES(LIBMONKEYUTIL_LA,[
+	gtk+-2.0
+	gthread-2.0
+	])
+AC_SUBST(LIBMONKEYUTIL_LA_CFLAGS)
+AC_SUBST(LIBMONKEYUTIL_LA_LIBS)
+
+PKG_CHECK_MODULES(LIBMONKEY_LA,[
+	gtk+-2.0
+	gthread-2.0
+	])
+AC_SUBST(LIBMONKEY_LA_CFLAGS)
+AC_SUBST(LIBMONKEY_LA_LIBS)
+
+PKG_CHECK_MODULES(LIBGDKVIEW_LA,[
+	gtk+-2.0
+	gthread-2.0
+	librsvg-2.0
+	])
+AC_SUBST(LIBGDKVIEW_LA_CFLAGS)
+AC_SUBST(LIBGDKVIEW_LA_LIBS)
+
+PKG_CHECK_MODULES(LIBGSTAUDIO_LA,[
+	gtk+-2.0
+	gthread-2.0
+	gstreamer-0.6
+	])
+AC_SUBST(LIBGSTAUDIO_LA_CFLAGS)
+AC_SUBST(LIBGSTAUDIO_LA_LIBS)
+
+PKG_CHECK_MODULES(MONKEY_SRV,[
+	gtk+-2.0
+	gthread-2.0
+	])
+AC_SUBST(MONKEY_SRV_CFLAGS)
+AC_SUBST(MONKEY_SRV_LIBS)
+
+PKG_CHECK_MODULES(LIBNETCLTMONKEY_LA,[
+	gtk+-2.0
+	gthread-2.0
+	])
+AC_SUBST(LIBNETCLTMONKEY_LA_CFLAGS)
+AC_SUBST(LIBNETCLTMONKEY_LA_LIBS)
+
+PKG_CHECK_MODULES(UI,[
+	gtk+-2.0
+	gthread-2.0
+	librsvg-2.0
+	libgnomeui-2.0
+	gstreamer-0.6
+	gconf-2.0
+	libglade-2.0
+	])
+AC_SUBST(UI_CFLAGS)
+AC_SUBST(UI_LIBS)
+
+dnl ***********
+dnl GConf stuff
+dnl ***********
+AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
+AM_GCONF_SOURCE_2
+
+dnl --------------------------------------------------------------------------
+
+dnl  ---------
+dnl | gtk-doc |---------------------------------------------------------------
+dnl  ---------
+
+AC_ARG_WITH(html-dir, [  --with-html-dir=PATH path to installed docs ])
+
+if test "x$with_html_dir" = "x" ; then
+  HTML_DIR='${datadir}/gtk-doc/html'
+else
+  HTML_DIR=$with_html_dir
+fi
+
+AC_SUBST(HTML_DIR)
+
+AC_CHECK_PROG(GTKDOC, gtkdoc-mkdb, true, false)
+
+gtk_doc_min_version=0.10
+if $GTKDOC ; then 
+    gtk_doc_version=`gtkdoc-mkdb --version`
+    AC_MSG_CHECKING([gtk-doc version ($gtk_doc_version) >= $gtk_doc_min_version])
+    if perl <<EOF ; then
+      exit (("$gtk_doc_version" =~ /^[[0-9]]+\.[[0-9]]+$/) &&
+            ("$gtk_doc_version" >= "$gtk_doc_min_version") ? 0 : 1);
+EOF
+      AC_MSG_RESULT(yes)
+   else
+      AC_MSG_RESULT(no)
+      GTKDOC=false
+   fi
+fi
+
+dnl Let people disable the gtk-doc stuff.
+AC_ARG_ENABLE(gtk-doc, [  --enable-gtk-doc  Use gtk-doc to build documentation [default=auto]], enable_gtk_doc="$enableval", enable_gtk_doc=auto)
+
+if test x$enable_gtk_doc = xauto ; then
+  if test x$GTKDOC = xtrue ; then
+    enable_gtk_doc=yes
+  else
+    enable_gtk_doc=no 
+  fi
+fi
+
+AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
+
+dnl --------------------------------------------------------------------------
+
+dnl  ------------------
+dnl | language support |------------------------------------------------------
+dnl  ------------------
+
+GETTEXT_PACKAGE=monkey-bubble
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name, for gettext])
+
+dnl Please keep this in alphabetical order
+ALL_LINGUAS="de fr"
+
+AM_GLIB_GNU_GETTEXT
+
+dnl AM_GLIB_GNU_GETTEXT sets $DATADIRNAME
+AC_MSG_CHECKING(locale directory)
+
+if test "x$prefix" = "xNONE"; then
+  PACKAGE_LOCALE_DIR=$ac_default_prefix/share/locale
+else
+  PACKAGE_LOCALE_DIR=$prefix/share/locale
+fi
+
+AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
+	[The directory in which gphpedit's locale data will be stored])
+AC_MSG_RESULT($PACKAGE_LOCALE_DIR)
+
+dnl --------------------------------------------------------------------------
+
+dnl  --------
+dnl | output |----------------------------------------------------------------
+dnl  --------
+
+AC_OUTPUT([
+  Makefile
+  debian/Makefile
+  data/Makefile
+  pixmaps/Makefile
+  pixmaps/bubbles/Makefile
+  pixmaps/snake/Makefile
+  pixmaps/number/Makefile
+  pixmaps/frozen-bubble/Makefile
+  src/Makefile
+  src/util/Makefile
+  src/monkey/Makefile
+  src/view/Makefile
+  src/audio/Makefile
+  src/ui/Makefile
+  src/net/Makefile
+  po/Makefile.in
+])
+
+dnl --------------------------------------------------------------------------

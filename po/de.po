@@ -1,0 +1,139 @@
+# german translation of monkey-bubble
+# Copyright (C) 2003 Sven Herzberg
+# This file is distributed under the same license as the monkey-bubble package.
+# Sven Herzberg <herzi@gnome-de.org>, 2003
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: monkey-bubble\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-10-06 12:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Sven Herzberg <herzi@gnome-de.org>\n"
+"Language-Team: German GNOME Translators <gnome-de@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: monkey-bubble.desktop.in.h:1
+msgid "Bubbles"
+msgstr "Bubbles"
+
+#: monkey-bubble.desktop.in.h:2
+msgid "Monkey Bubbles Arcade Game"
+msgstr "Monkey-Bubbles Arcade-Game"
+
+#: data/monkey-bubble.glade.h:1
+msgid "About"
+msgstr "_Info..."
+
+#: data/monkey-bubble.glade.h:2
+msgid "Monkey Bubble"
+msgstr "Monkey Bubble"
+
+#: data/monkey-bubble.glade.h:3
+msgid "New 1 player"
+msgstr "1-Spieler-Spiel"
+
+#: data/monkey-bubble.glade.h:4
+msgid "New 2 players"
+msgstr "2-Spieler-Spiel"
+
+#: data/monkey-bubble.glade.h:5
+msgid "Resume game"
+msgstr "Spiel fortfahren"
+
+#: data/monkey-bubble.glade.h:6
+msgid "_Game"
+msgstr "_Spiel"
+
+#: data/monkey-bubble.glade.h:7
+msgid "_Help"
+msgstr "_Hilfe"
+
+#: data/keybinding.glade.h:1
+msgid "*"
+msgstr ""
+
+#: data/keybinding.glade.h:2
+msgid "Keybinding"
+msgstr ""
+
+#: data/keybinding.glade.h:3
+msgid "Left"
+msgstr ""
+
+#: data/keybinding.glade.h:4
+msgid "Player 1"
+msgstr ""
+
+#: data/keybinding.glade.h:5
+msgid "Player 2"
+msgstr ""
+
+#: data/keybinding.glade.h:6
+msgid "Right"
+msgstr ""
+
+#: data/keybinding.glade.h:7
+msgid "Shoot"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:1
+msgid "d"
+msgstr "d"
+
+#: data/monkey-bubble.schemas.in.h:2
+msgid "f"
+msgstr "f"
+
+#: data/monkey-bubble.schemas.in.h:3
+msgid "j"
+msgstr "j"
+
+#: data/monkey-bubble.schemas.in.h:4
+msgid "k"
+msgstr "k"
+
+#: data/monkey-bubble.schemas.in.h:5
+msgid "l"
+msgstr "l"
+
+#: data/monkey-bubble.schemas.in.h:6
+msgid "left key for player one"
+msgstr "Taste für Links (Spieler 1)"
+
+#: data/monkey-bubble.schemas.in.h:7
+msgid "left key for player two"
+msgstr "Taste für Links (Spieler 2)"
+
+#: data/monkey-bubble.schemas.in.h:8
+msgid "right key for player one"
+msgstr "Taste für Rechts (Spieler 1)"
+
+#: data/monkey-bubble.schemas.in.h:9
+msgid "right key for player two"
+msgstr "Taste für Rechts (Spieler 2)"
+
+#: data/monkey-bubble.schemas.in.h:10
+msgid "s"
+msgstr "s"
+
+#: data/monkey-bubble.schemas.in.h:11
+msgid "shoot key for player one"
+msgstr "Schusstaste (Spieler 1)"
+
+#: data/monkey-bubble.schemas.in.h:12
+msgid "shoot key for player two"
+msgstr "Schusstaste (Spieler 2)"
+
+#: src/ui/ui-main.c:601
+msgid "translator_credits"
+msgstr "Sven Herzberg <herzi@gnome-de.org>"
+
+#~ msgid "Pause game"
+#~ msgstr "Spiel pausieren"
+
+#~ msgid "Stop game"
+#~ msgstr "Spiel beenden"

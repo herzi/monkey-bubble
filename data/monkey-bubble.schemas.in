@@ -1,0 +1,94 @@
+<gconfschemafile>
+  
+  <schemalist>
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_1_left</key>
+      <applyto>/apps/monkey-bubble-game/player_1_left</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>s</default>
+        <short>left key for player one</short>
+        <long>left key for player one</long>
+      </locale>
+
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_1_right</key>
+      <applyto>/apps/monkey-bubble-game/player_1_right</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>f</default>
+        <short>right key for player one</short>
+        <long>right key for player one</long>
+      </locale>
+
+    </schema>
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_1_shoot</key>
+      <applyto>/apps/monkey-bubble-game/player_1_shoot</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>d</default>
+        <short>shoot key for player one</short>
+        <long>shoot key for player one</long>
+      </locale>
+
+    </schema>
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_2_left</key>
+      <applyto>/apps/monkey-bubble-game/player_2_left</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>j</default>
+        <short>left key for player two</short>
+        <long>left key for player two</long>
+      </locale>
+
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_2_right</key>
+      <applyto>/apps/monkey-bubble-game/player_2_right</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>l</default>
+        <short>right key for player two</short>
+        <long>right key for player two</long>
+      </locale>
+
+    </schema>
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble-game/player_2_shoot</key>
+      <applyto>/apps/monkey-bubble-game/player_2_shoot</applyto>
+
+      <owner>monkey-bubble-game</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>k</default>
+        <short>shoot key for player two</short>
+        <long>shoot key for player two</long>
+      </locale>
+
+    </schema>
+
+  </schemalist>
+  
+</gconfschemafile>

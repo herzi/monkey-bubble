@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-10-06 12:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: monkey-bubble.desktop.in.h:1
+msgid "Bubbles"
+msgstr ""
+
+#: monkey-bubble.desktop.in.h:2
+msgid "Monkey Bubbles Arcade Game"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:1
+msgid "About"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:2
+msgid "Monkey Bubble"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:3
+msgid "New 1 player"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:4
+msgid "New 2 players"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:5
+msgid "Resume game"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:6
+msgid "_Game"
+msgstr ""
+
+#: data/monkey-bubble.glade.h:7
+msgid "_Help"
+msgstr ""
+
+#: data/keybinding.glade.h:1
+msgid "*"
+msgstr ""
+
+#: data/keybinding.glade.h:2
+msgid "Keybinding"
+msgstr ""
+
+#: data/keybinding.glade.h:3
+msgid "Left"
+msgstr ""
+
+#: data/keybinding.glade.h:4
+msgid "Player 1"
+msgstr ""
+
+#: data/keybinding.glade.h:5
+msgid "Player 2"
+msgstr ""
+
+#: data/keybinding.glade.h:6
+msgid "Right"
+msgstr ""
+
+#: data/keybinding.glade.h:7
+msgid "Shoot"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:1
+msgid "d"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:2
+msgid "f"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:3
+msgid "j"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:4
+msgid "k"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:5
+msgid "l"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:6
+msgid "left key for player one"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:7
+msgid "left key for player two"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:8
+msgid "right key for player one"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:9
+msgid "right key for player two"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:10
+msgid "s"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:11
+msgid "shoot key for player one"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:12
+msgid "shoot key for player two"
+msgstr ""
+
+#: src/ui/ui-main.c:601
+msgid "translator_credits"
+msgstr ""

@@ -1,0 +1,30 @@
+monkey-bubble (0.1.3-1) unstable; urgency=low
+                  
+   * Some bugfix,cleanup.
+   * begin of the audio system
+                                                              
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Wed, 24 Sep 2003 18:37:03 +0200
+
+monkey-bubble (0.1.2-1) unstable; urgency=low
+                                                                                
+  * New gfx.
+  * Some bug fixes
+                                                                                
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Wed, 24 Sep 2003 18:37:03 +0200
+                                                                                
+
+monkey-bubble (0.1.1-1) unstable; urgency=low
+                                                                                
+  * New gfx.
+  * Some bug fixes
+                                                                                
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Wed, 24 Sep 2003 09:34:43 +0200
+                                                                                
+
+monkey-bubble (0.1-1) unstable; urgency=low
+
+  * Initial Release.
+  * 
+
+ -- Laurent Belmonte <lolo3d@tuxfamily.org>  Wed, 24 Sep 2003 09:34:43 +0200
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<svg
+   id="svg39668"
+   sodipodi:version="0.31"
+   width="128pt"
+   height="128pt"
+   sodipodi:docbase="/home/lolo/cvs/mm/resources/gfx/"
+   sodipodi:docname="/home/lolo/cvs/mm/resources/gfx/3.svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs
+     id="defs39670" />
+  <sodipodi:namedview
+     id="base" />
+  <path
+     style="fill:#003f77;fill-rule:nonzero;stroke:none;fill-opacity:0.996078;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;"
+     id="path39485"
+     d="M 332.747 637.152 C 336.16 618.779 366.722 617.529 380.528 620.425 C 407.527 629.59 425.734 655.255 405.536 680.725 C 385.864 699.725 363.423 699.976 339.334 690.03 L 348.412 671.024 C 362.758 677.855 376.208 679.603 388.808 668.108 C 399.369 655.919 388.543 644.997 375.803 640.429 C 359.779 636.672 353.477 651.753 355.955 637.152 L 332.747 637.152 z "
+     transform="matrix(1,0,0,0.7474,-296.077,-432.517)" />
+  <path
+     style="fill:#003f77;fill-rule:nonzero;stroke:none;fill-opacity:0.996078;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;"
+     id="path39487"
+     d="M 354.063 680.766 C 362.521 682.141 370.994 682.122 379.465 684.006 C 400.76 690.026 418.475 706.749 418.29 729.946 C 411.806 759.585 378.93 772.065 351.552 772.118 C 343.851 771.475 336.842 770.035 329.509 767.618 L 336.789 748.428 C 341.752 750.316 346.448 751.497 351.729 752.101 C 367.975 752.465 390.694 746.352 396.823 729.1 C 398.831 716.924 384.842 707.218 374.751 704.53 C 368.169 703.221 360.797 701.979 354.063 703.075 L 354.063 680.766 z "
+     transform="matrix(1,0,0,0.7474,-296.077,-432.517)" />
+</svg>

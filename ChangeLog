@@ -1,0 +1,654 @@
+2003-10-06  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	added french translation
+	added keybinding configuration dialog
+	( need some i18n)
+	* AUTHORS:
+	* configure.in:
+	* data/Makefile.am:
+	* data/keybinding.glade:
+	* data/monkey-bubble.glade:
+	* html/downloads.html:
+	* pixmaps/Makefile.am:
+	* pixmaps/monkey.png:
+	* po/ChangeLog:
+	* po/fr.po:
+	* src/ui/Makefile.am:
+	* src/ui/keyboard-properties.c: (keyboard_properties_get_type),
+	(keyboard_properties_show_instance), (keyboard_properties_new),
+	(define_key), (on_close), (on_close_dialog),
+	(keyboard_properties_finalize), (keyboard_properties_class_init),
+	(keyboard_properties_init):
+	* src/ui/keyboard-properties.h:
+	* src/ui/main.c: (main):
+	* src/ui/ui-main.c: (ui_main_new), (show_preferences_dialog),
+	(about):
+
+2003-10-05  Sven Herzberg  <herzi@gnome-de.org>
+
+	* Makefile.am,
+	* data/Makefile.am: fixed make dist
+	* po/POTFILES.in: added src/ui/ui-main.c (for the about dialog)
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_key_pressed), (about):
+	added about dialog
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* monkey-bubble.desktop.in: fixed icon name
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* data/.cvsignore,
+	* po/.cvsignore: silent updates
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* src/ui/main.c: (main): added i18n calls (de transl works now)
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* configure.in: added de to ALL_LINGUAS
+	* data/monkey-bubble.schemas.in: fixed some c'n'p errors
+	* po/ChangeLog: added transaltions changelog
+	* po/de.po: added german translation
+	* po/.cvsignore: silent updates
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	the glorious "remove resources" commit :)
+	if the repo is going to be imported so some other server
+	once in the future please remove the resources dir before
+
+	renamed the french images to english ones (and changed c-code
+	to still work)
+
+	added i18n capabilities to the schema and the glade file
+	we should be quite well i18n-able now
+	* Makefile.am:
+	* configure.in:
+	* data/.cvsignore:
+	* data/Makefile.am:
+	* data/levels:
+	* data/monkey-bubble.glade:
+	* data/monkey-bubble.schemas.in:
+	* pixmaps/.cvsignore:
+	* pixmaps/Makefile.am:
+	* pixmaps/banana.svg:
+	* pixmaps/bubbles/.cvsignore:
+	* pixmaps/bubbles/Makefile.am:
+	* pixmaps/bubbles/bubble_01.svg:
+	* pixmaps/bubbles/bubble_02.svg:
+	* pixmaps/bubbles/bubble_03.svg:
+	* pixmaps/bubbles/bubble_04.svg:
+	* pixmaps/bubbles/bubble_05.svg:
+	* pixmaps/bubbles/bubble_06.svg:
+	* pixmaps/bubbles/bubble_07.svg:
+	* pixmaps/bubbles/bubble_08.svg:
+	* pixmaps/frozen-bubble/.cvsignore:
+	* pixmaps/frozen-bubble/Makefile.am:
+	* pixmaps/frozen-bubble/back_hiscores.png:
+	* pixmaps/frozen-bubble/data:
+	* pixmaps/harm.svg:
+	* pixmaps/layout_1_player.svg:
+	* pixmaps/layout_2_players.svg:
+	* pixmaps/looser.svg:
+	* pixmaps/lost.svg:
+	* pixmaps/monkey-bubble-icon.xpm:
+	* pixmaps/monkeys.svg:
+	* pixmaps/number/.cvsignore:
+	* pixmaps/number/0.svg:
+	* pixmaps/number/1.svg:
+	* pixmaps/number/2.svg:
+	* pixmaps/number/3.svg:
+	* pixmaps/number/4.svg:
+	* pixmaps/number/5.svg:
+	* pixmaps/number/6.svg:
+	* pixmaps/number/7.svg:
+	* pixmaps/number/8.svg:
+	* pixmaps/number/9.svg:
+	* pixmaps/number/Makefile.am:
+	* pixmaps/pane.svg:
+	* pixmaps/pause.svg:
+	* pixmaps/snake-body.svg:
+	* pixmaps/snake/.cvsignore:
+	* pixmaps/snake/Makefile.am:
+	* pixmaps/snake/snake.svg:
+	* pixmaps/snake/snake_-0.svg:
+	* pixmaps/snake/snake_-1.svg:
+	* pixmaps/snake/snake_-10.svg:
+	* pixmaps/snake/snake_-11.svg:
+	* pixmaps/snake/snake_-12.svg:
+	* pixmaps/snake/snake_-13.svg:
+	* pixmaps/snake/snake_-14.svg:
+	* pixmaps/snake/snake_-15.svg:
+	* pixmaps/snake/snake_-16.svg:
+	* pixmaps/snake/snake_-17.svg:
+	* pixmaps/snake/snake_-18.svg:
+	* pixmaps/snake/snake_-19.svg:
+	* pixmaps/snake/snake_-2.svg:
+	* pixmaps/snake/snake_-20.svg:
+	* pixmaps/snake/snake_-21.svg:
+	* pixmaps/snake/snake_-22.svg:
+	* pixmaps/snake/snake_-23.svg:
+	* pixmaps/snake/snake_-24.svg:
+	* pixmaps/snake/snake_-25.svg:
+	* pixmaps/snake/snake_-26.svg:
+	* pixmaps/snake/snake_-27.svg:
+	* pixmaps/snake/snake_-28.svg:
+	* pixmaps/snake/snake_-29.svg:
+	* pixmaps/snake/snake_-3.svg:
+	* pixmaps/snake/snake_-30.svg:
+	* pixmaps/snake/snake_-31.svg:
+	* pixmaps/snake/snake_-32.svg:
+	* pixmaps/snake/snake_-33.svg:
+	* pixmaps/snake/snake_-34.svg:
+	* pixmaps/snake/snake_-35.svg:
+	* pixmaps/snake/snake_-36.svg:
+	* pixmaps/snake/snake_-37.svg:
+	* pixmaps/snake/snake_-38.svg:
+	* pixmaps/snake/snake_-39.svg:
+	* pixmaps/snake/snake_-4.svg:
+	* pixmaps/snake/snake_-40.svg:
+	* pixmaps/snake/snake_-5.svg:
+	* pixmaps/snake/snake_-6.svg:
+	* pixmaps/snake/snake_-7.svg:
+	* pixmaps/snake/snake_-8.svg:
+	* pixmaps/snake/snake_-9.svg:
+	* pixmaps/snake/snake_0.svg:
+	* pixmaps/snake/snake_1.svg:
+	* pixmaps/snake/snake_10.svg:
+	* pixmaps/snake/snake_11.svg:
+	* pixmaps/snake/snake_12.svg:
+	* pixmaps/snake/snake_13.svg:
+	* pixmaps/snake/snake_14.svg:
+	* pixmaps/snake/snake_15.svg:
+	* pixmaps/snake/snake_16.svg:
+	* pixmaps/snake/snake_17.svg:
+	* pixmaps/snake/snake_18.svg:
+	* pixmaps/snake/snake_19.svg:
+	* pixmaps/snake/snake_2.svg:
+	* pixmaps/snake/snake_20.svg:
+	* pixmaps/snake/snake_21.svg:
+	* pixmaps/snake/snake_22.svg:
+	* pixmaps/snake/snake_23.svg:
+	* pixmaps/snake/snake_24.svg:
+	* pixmaps/snake/snake_25.svg:
+	* pixmaps/snake/snake_26.svg:
+	* pixmaps/snake/snake_27.svg:
+	* pixmaps/snake/snake_28.svg:
+	* pixmaps/snake/snake_29.svg:
+	* pixmaps/snake/snake_3.svg:
+	* pixmaps/snake/snake_30.svg:
+	* pixmaps/snake/snake_31.svg:
+	* pixmaps/snake/snake_32.svg:
+	* pixmaps/snake/snake_33.svg:
+	* pixmaps/snake/snake_34.svg:
+	* pixmaps/snake/snake_35.svg:
+	* pixmaps/snake/snake_36.svg:
+	* pixmaps/snake/snake_37.svg:
+	* pixmaps/snake/snake_38.svg:
+	* pixmaps/snake/snake_39.svg:
+	* pixmaps/snake/snake_4.svg:
+	* pixmaps/snake/snake_40.svg:
+	* pixmaps/snake/snake_5.svg:
+	* pixmaps/snake/snake_6.svg:
+	* pixmaps/snake/snake_7.svg:
+	* pixmaps/snake/snake_8.svg:
+	* pixmaps/snake/snake_9.svg:
+	* pixmaps/tomato.svg:
+	* pixmaps/win.svg:
+	* po/POTFILES.in:
+	* resources/Makefile.am:
+	* resources/data/Makefile.am:
+	* resources/data/levels:
+	* resources/gfx/Makefile.am:
+	* resources/gfx/banane.svg:
+	* resources/gfx/bubbles/Makefile.am:
+	* resources/gfx/bubbles/boule_01.svg:
+	* resources/gfx/bubbles/boule_02.svg:
+	* resources/gfx/bubbles/boule_03.svg:
+	* resources/gfx/bubbles/boule_04.svg:
+	* resources/gfx/bubbles/boule_05.svg:
+	* resources/gfx/bubbles/boule_06.svg:
+	* resources/gfx/bubbles/boule_07.svg:
+	* resources/gfx/bubbles/boule_08.svg:
+	* resources/gfx/decor_1_player.svg:
+	* resources/gfx/decor_2_players.svg:
+	* resources/gfx/harm.svg:
+	* resources/gfx/looser.svg:
+	* resources/gfx/lost.svg:
+	* resources/gfx/monkey-bubble-icon.xpm:
+	* resources/gfx/monkeys.svg:
+	* resources/gfx/panneau.svg:
+	* resources/gfx/pause.svg:
+	* resources/gfx/snake-body.svg:
+	* resources/gfx/tomate.svg:
+	* resources/gfx/win.svg:
+	* resources/glade/Makefile.am:
+	* resources/glade/monkey-bubble.glade:
+	* resources/monkey-bubble.schemas:
+	* src/net/client-handler.c: (client_handler_bubbles_exploded):
+	* src/net/monkey-message.h:
+	* src/ui/game-1-player.c: (game_1_player_new):
+	* src/ui/game-2-player.c: (game_2_player_new):
+	* src/view/gdk-view.c: (gdk_view_new), (gdk_view_create_bubble),
+	(gdk_view_create_gem), (gdk_view_create_little_waiting),
+	(gdk_view_create_big_waiting):
+
+2003-10-03  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	web site update
+	* html/downloads.html:
+	* html/index.html:
+	* html/links.html:
+	* html/roadmap.html:
+	* html/screenshots.html:
+	* html/status.html:
+
+	2 player game support gconf keybinding
+	* resources/monkey-bubble.schemas:
+	* src/ui/game-1-player.c:
+	* src/ui/game-2-player.c: (game_2_player_finalize),
+	(game_2_player_config_notify), (game_2_player_new),
+	(game_2_player_conf_keyboard), (game_2_player_key_pressed),
+	(game_2_player_key_released):
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* .cvsignore,
+	* debian/.cvsignore,
+	* po/.cvsignore,
+	* src/.cvsignore,
+	* src/audio/.cvsignore,
+	* src/monkey/.cvsignore,
+	* src/net/.cvsignore,
+	* src/ui/.cvsignore,
+	* src/util/.cvsignore,
+	* src/view/.cvsignore: cvs updates more silent now
+	* Makefile.am: fixed build
+	* configure.in: added language support
+	* po/POTFILES.in: added the .desktop.in file
+	
+	
+
+2003-10-03  Sven Herzberg  <herzi@gnome-de.org>
+
+	* Makefile.am: added desktop file and removed diasce specific stuff
+	* configure.in: added some comments and intltool
+	* monkey-bubble.desktop.in: template for the .desktop file (menu entry)
+	WARNING: might not even pass autogen.sh (needs the next commit)
+
+2003-10-03  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	web site update
+	* html/css/monkey-bubble.css:
+	* html/downloads.html:
+	* html/index.html:
+	* html/links.html:
+	* html/monkey.png:
+	* html/roadmap.html:
+	* html/screenshots.html:
+	* html/status.html:
+
+2003-10-03  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	gladize main interface
+	* configure.in:
+	* resources/Makefile.am:
+	* resources/glade/Makefile.am:
+	* resources/glade/monkey-bubble.glade:
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_enabled_games_item),
+	(ui_main_game_changed):
+
+2003-10-03  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	- keybinding in gconf for player 1
+	* configure.in:
+	* resources/Makefile.am:
+	* resources/monkey-bubble.schemas:
+	* src/ui/game-1-player.c: (game_1_player_finalize),
+	(game_1_player_config_notify), (game_1_player_new),
+	(game_1_player_conf_keyboard), (game_1_player_key_pressed),
+	(game_1_player_key_released):
+
+2003-09-29  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	- some test on gstreamer
+	- fix 2 player bug
+	- some cleanup
+	* src/audio/Makefile.am:
+	* src/audio/test.c: (my_function), (main):
+	* src/monkey/board.c: (board_add_bubbles):
+	* src/monkey/monkey.c: (monkey_finalize), (monkey_add_waiting_row):
+	* src/ui/game-1-player.c: (game_1_player_new):
+	* src/ui/game-2-player-manager.c: (restart_function):
+	* src/ui/game-2-player.c: (game_2_player_finalize),
+	(game_2_player_new), (game_2_player_bubbles_exploded):
+	* src/ui/ui-main.c: (quit_program):
+	* src/view/gdk-canvas.c: (gdk_canvas_finalize),
+	(gdk_canvas_create_block_from_image), (layer_delete),
+	(gdk_canvas_clear):
+	* src/view/gdk-view.c: (gdk_view_load_shooter_images),
+	(gdk_view_finalize), (gdk_view_free_map):
+
+2003-09-26  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	- just a icon to the main window
+	- fix 2 players win-lost
+	* configure.in:
+	* html/index.html:
+	* resources/gfx/Makefile.am:
+	* resources/gfx/monkey-bubble-icon.xpm:
+	* src/ui/game-2-player.c: (game_2_player_game_lost):
+	* src/ui/ui-main.c: (ui_main_new):
+
+2003-09-26  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	- less dependencies on frozen bubble gfx
+	- some polish
+	- some bug fix
+	* configure.in:
+	* debian/changelog:
+	* resources/gfx/0.svg:
+	* resources/gfx/1.svg:
+	* resources/gfx/2.svg:
+	* resources/gfx/3.svg:
+	* resources/gfx/4.svg:
+	* resources/gfx/5.svg:
+	* resources/gfx/6.svg:
+	* resources/gfx/7.svg:
+	* resources/gfx/8.svg:
+	* resources/gfx/9.svg:
+	* resources/gfx/Makefile.am:
+	* resources/gfx/frozen-bubble/Makefile.am:
+	* resources/gfx/frozen-bubble/back_paused.png:
+	* resources/gfx/frozen-bubble/base.png:
+	* resources/gfx/frozen-bubble/base_-1.png:
+	* resources/gfx/frozen-bubble/base_-10.png:
+	* resources/gfx/frozen-bubble/base_-11.png:
+	* resources/gfx/frozen-bubble/base_-12.png:
+	* resources/gfx/frozen-bubble/base_-13.png:
+	* resources/gfx/frozen-bubble/base_-14.png:
+	* resources/gfx/frozen-bubble/base_-15.png:
+	* resources/gfx/frozen-bubble/base_-16.png:
+	* resources/gfx/frozen-bubble/base_-17.png:
+	* resources/gfx/frozen-bubble/base_-18.png:
+	* resources/gfx/frozen-bubble/base_-19.png:
+	* resources/gfx/frozen-bubble/base_-2.png:
+	* resources/gfx/frozen-bubble/base_-20.png:
+	* resources/gfx/frozen-bubble/base_-21.png:
+	* resources/gfx/frozen-bubble/base_-22.png:
+	* resources/gfx/frozen-bubble/base_-23.png:
+	* resources/gfx/frozen-bubble/base_-24.png:
+	* resources/gfx/frozen-bubble/base_-25.png:
+	* resources/gfx/frozen-bubble/base_-26.png:
+	* resources/gfx/frozen-bubble/base_-27.png:
+	* resources/gfx/frozen-bubble/base_-28.png:
+	* resources/gfx/frozen-bubble/base_-29.png:
+	* resources/gfx/frozen-bubble/base_-3.png:
+	* resources/gfx/frozen-bubble/base_-30.png:
+	* resources/gfx/frozen-bubble/base_-31.png:
+	* resources/gfx/frozen-bubble/base_-32.png:
+	* resources/gfx/frozen-bubble/base_-33.png:
+	* resources/gfx/frozen-bubble/base_-34.png:
+	* resources/gfx/frozen-bubble/base_-35.png:
+	* resources/gfx/frozen-bubble/base_-36.png:
+	* resources/gfx/frozen-bubble/base_-37.png:
+	* resources/gfx/frozen-bubble/base_-38.png:
+	* resources/gfx/frozen-bubble/base_-39.png:
+	* resources/gfx/frozen-bubble/base_-4.png:
+	* resources/gfx/frozen-bubble/base_-40.png:
+	* resources/gfx/frozen-bubble/base_-5.png:
+	* resources/gfx/frozen-bubble/base_-6.png:
+	* resources/gfx/frozen-bubble/base_-7.png:
+	* resources/gfx/frozen-bubble/base_-8.png:
+	* resources/gfx/frozen-bubble/base_-9.png:
+	* resources/gfx/frozen-bubble/base_0.png:
+	* resources/gfx/frozen-bubble/base_1.png:
+	* resources/gfx/frozen-bubble/base_10.png:
+	* resources/gfx/frozen-bubble/base_11.png:
+	* resources/gfx/frozen-bubble/base_12.png:
+	* resources/gfx/frozen-bubble/base_13.png:
+	* resources/gfx/frozen-bubble/base_14.png:
+	* resources/gfx/frozen-bubble/base_15.png:
+	* resources/gfx/frozen-bubble/base_16.png:
+	* resources/gfx/frozen-bubble/base_17.png:
+	* resources/gfx/frozen-bubble/base_18.png:
+	* resources/gfx/frozen-bubble/base_19.png:
+	* resources/gfx/frozen-bubble/base_2.png:
+	* resources/gfx/frozen-bubble/base_20.png:
+	* resources/gfx/frozen-bubble/base_21.png:
+	* resources/gfx/frozen-bubble/base_22.png:
+	* resources/gfx/frozen-bubble/base_23.png:
+	* resources/gfx/frozen-bubble/base_24.png:
+	* resources/gfx/frozen-bubble/base_25.png:
+	* resources/gfx/frozen-bubble/base_26.png:
+	* resources/gfx/frozen-bubble/base_27.png:
+	* resources/gfx/frozen-bubble/base_28.png:
+	* resources/gfx/frozen-bubble/base_29.png:
+	* resources/gfx/frozen-bubble/base_3.png:
+	* resources/gfx/frozen-bubble/base_30.png:
+	* resources/gfx/frozen-bubble/base_31.png:
+	* resources/gfx/frozen-bubble/base_32.png:
+	* resources/gfx/frozen-bubble/base_33.png:
+	* resources/gfx/frozen-bubble/base_34.png:
+	* resources/gfx/frozen-bubble/base_35.png:
+	* resources/gfx/frozen-bubble/base_36.png:
+	* resources/gfx/frozen-bubble/base_37.png:
+	* resources/gfx/frozen-bubble/base_38.png:
+	* resources/gfx/frozen-bubble/base_39.png:
+	* resources/gfx/frozen-bubble/base_4.png:
+	* resources/gfx/frozen-bubble/base_40.png:
+	* resources/gfx/frozen-bubble/base_5.png:
+	* resources/gfx/frozen-bubble/base_6.png:
+	* resources/gfx/frozen-bubble/base_7.png:
+	* resources/gfx/frozen-bubble/base_8.png:
+	* resources/gfx/frozen-bubble/base_9.png:
+	* resources/gfx/frozen-bubble/shooter.png:
+	* resources/gfx/frozen-bubble/win_panel_p1.png:
+	* resources/gfx/lost.svg:
+	* resources/gfx/number/0.svg:
+	* resources/gfx/number/1.svg:
+	* resources/gfx/number/2.svg:
+	* resources/gfx/number/3.svg:
+	* resources/gfx/number/4.svg:
+	* resources/gfx/number/5.svg:
+	* resources/gfx/number/6.svg:
+	* resources/gfx/number/7.svg:
+	* resources/gfx/number/8.svg:
+	* resources/gfx/number/9.svg:
+	* resources/gfx/number/Makefile.am:
+	* resources/gfx/win.svg:
+	* src/monkey/monkey.h:
+	* src/ui/game-1-player.c: (game_1_player_timeout),
+	(game_1_player_bubbles_exploded):
+	* src/ui/game-2-player.c: (game_2_player_timeout):
+	* src/view/gdk-view.c: (gdk_view_new), (gdk_view_draw_lost),
+	(gdk_view_create_number), (gdk_view_set_score),
+	(gdk_view_draw_win):
+
+2003-09-25  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	- Workaround librsvg (new librsvg should be fixed though)
+	for non-C locales
+
+	- web site update
+	* html/index.html:
+	* html/monkey-bubble-0.1.3-gentoo.tar.bz2:
+	* html/scr-1-player.png:
+	* src/view/gdk-canvas.c: (create_pixbuf_svg):
+
+2003-09-25  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	Some bugfix,cleanup.
+	begin of the audio system
+	* configure.in:
+	* html/index.html:
+	* resources/gfx/snake/Makefile.am:
+	* src/Makefile.am:
+	* src/audio/Makefile.am:
+	* src/audio/gst-audio.c: (gst_audio_instance_init),
+	(gst_audio_finalize), (gst_audio_class_init), (gst_audio_get_type),
+	(gst_audio_new), (gst_audio_play_shoot), (gst_audio_play_rebound),
+	(gst_audio_play_explose), (gst_audio_play_win),
+	(gst_audio_play_lost):
+	* src/audio/gst-audio.h:
+	* src/monkey/monkey.c: (monkey_new_level_from_file):
+	* src/ui/game-1-player-manager.c: (game_1_player_manager_get_type),
+	(startnew_function), (restart_function),
+	(game_1_player_manager_game_manager_iface_init),
+	(game_1_player_manager_game_changed),
+	(game_1_player_manager_start_level), (game_1_player_manager_start),
+	(game_1_player_manager_stop):
+	* src/ui/game-1-player.c: (game_1_player_new),
+	(game_1_player_key_pressed), (game_1_player_key_released),
+	(game_1_player_add_bubble), (game_1_player_bubble_shot):
+	* src/ui/game-2-player.c: (game_2_player_new),
+	(game_2_player_key_pressed), (game_2_player_key_released),
+	(game_2_player_add_bubble), (game_2_player_bubble_shot):
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_draw_main),
+	(ui_main_game_changed), (ui_main_key_pressed):
+	* src/view/gdk-canvas.c: (gdk_canvas_instance_init),
+	(gdk_canvas_finalize), (gdk_canvas_class_init),
+	(gdk_canvas_get_type), (gdk_canvas_new), (block_get_position),
+	(gdk_canvas_configure), (gdk_canvas_scale_image_ghfunc),
+	(gdk_canvas_scale_images), (gdk_canvas_expose),
+	(gdk_canvas_create_block_from_image), (gdk_canvas_create_block),
+	(gdk_canvas_load_image_from_path), (image_scale),
+	(create_pixbuf_normal), (create_pixbuf_svg), (image_create_pixbuf),
+	(gdk_canvas_get_root_layer), (gdk_canvas_append_layer),
+	(gdk_canvas_new_layer), (gdk_canvas_add_block),
+	(block_set_position), (block_get_rectangle),
+	(gdk_canvas_move_block), (gdk_canvas_remove_block),
+	(gdk_canvas_unref_block), (layer_draw), (block_draw),
+	(layer_delete), (gdk_canvas_clear), (gdk_canvas_paint):
+
+2003-09-24  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	- 0.1.2 version..
+	- site update
+	- new snake gfx
+	- patch to compile with gcc2.95 contribute by
+		Thomas de Grenier de Latour <degrenier@easyconnect.fr>
+	* configure.in:
+	* html/index.html:
+	* html/scr-1-player.png:
+	* html/scr-2-players.png:
+	* resources/gfx/Makefile.am:
+	* resources/gfx/harm.svg:
+	* resources/gfx/snake-body.svg:
+	* resources/gfx/snake/snake.svg:
+	* resources/gfx/snake/snake_-0.svg:
+	* resources/gfx/snake/snake_-1.svg:
+	* resources/gfx/snake/snake_-10.svg:
+	* resources/gfx/snake/snake_-11.svg:
+	* resources/gfx/snake/snake_-12.svg:
+	* resources/gfx/snake/snake_-13.svg:
+	* resources/gfx/snake/snake_-14.svg:
+	* resources/gfx/snake/snake_-15.svg:
+	* resources/gfx/snake/snake_-16.svg:
+	* resources/gfx/snake/snake_-17.svg:
+	* resources/gfx/snake/snake_-18.svg:
+	* resources/gfx/snake/snake_-19.svg:
+	* resources/gfx/snake/snake_-2.svg:
+	* resources/gfx/snake/snake_-20.svg:
+	* resources/gfx/snake/snake_-21.svg:
+	* resources/gfx/snake/snake_-22.svg:
+	* resources/gfx/snake/snake_-23.svg:
+	* resources/gfx/snake/snake_-24.svg:
+	* resources/gfx/snake/snake_-25.svg:
+	* resources/gfx/snake/snake_-26.svg:
+	* resources/gfx/snake/snake_-27.svg:
+	* resources/gfx/snake/snake_-28.svg:
+	* resources/gfx/snake/snake_-29.svg:
+	* resources/gfx/snake/snake_-3.svg:
+	* resources/gfx/snake/snake_-30.svg:
+	* resources/gfx/snake/snake_-31.svg:
+	* resources/gfx/snake/snake_-32.svg:
+	* resources/gfx/snake/snake_-33.svg:
+	* resources/gfx/snake/snake_-34.svg:
+	* resources/gfx/snake/snake_-35.svg:
+	* resources/gfx/snake/snake_-36.svg:
+	* resources/gfx/snake/snake_-37.svg:
+	* resources/gfx/snake/snake_-38.svg:
+	* resources/gfx/snake/snake_-39.svg:
+	* resources/gfx/snake/snake_-4.svg:
+	* resources/gfx/snake/snake_-40.svg:
+	* resources/gfx/snake/snake_-5.svg:
+	* resources/gfx/snake/snake_-6.svg:
+	* resources/gfx/snake/snake_-7.svg:
+	* resources/gfx/snake/snake_-8.svg:
+	* resources/gfx/snake/snake_-9.svg:
+	* resources/gfx/snake/snake_0.svg:
+	* resources/gfx/snake/snake_1.svg:
+	* resources/gfx/snake/snake_10.svg:
+	* resources/gfx/snake/snake_11.svg:
+	* resources/gfx/snake/snake_12.svg:
+	* resources/gfx/snake/snake_13.svg:
+	* resources/gfx/snake/snake_14.svg:
+	* resources/gfx/snake/snake_15.svg:
+	* resources/gfx/snake/snake_16.svg:
+	* resources/gfx/snake/snake_17.svg:
+	* resources/gfx/snake/snake_18.svg:
+	* resources/gfx/snake/snake_19.svg:
+	* resources/gfx/snake/snake_2.svg:
+	* resources/gfx/snake/snake_20.svg:
+	* resources/gfx/snake/snake_21.svg:
+	* resources/gfx/snake/snake_22.svg:
+	* resources/gfx/snake/snake_23.svg:
+	* resources/gfx/snake/snake_24.svg:
+	* resources/gfx/snake/snake_25.svg:
+	* resources/gfx/snake/snake_26.svg:
+	* resources/gfx/snake/snake_27.svg:
+	* resources/gfx/snake/snake_28.svg:
+	* resources/gfx/snake/snake_29.svg:
+	* resources/gfx/snake/snake_3.svg:
+	* resources/gfx/snake/snake_30.svg:
+	* resources/gfx/snake/snake_31.svg:
+	* resources/gfx/snake/snake_32.svg:
+	* resources/gfx/snake/snake_33.svg:
+	* resources/gfx/snake/snake_34.svg:
+	* resources/gfx/snake/snake_35.svg:
+	* resources/gfx/snake/snake_36.svg:
+	* resources/gfx/snake/snake_37.svg:
+	* resources/gfx/snake/snake_38.svg:
+	* resources/gfx/snake/snake_39.svg:
+	* resources/gfx/snake/snake_4.svg:
+	* resources/gfx/snake/snake_40.svg:
+	* resources/gfx/snake/snake_5.svg:
+	* resources/gfx/snake/snake_6.svg:
+	* resources/gfx/snake/snake_7.svg:
+	* resources/gfx/snake/snake_8.svg:
+	* resources/gfx/snake/snake_9.svg:
+	* src/monkey/board.c: (recursive_tag_fallen),
+	(recursive_tag_exploded):
+	* src/util/clock.c: (clock_pause):
+	* src/view/gdk-view.c: (gdk_view_load_shooter_images),
+	(gdk_view_new):
+
+2003-09-24  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	Add new gfx, the monkeys
+	* resources/gfx/Makefile.am:
+	* resources/gfx/monkeys.svg:
+	* src/view/gdk-view.c: (gdk_view_new):
+
+	fix bug in the shooter
+	* src/monkey/monkey.c: (monkey_new_level_from_file):
+	* src/monkey/shooter.c: (shooter_add_bubble):
+
+	client executable, ui -> monkey-bubble
+	* src/ui/Makefile.am:
+
+2003-09-23  Laurent Belmonte  <lolo3d@tuxfamily.org>
+	
+	The web site
+	* html/index.html:
+	* html/mb.png:
+	* html/scr-1-player.png:
+	* html/scr-2-players.png:
+	* monkey-bubble-0.1.tar.gz:
+
+2003-09-23  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	initial release

@@ -1,0 +1,5 @@
+monkey-bubble.desktop.in
+data/monkey-bubble.glade
+data/keybinding.glade
+data/monkey-bubble.schemas.in
+src/ui/ui-main.c
