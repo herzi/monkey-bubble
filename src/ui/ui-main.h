@@ -20,7 +20,7 @@
 #define __UI_MAIN_H__
 
 #include <gtk/gtk.h>
-#include "gdk-canvas.h"
+#include "monkey-canvas.h"
 #include "game.h"
 
 #define UI_TYPE_MAIN                 (ui_main_get_type ())
@@ -49,7 +49,7 @@ struct _UiMainClass {
 
 GType        ui_main_get_type          (void);
 UiMain * ui_main_get_instance();
-GdkCanvas * ui_main_get_canvas(UiMain * ui_main);
+MonkeyCanvas * ui_main_get_canvas(UiMain * ui_main);
 GtkWidget * ui_main_get_window(UiMain * ui_main);
 Block * ui_main_get_main_image(UiMain * ui_main);
 void ui_main_set_game(UiMain *ui_main, Game *game);

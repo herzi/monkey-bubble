@@ -2,20 +2,15 @@ NULL=
 
 
 INCLUDES = \
-	$(LIBGDKVIEW_LA_CFLAGS) \
+	$(LIBMONKEYVIEW_A_CFLAGS) \
+	$(AM_CFLAGS) \
 	-I../monkey \
 	-g -O2 -Wall -Werror -D_REENTRANT -DDATADIR=\""$(datadir)"\"
 
-lib_LTLIBRARIES = libgdkview.la
+noinst_LIBRARIES = libmonkeyview.a
 
 
 
-libgdkview_la_SOURCES = \
-	gdk-canvas.h gdk-canvas.c \
-	gdk-view.h gdk-view.c
-
-libgdkview_la_LDFLAGS = 
-
-libgdkview_la_LIBADD =  \
-	$(LIBGDKVIEW_LA_LIBS)
-
+libmonkeyview_a_SOURCES = \
+	monkey-canvas.h monkey-canvas.c \
+	monkey-view.h monkey-view.c

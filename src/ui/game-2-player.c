@@ -16,14 +16,20 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#include <gtk/gtk.h>
-#include "game-2-player.h"
-#include "game.h"
-#include "gdk-canvas.h"
-#include "gdk-view.h"
+
 #include <stdlib.h>
-#include "clock.h"
+
+#include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
+
+#include "clock.h"
+
+#include "monkey-canvas.h"
+#include "monkey-view.h"
+
+#include "keyboard-properties.h"
+#include "game.h"
+#include "game-2-player.h"
 
 #define FRAME_DELAY 10
 #define INIT_BUBBLES_COUNT 8+7+8+7
@@ -33,10 +39,10 @@
 static GObjectClass* parent_class = NULL;
 
 struct Game2PlayerPrivate {
-  GdkCanvas * canvas;
+  MonkeyCanvas * canvas;
   GtkWidget * window;
-  GdkView * display_left;
-  GdkView * display_right;
+  MonkeyView * display_left;
+  MonkeyView * display_right;
   Block * background;
   Block * paused_block;
   Layer * paused_layer;
@@ -227,7 +233,7 @@ game_2_player_config_notify (GConfClient *client,
   
 }
 
-Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_left,int score_right){
+Game2Player * game_2_player_new(GtkWidget * window,MonkeyCanvas * canvas,int score_left,int score_right){
   Game2Player * game;
   Bubble * bubbles_left[INIT_BUBBLES_COUNT];
   Bubble * bubbles_right[INIT_BUBBLES_COUNT];
@@ -239,11 +245,11 @@ Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_
 
   PRIVATE(game)->gconf_client = gconf_client_get_default ();
 
-  gconf_client_add_dir (PRIVATE(game)->gconf_client, "/apps/monkey-bubble-game",
+  gconf_client_add_dir (PRIVATE(game)->gconf_client, CONF_KEY_PREFIX,
                         GCONF_CLIENT_PRELOAD_NONE, NULL);
 
 
-    gdk_canvas_clear(canvas);
+    monkey_canvas_clear(canvas);
   PRIVATE(game)->clock = clock_new();
 
   PRIVATE(game)->monkey_left = monkey_new();  
@@ -262,12 +268,12 @@ Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_
 
 
   PRIVATE(game)->display_left = 
-    gdk_view_new(canvas, 
+    monkey_view_new(canvas, 
 		 PRIVATE(game)->monkey_left,
 		 -165,0,FALSE);
 
   PRIVATE(game)->display_right = 
-    gdk_view_new(canvas, 
+    monkey_view_new(canvas, 
 		 PRIVATE(game)->monkey_right,
 		 165,0,FALSE);
 
@@ -277,25 +283,25 @@ Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_
     
 
   PRIVATE(game)->paused_block = 
-    gdk_canvas_create_block_from_image(canvas,
+    monkey_canvas_create_block_from_image(canvas,
 				       DATADIR"/monkey-bubble/gfx/pause.svg",
 				       200,200,
 				       100,100);
 
   PRIVATE(game)->paused_layer =
-      gdk_canvas_append_layer(canvas,0,0);
+      monkey_canvas_append_layer(canvas,0,0);
 
   
   PRIVATE(game)->background = 
-    gdk_canvas_create_block_from_image(
+    monkey_canvas_create_block_from_image(
 				       canvas,
 				       DATADIR"/monkey-bubble/gfx/layout_2_players.svg",
 				       640,480,
 				       0,0);
   
 
-  gdk_canvas_add_block(canvas,
-		       gdk_canvas_get_root_layer( PRIVATE(game)->canvas),
+  monkey_canvas_add_block(canvas,
+		       monkey_canvas_get_root_layer( PRIVATE(game)->canvas),
 		       PRIVATE(game)->background,
 		       0,0);
     
@@ -307,9 +313,9 @@ Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_
   
 
   
-  gdk_view_set_score( PRIVATE(game)->display_left,score_left);
+  monkey_view_set_score( PRIVATE(game)->display_left,score_left);
 
-  gdk_view_set_score( PRIVATE(game)->display_right,score_right);
+  monkey_view_set_score( PRIVATE(game)->display_right,score_right);
 
   
   g_signal_connect( G_OBJECT( PRIVATE(game)->monkey_left),
@@ -364,7 +370,7 @@ Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_
 
   PRIVATE(game)->notify_id =
       gconf_client_notify_add( PRIVATE(game)->gconf_client,
-			       "/apps/monkey-bubble-game",
+			       CONF_KEY_PREFIX,
 			       game_2_player_config_notify,
 			       game,NULL,NULL);
 
@@ -376,7 +382,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
     gchar * str;
     guint accel;
     GdkModifierType modifier;
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_left",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_left",NULL);
 
     if( str != NULL) {
 	
@@ -393,7 +399,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
 	
     }
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_right",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_right",NULL);
 
     if( str != NULL) {
 	
@@ -410,7 +416,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
 	
     }
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_shoot",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_shoot",NULL);
 
     if( str != NULL) {
 	
@@ -428,7 +434,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
     }
 
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_2_left",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_2_left",NULL);
 
     if( str != NULL) {
 	
@@ -445,7 +451,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
 	
     }
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_2_right",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_2_right",NULL);
 
     if( str != NULL) {
 	
@@ -462,7 +468,7 @@ static void game_2_player_conf_keyboard(Game2Player * game) {
 	
     }
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_2_shoot",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_2_shoot",NULL);
 
     if( str != NULL) {
 	
@@ -596,16 +602,16 @@ static gint game_2_player_timeout (gpointer data)
     
   }
 
-    gdk_view_update( PRIVATE(game)->display_left,
+    monkey_view_update( PRIVATE(game)->display_left,
 		     time);
     
 
 
-    gdk_view_update( PRIVATE(game)->display_right,
+    monkey_view_update( PRIVATE(game)->display_right,
 		     time);
     
 
-  gdk_canvas_paint(PRIVATE(game)->canvas);
+  monkey_canvas_paint(PRIVATE(game)->canvas);
 
   return TRUE;
 }
@@ -682,7 +688,7 @@ static void game_2_player_pause(Game * game,gboolean pause) {
     PRIVATE(g)->state = GAME_PAUSED;
     time_paused( g);
     game_2_player_disconnect_input(g);
-    gdk_canvas_add_block(PRIVATE(g)->canvas,
+    monkey_canvas_add_block(PRIVATE(g)->canvas,
 								 PRIVATE(g)->paused_layer,
 								 PRIVATE(g)->paused_block,
 								 320,240);
@@ -693,7 +699,7 @@ static void game_2_player_pause(Game * game,gboolean pause) {
     PRIVATE(g)->state = GAME_PLAYING;
     time_unpaused( g);
     game_2_player_connect_input(g);
-    gdk_canvas_remove_block(PRIVATE(g)->canvas,
+    monkey_canvas_remove_block(PRIVATE(g)->canvas,
 									 PRIVATE(g)->paused_block);    
 	 game_2_player_fire_changed(g);
 
@@ -714,19 +720,19 @@ static void game_2_player_game_lost(Monkey * monkey,Game2Player * g) {
   g_assert( IS_GAME_2_PLAYER(g));
 
   if( PRIVATE(g)->monkey_left == monkey ) {
-  gdk_view_draw_lost(PRIVATE(g)->display_left);
-  gdk_view_draw_win(PRIVATE(g)->display_right);
+  monkey_view_draw_lost(PRIVATE(g)->display_left);
+  monkey_view_draw_win(PRIVATE(g)->display_right);
 
 		PRIVATE(g)->winner = PLAYER_2;
   } else {
 		PRIVATE(g)->winner = PLAYER_1;
 
-  gdk_view_draw_win(PRIVATE(g)->display_left);
-  gdk_view_draw_lost(PRIVATE(g)->display_right);
+  monkey_view_draw_win(PRIVATE(g)->display_left);
+  monkey_view_draw_lost(PRIVATE(g)->display_right);
 
   }
 
-  gdk_canvas_paint(PRIVATE(g)->canvas);
+  monkey_canvas_paint(PRIVATE(g)->canvas);
 
   time_paused(g);
   
@@ -744,7 +750,7 @@ static void game_2_player_bubbles_exploded(Monkey * monkey,
   int i;
   int * columns;
   int to_go;
-  GdkView * view;
+  MonkeyView * view;
   Monkey * other;
   Color * colors;
 

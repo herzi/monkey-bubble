@@ -3,32 +3,34 @@ NULL=
 
 
 INCLUDES = \
-	$(LIBMONKEY_LA_CFLAGS) \
+	$(LIBMONKEY_A_CFLAGS) \
 	-Wall -Werror -g
 
 
-lib_LTLIBRARIES = libmonkey.la
+noinst_LIBRARIES = libmonkey.a
 
-libmonkey_la_SOURCES = \
+marshal_sources = 			\
+	monkey-marshal.h		\
+	monkey-marshal.c		\
+	$(NULL)
+
+libmonkey_a_SOURCES = \
 	bubble.c bubble.h\
 	shooter.c shooter.h\
 	board.c board.h\
 	playground.c playground.h\
 	monkey.c monkey.h\
 	point.h color.h \
-	monkey-marshal.c monkey-marshal.h
+	$(marshal_sources)
+
+$(libmonkey_a_OBJECTS): $(marshal_sources)
+
+monkey-marshal.c monkey-marshal.h: monkey-marshal.list
+	glib-genmarshal --prefix=monkey_marshal --body $^ > monkey-marshal.c
+	glib-genmarshal --prefix=monkey_marshal --header $^ > monkey-marshal.h
 
 
-monkey-marshal.c: monkey-marshal.list $(GLIB_GENMARSHAL)
-	echo "#include <monkey-marshal.h>" > $@ && $(GLIB_GENMARSHAL) $< --body --prefix=monkey_marshal >> $@
-
-monkey-marshal.h: monkey-marshal.list $(GLIB_GENMARSHAL)
-	$(GLIB_GENMARSHAL) $< --header --prefix=monkey_marshal > $@
-
-
-libmonkey_la_LDFLAGS =  
-
-libmonkey_la_LIBADD =  \
-	$(LIBMONKEY_LA_LIBS)
+CLEANFILES = monkey-marshal.c monkey-marshal.h
 
 EXTRA_DIST = monkey-marshal.list
+

@@ -1,5 +1,5 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*- */
-/* gdk_view.c
+/* monkey_view.c
  * Copyright (C) 2002 Laurent Belmonte
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 #include <gtk/gtk.h>
-#include "gdk-view.h"
+#include "monkey-view.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -27,7 +27,7 @@
 #define BUBBLE_COUNT 8
 #define SHOOTER_COUNT 40*2
 
-#define PRIVATE( gdk_view ) (gdk_view->private)
+#define PRIVATE( monkey_view ) (monkey_view->private)
 static GObjectClass* parent_class = NULL;
 
 typedef struct Star {
@@ -41,9 +41,9 @@ typedef struct BubbleAdded {
     
 } BubbleAdded;
 
-struct GdkViewPrivate {
+struct MonkeyViewPrivate {
         gint last_time;
-        GdkCanvas * canvas;
+        MonkeyCanvas * canvas;
         Monkey * monkey;
         GList * fallen_list;
         GList * added_list;
@@ -65,6 +65,10 @@ struct GdkViewPrivate {
 
         Block * snake_body;
         Block * harm;
+        Block * harm_up;
+        Block * harm_down;
+        Block * harm_center;
+        Block * harm_shoot;
         Block * monkeys;
         GList * waiting_list;
         GList * score_list;
@@ -72,54 +76,54 @@ struct GdkViewPrivate {
         GList * gems_list;
         GList * star_list;
         gint time;
-
+        gint last_shoot;
 };
 
-static void gdk_view_animate_stars(GdkView * d,gint time);
-static void gdk_view_add_explode_stars(GdkView * d,Bubble * b) ;
-static void gdk_view_bubble_changed(Bubble * b,GdkView * view);
+static void monkey_view_animate_stars(MonkeyView * d,gint time);
+static void monkey_view_add_explode_stars(MonkeyView * d,Bubble * b) ;
+static void monkey_view_bubble_changed(Bubble * b,MonkeyView * view);
 
-static void gdk_view_bubbles_waiting_changed(Monkey * monkey,
+static void monkey_view_bubbles_waiting_changed(Monkey * monkey,
 					     int bubbles_count,
-					     GdkView * view);
+					     MonkeyView * view);
 
-static Block * gdk_view_create_gem(GdkView * d);
-static Block * gdk_view_create_big_waiting(GdkView * d);
-static Block * gdk_view_create_little_waiting(GdkView * d);
-static void gdk_view_free_map(gpointer key,
+static Block * monkey_view_create_gem(MonkeyView * d);
+static Block * monkey_view_create_big_waiting(MonkeyView * d);
+static Block * monkey_view_create_little_waiting(MonkeyView * d);
+static void monkey_view_free_map(gpointer key,
 			      gpointer value,
 			      gpointer user_data);
 
-static void gdk_view_shooter_bubble_added(Shooter * shooter,
+static void monkey_view_shooter_bubble_added(Shooter * shooter,
 					  Bubble * b,
-					  GdkView * view);
+					  MonkeyView * view);
 
-static void gdk_view_shooter_rotated(Shooter * shooter,GdkView * view);
+static void monkey_view_shooter_rotated(Shooter * shooter,MonkeyView * view);
 
-static void gdk_view_bubbles_exploded(    Board * board,
+static void monkey_view_bubbles_exploded(    Board * board,
                                           GList * exploed,
                                           GList * fallen,
-					  GdkView * view);
-static void gdk_view_bubbles_added(  Board * board,
+					  MonkeyView * view);
+static void monkey_view_bubbles_added(  Board * board,
                                      GList * bubbles,
-				     GdkView * view);
+				     MonkeyView * view);
 
 
-static void gdk_view_board_down(Board * board,
-				GdkView * view);
+static void monkey_view_board_down(Board * board,
+				MonkeyView * view);
 
 
-static void gdk_view_bubbles_inserted(    Board * board,
+static void monkey_view_bubbles_inserted(    Board * board,
                                           Bubble ** bubbles,
                                           int count,
-					  GdkView * view);
+					  MonkeyView * view);
 
 
 
 
-static Block * gdk_view_create_bubble(GdkView * view,
+static Block * monkey_view_create_bubble(MonkeyView * view,
 				      Bubble * bubble );
-void gdk_view_load_shooter_images(GdkView * gdk_view) {
+void monkey_view_load_shooter_images(MonkeyView * monkey_view) {
         GError * error;
         gchar path[4096];
         gint str_length;
@@ -130,7 +134,7 @@ void gdk_view_load_shooter_images(GdkView * gdk_view) {
 
   
         error = NULL;
-        shooter = monkey_get_shooter(PRIVATE(gdk_view)->monkey);
+        shooter = monkey_get_shooter(PRIVATE(monkey_view)->monkey);
 
   
   
@@ -146,8 +150,8 @@ void gdk_view_load_shooter_images(GdkView * gdk_view) {
 		snprintf(path+str_length ,7,"%d.svg",i);    
                 
     
-                PRIVATE(gdk_view)->shooter_block[i] = 
-                        gdk_canvas_create_block_from_image(PRIVATE(gdk_view)->canvas,
+                PRIVATE(monkey_view)->shooter_block[i] = 
+                        monkey_canvas_create_block_from_image(PRIVATE(monkey_view)->canvas,
                                                            path,120,60,
                                                            60 ,					   
                                                            40 );
@@ -162,8 +166,8 @@ void gdk_view_load_shooter_images(GdkView * gdk_view) {
       
       
       
-                PRIVATE(gdk_view)->shooter_block[i] = 
-                        gdk_canvas_create_block_from_image(PRIVATE(gdk_view)->canvas,
+                PRIVATE(monkey_view)->shooter_block[i] = 
+                        monkey_canvas_create_block_from_image(PRIVATE(monkey_view)->canvas,
                                                            path,120,60,
                                                            60,					   
                                                            40);
@@ -171,7 +175,53 @@ void gdk_view_load_shooter_images(GdkView * gdk_view) {
       
 }
 
-GdkView * gdk_view_new(GdkCanvas * canvas,
+void monkey_view_set_harm(MonkeyView * monkey_view,Block * h) {
+        if( PRIVATE(monkey_view)->harm != h  ) {
+        if( PRIVATE(monkey_view)->harm != NULL) {
+                monkey_canvas_remove_block( PRIVATE(monkey_view)->canvas,
+                                            PRIVATE(monkey_view)->harm);
+        }
+
+        PRIVATE(monkey_view)->harm = h;
+        monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                                 PRIVATE(monkey_view)->ground_layer,
+                                 PRIVATE(monkey_view)->harm,
+                                 310,386);
+        }
+}
+
+
+static void monkey_view_shooter_down(Monkey * m,MonkeyView * p) {
+
+        monkey_view_set_harm( p,PRIVATE(p)->harm_down);
+}
+
+
+
+static void monkey_view_shooter_up(Monkey * m,MonkeyView * p) {
+
+        monkey_view_set_harm( p,PRIVATE(p)->harm_up);
+}
+
+
+
+static void monkey_view_shooter_center(Monkey * m,MonkeyView * p) {
+        if( PRIVATE(p)->harm != PRIVATE(p)->harm_shoot || 
+            PRIVATE(p)->last_shoot + 200 < PRIVATE(p)->time) {
+                monkey_view_set_harm( p,PRIVATE(p)->harm_center);
+        }
+}
+
+
+
+static void monkey_view_shooter_shoot(Shooter * s,Bubble *b ,MonkeyView * p) {
+
+        PRIVATE(p)->last_shoot = PRIVATE(p)->time;
+        monkey_view_set_harm( p,PRIVATE(p)->harm_shoot);
+}
+
+
+MonkeyView * monkey_view_new(MonkeyCanvas * canvas,
 		       Monkey * monkey,
 		       gint x_pos,gint y_pos,gboolean back_needed) {
         gdouble x,y;
@@ -183,175 +233,208 @@ GdkView * gdk_view_new(GdkCanvas * canvas,
         Block * block;
         int i,j;
 
-        GdkView * gdk_view = GDK_VIEW (g_object_new (TYPE_GDK_VIEW, NULL));
+        MonkeyView * monkey_view = MONKEY_VIEW (g_object_new (TYPE_MONKEY_VIEW, NULL));
 
         error = NULL;
   
-        g_assert( IS_GDK_VIEW( gdk_view ) );
+        g_assert( IS_MONKEY_VIEW( monkey_view ) );
 
         g_object_ref( monkey);
-        PRIVATE(gdk_view)->monkey = monkey;
+        PRIVATE(monkey_view)->monkey = monkey;
 
 
-        PRIVATE(gdk_view)->last_time = 0;
-        PRIVATE(gdk_view)->canvas = canvas;
+        PRIVATE(monkey_view)->last_time = 0;
+        PRIVATE(monkey_view)->canvas = canvas;
 
-        PRIVATE(gdk_view)->added_list = NULL;
+        PRIVATE(monkey_view)->added_list = NULL;
   
-        PRIVATE(gdk_view)->background_layer = gdk_canvas_get_root_layer( canvas );
-        PRIVATE(gdk_view)->ground_layer = gdk_canvas_append_layer(canvas,x_pos,y_pos);
-        PRIVATE(gdk_view)->shooter_layer = gdk_canvas_append_layer( canvas ,x_pos,y_pos);
-        PRIVATE(gdk_view)->bubble_layer = gdk_canvas_append_layer( canvas,x_pos,y_pos );
-        PRIVATE(gdk_view)->monkeys_layer = gdk_canvas_append_layer(canvas,x_pos,y_pos);
-        PRIVATE(gdk_view)->star_layer = gdk_canvas_append_layer(canvas,x_pos,y_pos);
+        PRIVATE(monkey_view)->background_layer = monkey_canvas_get_root_layer( canvas );
+        PRIVATE(monkey_view)->ground_layer = monkey_canvas_append_layer(canvas,x_pos,y_pos);
+        PRIVATE(monkey_view)->shooter_layer = monkey_canvas_append_layer( canvas ,x_pos,y_pos);
+        PRIVATE(monkey_view)->bubble_layer = monkey_canvas_append_layer( canvas,x_pos,y_pos );
+        PRIVATE(monkey_view)->monkeys_layer = monkey_canvas_append_layer(canvas,x_pos,y_pos);
+        PRIVATE(monkey_view)->star_layer = monkey_canvas_append_layer(canvas,x_pos,y_pos);
   
   
-        PRIVATE(gdk_view)->hash_map = 
+        PRIVATE(monkey_view)->hash_map = 
                 g_hash_table_new(g_direct_hash,g_direct_equal);
   
   
   
-        gdk_view_load_shooter_images(gdk_view);
+        monkey_view_load_shooter_images(monkey_view);
   
         if(back_needed ) {
       
 
-                PRIVATE(gdk_view)->background = 
-                        gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+                PRIVATE(monkey_view)->background = 
+                        monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                             DATADIR"/monkey-bubble/gfx/layout_1_player.svg",
                                                             640,480,0,0);
       
-                gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                                      PRIVATE(gdk_view)->background_layer,
-                                      PRIVATE(gdk_view)->background,
+                monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                                      PRIVATE(monkey_view)->background_layer,
+                                      PRIVATE(monkey_view)->background,
                                       0,0);
 
 	
         } else {
 		  
-                PRIVATE(gdk_view)->background =   NULL;
+                PRIVATE(monkey_view)->background =   NULL;
         }
 	 
-        PRIVATE(gdk_view)->bback =  gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->bback =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                                         DATADIR"/monkey-bubble/gfx/pane.svg",
                                                                         280,80,140,40);
-        gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                              PRIVATE(gdk_view)->ground_layer,
-                              PRIVATE(gdk_view)->bback,
+        monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                              PRIVATE(monkey_view)->ground_layer,
+                              PRIVATE(monkey_view)->bback,
                               320,30);
 	 
 
-        PRIVATE(gdk_view)->monkeys =  gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->monkeys =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                                           DATADIR"/monkey-bubble/gfx/monkeys.svg",
                                                                           300,160,150,0);
 
+        PRIVATE(monkey_view)->harm = NULL;
+        PRIVATE(monkey_view)->harm_up =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
+                                                                       DATADIR"/monkey-bubble/gfx/harm_up.svg",
+                                                                       90,60,0,0);
 
-        PRIVATE(gdk_view)->harm =  gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->harm_down =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
+                                                                       DATADIR"/monkey-bubble/gfx/harm_down.svg",
+                                                                       90,60,0,0);
+
+        PRIVATE(monkey_view)->harm_center =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                                        DATADIR"/monkey-bubble/gfx/harm.svg",
                                                                        90,60,0,0);
 
+        PRIVATE(monkey_view)->harm_shoot =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
+                                                                       DATADIR"/monkey-bubble/gfx/harm_shoot.svg",
+                                                                       90,60,0,0);
 
-        gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                              PRIVATE(gdk_view)->monkeys_layer,
-                              PRIVATE(gdk_view)->harm,
-                              310,386);
 
-        gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                              PRIVATE(gdk_view)->monkeys_layer,
-                              PRIVATE(gdk_view)->monkeys,
+
+        
+
+        monkey_view_set_harm( monkey_view, PRIVATE(monkey_view)->harm_center);
+
+        monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                              PRIVATE(monkey_view)->monkeys_layer,
+                              PRIVATE(monkey_view)->monkeys,
                               320,350);
 
 
 
 
 
-        PRIVATE(gdk_view)->snake_body =  gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->snake_body =  monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                                              DATADIR"/monkey-bubble/gfx/snake-body.svg",
                                                                              60,60,30,20);	 
-        PRIVATE(gdk_view)->lost = 
-                gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->lost = 
+                monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                     DATADIR"/monkey-bubble/gfx/lost.svg",
                                                     200,200,
                                                     100,100);
 	 
-        PRIVATE(gdk_view)->win = 
-                gdk_canvas_create_block_from_image( PRIVATE(gdk_view)->canvas,
+        PRIVATE(monkey_view)->win = 
+                monkey_canvas_create_block_from_image( PRIVATE(monkey_view)->canvas,
                                                     DATADIR"/monkey-bubble/gfx/win.svg",
                                                     200,200,
                                                     100,100);
 	 
     
-        shooter = monkey_get_shooter(PRIVATE(gdk_view)->monkey);
+        shooter = monkey_get_shooter(PRIVATE(monkey_view)->monkey);
         shooter_get_position(shooter,&x,&y);
     
-        PRIVATE(gdk_view)->current_shooter_block = PRIVATE(gdk_view)->shooter_block[0];
+        PRIVATE(monkey_view)->current_shooter_block = PRIVATE(monkey_view)->shooter_block[0];
     
-        gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                              PRIVATE(gdk_view)->shooter_layer,
-                              PRIVATE(gdk_view)->shooter_block[0],
+        monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                              PRIVATE(monkey_view)->shooter_layer,
+                              PRIVATE(monkey_view)->shooter_block[0],
                               x,y);
 
-        gdk_canvas_add_block( PRIVATE(gdk_view)->canvas,
-                              PRIVATE(gdk_view)->monkeys_layer,
-                              PRIVATE(gdk_view)->snake_body,
+        monkey_canvas_add_block( PRIVATE(monkey_view)->canvas,
+                              PRIVATE(monkey_view)->monkeys_layer,
+                              PRIVATE(monkey_view)->snake_body,
                               x,y);
     
         if( shooter_get_current_bubble( shooter ) != NULL ) {
-                gdk_view_shooter_bubble_added(
+                monkey_view_shooter_bubble_added(
                                               shooter,
-                                              shooter_get_current_bubble( shooter ), gdk_view);
+                                              shooter_get_current_bubble( shooter ), monkey_view);
 	
         }
     
     
         if( shooter_get_waiting_bubble( shooter ) != NULL ) {
-                gdk_view_shooter_bubble_added(
+                monkey_view_shooter_bubble_added(
                                               shooter,
-                                              shooter_get_waiting_bubble( shooter ),gdk_view);
+                                              shooter_get_waiting_bubble( shooter ),monkey_view);
 		  
         }
 
-	PRIVATE(gdk_view)->star_list = NULL;
-        PRIVATE(gdk_view)->score_list = NULL;
-        PRIVATE(gdk_view)->gems_list = NULL;
-        PRIVATE(gdk_view)->waiting_list = NULL;
+	PRIVATE(monkey_view)->star_list = NULL;
+        PRIVATE(monkey_view)->score_list = NULL;
+        PRIVATE(monkey_view)->gems_list = NULL;
+        PRIVATE(monkey_view)->waiting_list = NULL;
 
-        PRIVATE(gdk_view)->fallen_list = NULL;
-        PRIVATE(gdk_view)->time = 0;
+        PRIVATE(monkey_view)->fallen_list = NULL;
+        PRIVATE(monkey_view)->time = 0;
   
         pl = monkey_get_playground( monkey);
 
         g_signal_connect( G_OBJECT(monkey),"bubbles-waiting-changed",
-                          G_CALLBACK( gdk_view_bubbles_waiting_changed),
-                          gdk_view);
+                          G_CALLBACK( monkey_view_bubbles_waiting_changed),
+                          monkey_view);
 
   
         g_signal_connect( G_OBJECT(shooter),
                           "rotated",
-                          G_CALLBACK( gdk_view_shooter_rotated), 
-                          gdk_view);		    
+                          G_CALLBACK( monkey_view_shooter_rotated), 
+                          monkey_view);		    
+
+        g_signal_connect( G_OBJECT(shooter),
+                          "shoot",
+                          G_CALLBACK( monkey_view_shooter_shoot), 
+                          monkey_view);		    
+
+  
+        g_signal_connect( G_OBJECT(monkey),
+                          "up",
+                          G_CALLBACK( monkey_view_shooter_up), 
+                          monkey_view);		    
+
+        g_signal_connect( G_OBJECT(monkey),
+                          "down",
+                          G_CALLBACK( monkey_view_shooter_down), 
+                          monkey_view);		    
+
+        g_signal_connect( G_OBJECT(monkey),
+                          "center",
+                          G_CALLBACK( monkey_view_shooter_center), 
+                          monkey_view);		    
 
         g_signal_connect( G_OBJECT(shooter),
                           "bubble-added",
-                          G_CALLBACK( gdk_view_shooter_bubble_added), 
-                          gdk_view);		    
+                          G_CALLBACK( monkey_view_shooter_bubble_added), 
+                          monkey_view);		    
 
         board = playground_get_board( monkey_get_playground( monkey));
  
         g_signal_connect( G_OBJECT( board),
-                          "bubbles-exploded",G_CALLBACK(gdk_view_bubbles_exploded),gdk_view);
+                          "bubbles-exploded",G_CALLBACK(monkey_view_bubbles_exploded),monkey_view);
 
  
         g_signal_connect( G_OBJECT( board),
-                          "bubbles-added",G_CALLBACK(gdk_view_bubbles_added),gdk_view);
+                          "bubbles-added",G_CALLBACK(monkey_view_bubbles_added),monkey_view);
 
  
         g_signal_connect( G_OBJECT( board),
-                          "bubbles-inserted",G_CALLBACK(gdk_view_bubbles_inserted),gdk_view);
+                          "bubbles-inserted",G_CALLBACK(monkey_view_bubbles_inserted),monkey_view);
 
  
         g_signal_connect( G_OBJECT( board),
-                          "down",G_CALLBACK(gdk_view_board_down),gdk_view);
+                          "down",G_CALLBACK(monkey_view_board_down),monkey_view);
 
 
   
@@ -361,15 +444,15 @@ GdkView * gdk_view_new(GdkCanvas * canvas,
 	  
                         if( ( b = board_get_bubble_at(board,i,j) )!= NULL ) {
                                 bubble_get_position(b,&x,&y);
-                                block = gdk_view_create_bubble(gdk_view,b);
-                                gdk_canvas_add_block(PRIVATE(gdk_view)->canvas,
-                                                     PRIVATE(gdk_view)->bubble_layer , 
+                                block = monkey_view_create_bubble(monkey_view,b);
+                                monkey_canvas_add_block(PRIVATE(monkey_view)->canvas,
+                                                     PRIVATE(monkey_view)->bubble_layer , 
                                                      block,
                                                      x,y);
 	
-                                g_hash_table_insert( PRIVATE(gdk_view)->hash_map, b, block );
+                                g_hash_table_insert( PRIVATE(monkey_view)->hash_map, b, block );
 	
-                                g_signal_connect( G_OBJECT(b), "bubble-changed", G_CALLBACK( gdk_view_bubble_changed), gdk_view);
+                                g_signal_connect( G_OBJECT(b), "bubble-changed", G_CALLBACK( monkey_view_bubble_changed), monkey_view);
 	
 	
                         }
@@ -378,11 +461,11 @@ GdkView * gdk_view_new(GdkCanvas * canvas,
     
         }
   
-        return gdk_view;
+        return monkey_view;
 }
 
 
-void gdk_view_update(GdkView * gdk_view,
+void monkey_view_update(MonkeyView * monkey_view,
 		     gint time) {
     
         GList * next;
@@ -390,12 +473,12 @@ void gdk_view_update(GdkView * gdk_view,
         gdouble x,y,x2,y2;
         BubbleAdded * added;
         gint dtime;
-        g_assert( IS_GDK_VIEW(gdk_view));
+        g_assert( IS_MONKEY_VIEW(monkey_view));
     
-        next = PRIVATE(gdk_view)->fallen_list;
+        next = PRIVATE(monkey_view)->fallen_list;
         
-        dtime = time - PRIVATE(gdk_view)->time;
-        PRIVATE(gdk_view)->time = time;
+        dtime = time - PRIVATE(monkey_view)->time;
+        PRIVATE(monkey_view)->time = time;
         
         while( next != NULL ) {
 	
@@ -404,17 +487,17 @@ void gdk_view_update(GdkView * gdk_view,
 
                 if( y > 480) {
                         next = g_list_previous(next);
-                        PRIVATE(gdk_view)->fallen_list = g_list_remove( PRIVATE(gdk_view)->fallen_list
+                        PRIVATE(monkey_view)->fallen_list = g_list_remove( PRIVATE(monkey_view)->fallen_list
                                                                         , block);
-                        gdk_canvas_remove_block( PRIVATE(gdk_view)->canvas,
+                        monkey_canvas_remove_block( PRIVATE(monkey_view)->canvas,
                                                  block);
-                        gdk_canvas_unref_block( PRIVATE(gdk_view)->canvas,
+                        monkey_canvas_unref_block( PRIVATE(monkey_view)->canvas,
                                                 block);
  
                 } else {
-                        gdk_canvas_move_block( PRIVATE(gdk_view)->canvas,
-                                               block,
-                                               x,y+10);
+                        monkey_canvas_move_block( PRIVATE(monkey_view)->canvas,
+                                                  block,
+                                                  x,y+ dtime/2.0);
       
                 }
 	
@@ -423,7 +506,7 @@ void gdk_view_update(GdkView * gdk_view,
         }
 
 
-        next = PRIVATE(gdk_view)->added_list;
+        next = PRIVATE(monkey_view)->added_list;
     
         while( next != NULL ) {
 	
@@ -433,32 +516,32 @@ void gdk_view_update(GdkView * gdk_view,
                 if( (y -30) < y2 ) {
 	    
                         next = g_list_previous( next );
-                        gdk_canvas_move_block(PRIVATE(gdk_view)->canvas,
+                        monkey_canvas_move_block(PRIVATE(monkey_view)->canvas,
                                               added->block,x2,y2 );
 	    
-                        PRIVATE(gdk_view)->added_list = g_list_remove(PRIVATE(gdk_view)->added_list,
+                        PRIVATE(monkey_view)->added_list = g_list_remove(PRIVATE(monkey_view)->added_list,
                                                                       added);
-                        g_hash_table_insert( PRIVATE(gdk_view)->hash_map, 
+                        g_hash_table_insert( PRIVATE(monkey_view)->hash_map, 
                                              added->bubble, 
                                              added->block );
 
 
 
-                        g_signal_connect( G_OBJECT(added->bubble), "bubble-changed", G_CALLBACK( gdk_view_bubble_changed), gdk_view);
+                        g_signal_connect( G_OBJECT(added->bubble), "bubble-changed", G_CALLBACK( monkey_view_bubble_changed), monkey_view);
                         g_free(added);
                 } else {
-                        gdk_canvas_move_block( PRIVATE(gdk_view)->canvas,
+                        monkey_canvas_move_block( PRIVATE(monkey_view)->canvas,
                                                added->block,x,y-50);
                 }
 	
                 next = g_list_next( next);
         }
 
-        gdk_view_animate_stars(gdk_view,dtime);
+        monkey_view_animate_stars(monkey_view,dtime);
 }
 
 
-static void gdk_view_animate_stars(GdkView * d,gint time) {
+static void monkey_view_animate_stars(MonkeyView * d,gint time) {
         GList * next;
         Star * star;
         gdouble x,y;
@@ -468,66 +551,72 @@ static void gdk_view_animate_stars(GdkView * d,gint time) {
                 //  g_print("time %d",time);
                 star = (Star *)next->data;
                 block_get_position( star->block, &x,&y);
-                x +=  star->vx;
-                y +=  star->vy;
-
-                star->vx = star->vx;
+                x +=  (star->vx * time)/100 ;
+                y +=  (star->vy * time)/100;
                 
-                star->vy = star->vy+0.2;
-                gdk_canvas_move_block( PRIVATE(d)->canvas, star->block, x,y);
+                /*                if( star -> vx > 0 ) {
+                        star->vx = star->vx - time/200.0;
+                }
+
+                if( star -> vx < 0 ) {
+                        star->vx = star->vx + time/200.0;
+                }
+                */
+                star->vy = star->vy + time/10.0;
+                monkey_canvas_move_block( PRIVATE(d)->canvas, star->block, x,y);
                 next = g_list_next( next);
         }
 }
 
-static void gdk_view_instance_init(GdkView * gdk_view) {
-        gdk_view->private =g_new0 (GdkViewPrivate, 1);			
+static void monkey_view_instance_init(MonkeyView * monkey_view) {
+        monkey_view->private =g_new0 (MonkeyViewPrivate, 1);			
 }
 
-static void gdk_view_finalize(GObject* object) {
+static void monkey_view_finalize(GObject* object) {
         Playground * p;
-        GdkView * gdk_view = GDK_VIEW(object);
+        MonkeyView * monkey_view = MONKEY_VIEW(object);
 
-        p = monkey_get_playground( PRIVATE(gdk_view)->monkey);
+        p = monkey_get_playground( PRIVATE(monkey_view)->monkey);
 
 
 
-        g_signal_handlers_disconnect_matched( G_OBJECT( PRIVATE(gdk_view)->monkey),
-                                              G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,gdk_view);
+        g_signal_handlers_disconnect_matched( G_OBJECT( PRIVATE(monkey_view)->monkey),
+                                              G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey_view);
 
         g_signal_handlers_disconnect_matched(  G_OBJECT( playground_get_board(p) ),
-                                               G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,gdk_view);
+                                               G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey_view);
 
-        g_signal_handlers_disconnect_matched( G_OBJECT(monkey_get_shooter(PRIVATE(gdk_view)->monkey)),
-                                              G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,gdk_view);
+        g_signal_handlers_disconnect_matched( G_OBJECT(monkey_get_shooter(PRIVATE(monkey_view)->monkey)),
+                                              G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey_view);
 
 
 
-        g_hash_table_foreach(PRIVATE(gdk_view)->hash_map,
-                             gdk_view_free_map,
-                             gdk_view);
+        g_hash_table_foreach(PRIVATE(monkey_view)->hash_map,
+                             monkey_view_free_map,
+                             monkey_view);
   
 
 
-        g_object_unref( PRIVATE(gdk_view)->monkey);
+        g_object_unref( PRIVATE(monkey_view)->monkey);
   
 
-        //  gdk_canvas_clear( PRIVATE(gdk_view)->canvas);
-        //  g_object_unref( PRIVATE(gdk_view)-> canvas);
-        g_free(gdk_view->private);
+        //  monkey_canvas_clear( PRIVATE(monkey_view)->canvas);
+        //  g_object_unref( PRIVATE(monkey_view)-> canvas);
+        g_free(monkey_view->private);
   
         if (G_OBJECT_CLASS (parent_class)->finalize) {
                 (* G_OBJECT_CLASS (parent_class)->finalize) (object);
         }
 }
 
-static void gdk_view_free_map(gpointer key,
+static void monkey_view_free_map(gpointer key,
 			      gpointer value,
 			      gpointer user_data) {
-        GdkView * view;
+        MonkeyView * view;
         Bubble *b;
         Block * bb;
 
-        view = GDK_VIEW(user_data);
+        view = MONKEY_VIEW(user_data);
         b = BUBBLE(key);
         bb = (Block *) value;
 
@@ -537,35 +626,35 @@ static void gdk_view_free_map(gpointer key,
 
 }
 
-static void gdk_view_class_init (GdkViewClass *klass) {
+static void monkey_view_class_init (MonkeyViewClass *klass) {
         GObjectClass* object_class;
     
         parent_class = g_type_class_peek_parent(klass);
         object_class = G_OBJECT_CLASS(klass);
-        object_class->finalize = gdk_view_finalize;
+        object_class->finalize = monkey_view_finalize;
 }
 
 
-GType gdk_view_get_type(void) {
-        static GType gdk_view_type = 0;
+GType monkey_view_get_type(void) {
+        static GType monkey_view_type = 0;
     
-        if (!gdk_view_type) {
-                static const GTypeInfo gdk_view_info = {
-                        sizeof(GdkViewClass),
+        if (!monkey_view_type) {
+                static const GTypeInfo monkey_view_info = {
+                        sizeof(MonkeyViewClass),
                         NULL,           /* base_init */
                         NULL,           /* base_finalize */
-                        (GClassInitFunc) gdk_view_class_init,
+                        (GClassInitFunc) monkey_view_class_init,
                         NULL,           /* class_finalize */
                         NULL,           /* class_data */
-                        sizeof(GdkView),
+                        sizeof(MonkeyView),
                         1,              /* n_preallocs */
-                        (GInstanceInitFunc) gdk_view_instance_init,
+                        (GInstanceInitFunc) monkey_view_instance_init,
                 };
 
 
-                gdk_view_type = g_type_register_static(G_TYPE_OBJECT,
-                                                       "GdkView",
-                                                       &gdk_view_info, 0);
+                monkey_view_type = g_type_register_static(G_TYPE_OBJECT,
+                                                       "MonkeyView",
+                                                       &monkey_view_info, 0);
 
 
 
@@ -573,7 +662,7 @@ GType gdk_view_get_type(void) {
 
         }
     
-        return gdk_view_type;
+        return monkey_view_type;
 }
 
 
@@ -581,14 +670,14 @@ GType gdk_view_get_type(void) {
 
 
 
-static void gdk_view_bubble_changed(Bubble * b,GdkView * view) {
+static void monkey_view_bubble_changed(Bubble * b,MonkeyView * view) {
         gdouble x,y;
   
-        g_assert( IS_GDK_VIEW( view ) );
+        g_assert( IS_MONKEY_VIEW( view ) );
 
         bubble_get_position( b , &x , &y);
 
-        gdk_canvas_move_block( PRIVATE(view)->canvas,
+        monkey_canvas_move_block( PRIVATE(view)->canvas,
                                (Block *)g_hash_table_lookup( PRIVATE(view)->hash_map,
                                                              b ),
                                x,y
@@ -600,8 +689,8 @@ static void gdk_view_bubble_changed(Bubble * b,GdkView * view) {
 
 
 
-static void gdk_view_shooter_rotated(Shooter * shooter,
-				     GdkView * p) {
+static void monkey_view_shooter_rotated(Shooter * shooter,
+				     MonkeyView * p) {
 
 
         Block * b;
@@ -617,9 +706,9 @@ static void gdk_view_shooter_rotated(Shooter * shooter,
 
         shooter_get_position(shooter,&x,&y);
 
-        gdk_canvas_remove_block(PRIVATE(p)->canvas,
+        monkey_canvas_remove_block(PRIVATE(p)->canvas,
                                 PRIVATE(p)->current_shooter_block);
-        gdk_canvas_add_block( PRIVATE(p)->canvas,
+        monkey_canvas_add_block( PRIVATE(p)->canvas,
                               PRIVATE(p)->shooter_layer,
                               b,
                               x,
@@ -628,27 +717,27 @@ static void gdk_view_shooter_rotated(Shooter * shooter,
         PRIVATE(p)->current_shooter_block = b;
 }
 
-static void gdk_view_shooter_bubble_added(Shooter * s,
+static void monkey_view_shooter_bubble_added(Shooter * s,
 					  Bubble * b,
-					  GdkView * d) {
+					  MonkeyView * d) {
         gdouble x,y;
         Block * block;
-        g_assert(IS_GDK_VIEW(d) );
+        g_assert(IS_MONKEY_VIEW(d) );
 
 
         bubble_get_position(b,&x,&y);
-        block = gdk_view_create_bubble(d,b);
-        gdk_canvas_add_block(PRIVATE(d)->canvas,
+        block = monkey_view_create_bubble(d,b);
+        monkey_canvas_add_block(PRIVATE(d)->canvas,
                              PRIVATE(d)->bubble_layer , 
                              block,
                              x,y);
 
         g_hash_table_insert( PRIVATE(d)->hash_map, b, block );
 
-        g_signal_connect(G_OBJECT(b),"bubble-changed",G_CALLBACK( gdk_view_bubble_changed), d);
+        g_signal_connect(G_OBJECT(b),"bubble-changed",G_CALLBACK( monkey_view_bubble_changed), d);
 }
 
-static Block * gdk_view_create_bubble(GdkView * view,
+static Block * monkey_view_create_bubble(MonkeyView * view,
 				      Bubble * bubble ) {
 
 
@@ -666,7 +755,7 @@ static Block * gdk_view_create_bubble(GdkView * view,
         sprintf(path+str_length ,"0%d.svg",bubble_get_color(bubble)+1);
     
     
-        block = gdk_canvas_create_block_from_image(PRIVATE(view)->canvas,
+        block = monkey_canvas_create_block_from_image(PRIVATE(view)->canvas,
                                                    path,
                                                    33,33,
                                                    16,16);
@@ -675,21 +764,21 @@ static Block * gdk_view_create_bubble(GdkView * view,
 }
 
 
-static void gdk_view_board_down(Board * board,GdkView * gdk_view) {
+static void monkey_view_board_down(Board * board,MonkeyView * monkey_view) {
 
   
-        g_assert( IS_GDK_VIEW( gdk_view) );
+        g_assert( IS_MONKEY_VIEW( monkey_view) );
   
-        gdk_canvas_move_block( PRIVATE(gdk_view)->canvas,
-                               PRIVATE(gdk_view)->bback,
+        monkey_canvas_move_block( PRIVATE(monkey_view)->canvas,
+                               PRIVATE(monkey_view)->bback,
                                320,
                                board_get_y_min( board )-10);
 }
 
-static void gdk_view_bubbles_exploded(   Board * board,
+static void monkey_view_bubbles_exploded(   Board * board,
                                          GList * exploded,
                                          GList * fallen,
-                                         GdkView * gdk_view) {
+                                         MonkeyView * monkey_view) {
 
         GList * next;
         Bubble * bubble;
@@ -700,20 +789,20 @@ static void gdk_view_bubbles_exploded(   Board * board,
 
         while( next != NULL ) {
                 bubble = next->data;
-                gdk_view_add_explode_stars(gdk_view,bubble);
+                monkey_view_add_explode_stars(monkey_view,bubble);
 
-                block = (Block *)g_hash_table_lookup( PRIVATE(gdk_view)->hash_map,
+                block = (Block *)g_hash_table_lookup( PRIVATE(monkey_view)->hash_map,
                                                       bubble );			    
-                gdk_canvas_remove_block( PRIVATE(gdk_view)->canvas,
+                monkey_canvas_remove_block( PRIVATE(monkey_view)->canvas,
                                          block);
 
-                gdk_canvas_unref_block( PRIVATE(gdk_view)->canvas,
+                monkey_canvas_unref_block( PRIVATE(monkey_view)->canvas,
                                         block);
 
-                g_hash_table_remove(PRIVATE(gdk_view)->hash_map,
+                g_hash_table_remove(PRIVATE(monkey_view)->hash_map,
                                     bubble);
 
-                g_signal_handlers_disconnect_matched( G_OBJECT(bubble),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,gdk_view);
+                g_signal_handlers_disconnect_matched( G_OBJECT(bubble),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey_view);
                 next = g_list_next(next);
         }
 
@@ -721,33 +810,33 @@ static void gdk_view_bubbles_exploded(   Board * board,
         next = fallen;
         while( next != NULL ) {
                 bubble = next->data;
-                PRIVATE(gdk_view)->fallen_list = 
-                        g_list_append(     PRIVATE(gdk_view)->fallen_list,
-                                           (Block *)g_hash_table_lookup( PRIVATE(gdk_view)->hash_map,
+                PRIVATE(monkey_view)->fallen_list = 
+                        g_list_append(     PRIVATE(monkey_view)->fallen_list,
+                                           (Block *)g_hash_table_lookup( PRIVATE(monkey_view)->hash_map,
                                                                          bubble )
 
                                            );
 
 
-                g_hash_table_remove(PRIVATE(gdk_view)->hash_map,
+                g_hash_table_remove(PRIVATE(monkey_view)->hash_map,
                                     bubble);
 
 
-                g_signal_handlers_disconnect_matched( G_OBJECT(bubble),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,gdk_view);
+                g_signal_handlers_disconnect_matched( G_OBJECT(bubble),G_SIGNAL_MATCH_DATA,0,0,NULL,NULL,monkey_view);
                 next = g_list_next(next);
         }
 }
 
-void gdk_view_draw_lost(GdkView *d) {
-        g_assert(IS_GDK_VIEW(d));
+void monkey_view_draw_lost(MonkeyView *d) {
+        g_assert(IS_MONKEY_VIEW(d));
 
-        gdk_canvas_add_block( PRIVATE(d)->canvas,
+        monkey_canvas_add_block( PRIVATE(d)->canvas,
                               PRIVATE(d)->monkeys_layer,
                               PRIVATE(d)->lost,
                               320,240);
 }
 
-static void gdk_view_add_explode_stars(GdkView * d,Bubble * b) {
+static void monkey_view_add_explode_stars(MonkeyView * d,Bubble * b) {
         Star * star;
         int i;
         gdouble dx,dy;
@@ -757,16 +846,16 @@ static void gdk_view_add_explode_stars(GdkView * d,Bubble * b) {
                 bubble_get_position( b, &dx,&dy);
 
                 
-                star->vx = (rand()%400)/100 -2;
-                star->vy = -(rand()%200)/ 100;
+                star->vx = (rand()%400)/20 - 10;
+                star->vy = (rand()%200)/ 10 - 15 ;
                 //0.1;
 
-                star->block = gdk_canvas_create_block_from_image( PRIVATE(d)->canvas,
+                star->block = monkey_canvas_create_block_from_image( PRIVATE(d)->canvas,
                                                                   DATADIR"/monkey-bubble/gfx/star.svg",
                                                                   16,16,
                                                                   8,8);
 
-                gdk_canvas_add_block( PRIVATE(d)->canvas,
+                monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->star_layer,
                                       star->block,
                                       dx,dy);
@@ -777,11 +866,11 @@ static void gdk_view_add_explode_stars(GdkView * d,Bubble * b) {
         
 }
 
-static Block * gdk_view_create_gem(GdkView * d) {
+static Block * monkey_view_create_gem(MonkeyView * d) {
 
         Block * block;  
     
-        block = gdk_canvas_create_block_from_image(PRIVATE(d)->canvas,
+        block = monkey_canvas_create_block_from_image(PRIVATE(d)->canvas,
                                                    DATADIR"/monkey-bubble/gfx/banana.svg",
                                                    32,32,
                                                    8,8);
@@ -790,7 +879,7 @@ static Block * gdk_view_create_gem(GdkView * d) {
   
 }
 
-static void gdk_view_clear_gems(GdkView * d) {
+static void monkey_view_clear_gems(MonkeyView * d) {
         Block * block;
         GList * next;
 
@@ -800,10 +889,10 @@ static void gdk_view_clear_gems(GdkView * d) {
 		  
                 block = (Block *)next->data;
  
-                gdk_canvas_remove_block( PRIVATE(d)->canvas,
+                monkey_canvas_remove_block( PRIVATE(d)->canvas,
                                          block);
 		  
-                gdk_canvas_unref_block( PRIVATE(d)->canvas,
+                monkey_canvas_unref_block( PRIVATE(d)->canvas,
                                         block);
 
                 next = g_list_next(next);
@@ -814,16 +903,16 @@ static void gdk_view_clear_gems(GdkView * d) {
 
 }
 
-void gdk_view_set_gems_count(GdkView * d,int gems) {
+void monkey_view_set_gems_count(MonkeyView * d,int gems) {
         Block * block;
-        g_assert(IS_GDK_VIEW(d));
+        g_assert(IS_MONKEY_VIEW(d));
   
-        gdk_view_clear_gems(d);
+        monkey_view_clear_gems(d);
 
 
         while(gems > 0 ) {
-		block = gdk_view_create_gem(d);
-		gdk_canvas_add_block( PRIVATE(d)->canvas,
+		block = monkey_view_create_gem(d);
+		monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->shooter_layer,
                                       block,
                                       40,200+(gems*30));
@@ -835,7 +924,7 @@ void gdk_view_set_gems_count(GdkView * d,int gems) {
 }
 
 
-static Block * gdk_view_create_number(GdkView * view,int number) {
+static Block * monkey_view_create_number(MonkeyView * view,int number) {
         gchar path[4096];
         gint str_length;
         Block * block;
@@ -849,7 +938,7 @@ static Block * gdk_view_create_number(GdkView * view,int number) {
     
         sprintf(path+str_length ,"%d.svg",number);
 
-        block = gdk_canvas_create_block_from_image(PRIVATE(view)->canvas,
+        block = monkey_canvas_create_block_from_image(PRIVATE(view)->canvas,
                                                    path,
                                                    32,32,
                                                    16,16);
@@ -858,7 +947,7 @@ static Block * gdk_view_create_number(GdkView * view,int number) {
 
 }
 
-static void gdk_view_clear_score(GdkView * d) {
+static void monkey_view_clear_score(MonkeyView * d) {
 
         Block * block;
         GList * next;
@@ -869,10 +958,10 @@ static void gdk_view_clear_score(GdkView * d) {
 		  
                 block = (Block *)next->data;
  
-                gdk_canvas_remove_block( PRIVATE(d)->canvas,
+                monkey_canvas_remove_block( PRIVATE(d)->canvas,
                                          block);
 		  
-                gdk_canvas_unref_block( PRIVATE(d)->canvas,
+                monkey_canvas_unref_block( PRIVATE(d)->canvas,
                                         block);
 
                 next = g_list_next(next);
@@ -883,15 +972,15 @@ static void gdk_view_clear_score(GdkView * d) {
 }
 
 
-void gdk_view_set_score(GdkView * d,int score) {
+void monkey_view_set_score(MonkeyView * d,int score) {
 
         Block * block;
         int pre_score;
         int i = 0;
   
     
-        g_assert(IS_GDK_VIEW(d));
-        gdk_view_clear_score(d);
+        g_assert(IS_MONKEY_VIEW(d));
+        monkey_view_clear_score(d);
 
 
 
@@ -900,8 +989,8 @@ void gdk_view_set_score(GdkView * d,int score) {
                 while( score != 0 ) {
                         pre_score = score % 10 ;
 
-                        block = gdk_view_create_number(d,pre_score);  
-                        gdk_canvas_add_block( PRIVATE(d)->canvas,
+                        block = monkey_view_create_number(d,pre_score);  
+                        monkey_canvas_add_block( PRIVATE(d)->canvas,
                                               PRIVATE(d)->shooter_layer,
                                               block,
                                               450-i*20,415);
@@ -912,8 +1001,8 @@ void gdk_view_set_score(GdkView * d,int score) {
                         i++;
                 }
         } else {
-                block = gdk_view_create_number(d,0);  
-                gdk_canvas_add_block( PRIVATE(d)->canvas,
+                block = monkey_view_create_number(d,0);  
+                monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->shooter_layer,
                                       block,
                                       450,415);
@@ -925,7 +1014,7 @@ void gdk_view_set_score(GdkView * d,int score) {
 }
 
 
-static void gdk_view_clear_points(GdkView * d) {
+static void monkey_view_clear_points(MonkeyView * d) {
 
         Block * block;
         GList * next;
@@ -936,10 +1025,10 @@ static void gdk_view_clear_points(GdkView * d) {
 		  
                 block = (Block *)next->data;
  
-                gdk_canvas_remove_block( PRIVATE(d)->canvas,
+                monkey_canvas_remove_block( PRIVATE(d)->canvas,
                                          block);
 		  
-                gdk_canvas_unref_block( PRIVATE(d)->canvas,
+                monkey_canvas_unref_block( PRIVATE(d)->canvas,
                                         block);
 
                 next = g_list_next(next);
@@ -950,15 +1039,15 @@ static void gdk_view_clear_points(GdkView * d) {
 }
 
 
-void gdk_view_set_points(GdkView * d,int score) {
+void monkey_view_set_points(MonkeyView * d,int score) {
 
         Block * block;
         int pre_score;
         int i = 0;
   
     
-        g_assert(IS_GDK_VIEW(d));
-        gdk_view_clear_points(d);
+        g_assert(IS_MONKEY_VIEW(d));
+        monkey_view_clear_points(d);
 
 
 
@@ -967,11 +1056,11 @@ void gdk_view_set_points(GdkView * d,int score) {
                 while( score != 0 ) {
                         pre_score = score % 10 ;
 
-                        block = gdk_view_create_number(d,pre_score);  
-                        gdk_canvas_add_block( PRIVATE(d)->canvas,
+                        block = monkey_view_create_number(d,pre_score);  
+                        monkey_canvas_add_block( PRIVATE(d)->canvas,
                                               PRIVATE(d)->shooter_layer,
                                               block,
-                                              600-i*20,450);
+                                              580-i*20,40);
 
                         PRIVATE(d)->points_list = g_list_append( PRIVATE(d)->points_list,block);
 
@@ -979,11 +1068,11 @@ void gdk_view_set_points(GdkView * d,int score) {
                         i++;
                 }
         } else {
-                block = gdk_view_create_number(d,0);  
-                gdk_canvas_add_block( PRIVATE(d)->canvas,
+                block = monkey_view_create_number(d,0);  
+                monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->shooter_layer,
                                       block,
-                                      600,450);
+                                      580,40);
 
                 PRIVATE(d)->points_list = g_list_append( PRIVATE(d)->points_list,block);
 
@@ -993,11 +1082,11 @@ void gdk_view_set_points(GdkView * d,int score) {
 
 
 
-static Block * gdk_view_create_little_waiting(GdkView * d) {
+static Block * monkey_view_create_little_waiting(MonkeyView * d) {
 
         Block * block;  
     
-        block = gdk_canvas_create_block_from_image(PRIVATE(d)->canvas,
+        block = monkey_canvas_create_block_from_image(PRIVATE(d)->canvas,
                                                    DATADIR"/monkey-bubble/gfx/banana.svg",
                                                    32,32,
                                                    16,16);
@@ -1007,11 +1096,11 @@ static Block * gdk_view_create_little_waiting(GdkView * d) {
 }
 
 
-static Block * gdk_view_create_big_waiting(GdkView * d) {
+static Block * monkey_view_create_big_waiting(MonkeyView * d) {
 
         Block * block;  
     
-        block = gdk_canvas_create_block_from_image(PRIVATE(d)->canvas,
+        block = monkey_canvas_create_block_from_image(PRIVATE(d)->canvas,
                                                    DATADIR"/monkey-bubble/gfx/tomato.svg",
                                                    32,32,
                                                    16,16);
@@ -1020,7 +1109,7 @@ static Block * gdk_view_create_big_waiting(GdkView * d) {
   
 }
 
-static void gdk_view_clear_waiting(GdkView * d) {
+static void monkey_view_clear_waiting(MonkeyView * d) {
         Block * block;
         GList * next;
 
@@ -1030,10 +1119,10 @@ static void gdk_view_clear_waiting(GdkView * d) {
 		  
                 block = (Block *)next->data;
  
-                gdk_canvas_remove_block( PRIVATE(d)->canvas,
+                monkey_canvas_remove_block( PRIVATE(d)->canvas,
                                          block);
 		  
-                gdk_canvas_unref_block( PRIVATE(d)->canvas,
+                monkey_canvas_unref_block( PRIVATE(d)->canvas,
                                         block);
 
                 next = g_list_next(next);
@@ -1043,12 +1132,12 @@ static void gdk_view_clear_waiting(GdkView * d) {
         PRIVATE(d)->waiting_list = NULL;
 }
 
-void gdk_view_set_waiting_bubbles(GdkView * d,int bubbles) {
+void monkey_view_set_waiting_bubbles(MonkeyView * d,int bubbles) {
         Block * block;
         int i;
-        g_assert(IS_GDK_VIEW(d));
+        g_assert(IS_MONKEY_VIEW(d));
   
-        gdk_view_clear_waiting(d);
+        monkey_view_clear_waiting(d);
   
         i = 0;
         while(bubbles > 0 ) {
@@ -1056,15 +1145,15 @@ void gdk_view_set_waiting_bubbles(GdkView * d,int bubbles) {
 
                         bubbles = bubbles - 5;
 
-                        block = gdk_view_create_big_waiting(d);
+                        block = monkey_view_create_big_waiting(d);
 		} else {
                         bubbles--;
 
-                        block = gdk_view_create_little_waiting(d);
+                        block = monkey_view_create_little_waiting(d);
 		}
 
 
-		gdk_canvas_add_block( PRIVATE(d)->canvas,
+		monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->bubble_layer,
                                       block,
                                       185,400-(i*25));
@@ -1078,20 +1167,20 @@ void gdk_view_set_waiting_bubbles(GdkView * d,int bubbles) {
 }
 
 
-void gdk_view_draw_win(GdkView *d) {
-        g_assert(IS_GDK_VIEW(d));
-        gdk_canvas_add_block( PRIVATE(d)->canvas,
+void monkey_view_draw_win(MonkeyView *d) {
+        g_assert(IS_MONKEY_VIEW(d));
+        monkey_canvas_add_block( PRIVATE(d)->canvas,
                               PRIVATE(d)->monkeys_layer,
                               PRIVATE(d)->win,
                               320,240);
 }
 
 
-static void gdk_view_bubbles_inserted(
+static void monkey_view_bubbles_inserted(
 				      Board * board,
 				      Bubble ** bubbles,
 				      int count,
-				      GdkView *d) {
+				      MonkeyView *d) {
 
         int i;
         gdouble x,y;
@@ -1102,25 +1191,25 @@ static void gdk_view_bubbles_inserted(
                 b = bubbles[i];
                 bubble_get_position(b,&x,&y);
       
-                block = gdk_view_create_bubble(d,
+                block = monkey_view_create_bubble(d,
                                                b);
       
                 g_hash_table_insert( PRIVATE(d)->hash_map, 
                                      b, 
                                      block );
-                gdk_canvas_add_block( PRIVATE(d)->canvas,
+                monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->bubble_layer,
                                       block,
                                       x,y);
 
-                g_signal_connect( G_OBJECT(b),"bubble-changed",G_CALLBACK(gdk_view_bubble_changed),d);
+                g_signal_connect( G_OBJECT(b),"bubble-changed",G_CALLBACK(monkey_view_bubble_changed),d);
       
         }
 }
 
-static void gdk_view_bubbles_added(Board * board,
+static void monkey_view_bubbles_added(Board * board,
 				   GList * bubbles,
-				   GdkView *d) {
+				   MonkeyView *d) {
     
         gdouble x,y;
         Block * block;
@@ -1134,10 +1223,10 @@ static void gdk_view_bubbles_added(Board * board,
                 b = (Bubble *) next->data;
 
                 bubble_get_position(b,&x,&y);
-                block = gdk_view_create_bubble(d,
+                block = monkey_view_create_bubble(d,
                                                b);
     
-                gdk_canvas_add_block( PRIVATE(d)->canvas,
+                monkey_canvas_add_block( PRIVATE(d)->canvas,
                                       PRIVATE(d)->bubble_layer,
                                       block,
                                       x,480);
@@ -1156,9 +1245,9 @@ static void gdk_view_bubbles_added(Board * board,
 
 
 
-static void gdk_view_bubbles_waiting_changed(Monkey * monkey,
+static void monkey_view_bubbles_waiting_changed(Monkey * monkey,
 					     int bubbles_count,
-					     GdkView * view) {
+					     MonkeyView * view) {
 
-        gdk_view_set_waiting_bubbles(view,bubbles_count);
+        monkey_view_set_waiting_bubbles(view,bubbles_count);
 }

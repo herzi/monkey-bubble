@@ -163,7 +163,7 @@ gboolean bubble_collide_bubble(const Bubble * bubble ,
   
   distance = (x-cx)*(x-cx ) + ( y-cy)*(y-cy);
 
-  if(  distance < (32*0.87)*(32*0.87) ) {
+  if(  distance < (32*0.80)*(32*0.80) ) {
     return TRUE;
   } else {
     return FALSE;

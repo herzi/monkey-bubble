@@ -14,7 +14,7 @@
 
 GETTEXT_PACKAGE = monkey-bubble
 PACKAGE = monkey-bubble
-VERSION = 0.1.7
+VERSION = 0.1.9
 
 SHELL = /bin/sh
 

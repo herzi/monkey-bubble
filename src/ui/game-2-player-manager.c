@@ -28,7 +28,7 @@
 static GObjectClass* parent_class = NULL;
 
 struct Game2PlayerManagerPrivate {
-	 GdkCanvas * canvas;
+	 MonkeyCanvas * canvas;
 	 GtkWidget * window;
 	 Game2Player * current_game;
 	 int score_player_1;
@@ -99,7 +99,7 @@ GType game_2_player_manager_get_type(void) {
 }
 
 
-Game2PlayerManager * game_2_player_manager_new(GtkWidget * window,GdkCanvas * canvas) {
+Game2PlayerManager * game_2_player_manager_new(GtkWidget * window,MonkeyCanvas * canvas) {
   Game2PlayerManager * game_2_player_manager;
   game_2_player_manager = GAME_2_PLAYER_MANAGER (g_object_new (TYPE_GAME_2_PLAYER_MANAGER, NULL));
 
@@ -204,7 +204,7 @@ static void game_2_player_manager_restart(Game2PlayerManager * manager) {
 
 	 g_signal_connect( G_OBJECT(game), "state-changed",
 			   G_CALLBACK(game_2_player_manager_state_changed),manager);
-	 gdk_canvas_paint( PRIVATE(manager)->canvas);
+	 monkey_canvas_paint( PRIVATE(manager)->canvas);
 	 
 }
 
@@ -225,5 +225,5 @@ void game_2_player_manager_stop(GameManager * g) {
   g_object_unref( PRIVATE(manager)->current_game);
   
   ui_main_set_game(ui_main,NULL);
-  gdk_canvas_paint( PRIVATE(manager)->canvas);
+  monkey_canvas_paint( PRIVATE(manager)->canvas);
 }

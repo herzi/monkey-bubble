@@ -19,6 +19,7 @@
 #include "board.h"
 #include "point.h"
 #include "monkey-marshal.h"
+#include <math.h>
 
 #define PRIVATE(board) (board->private)
 #define QUADRANT_INITIAL  0
@@ -370,14 +371,14 @@ static void board_get_cell(Board * board,
 			   Point * point) {
 
   point->y = 
-    (gint) ( y - PRIVATE(board)->y_center ) / ROW_SIZE;
+    (gint) floor (( y - PRIVATE(board)->y_center ) / ROW_SIZE);
     
 
-  point->x = 
+  point->x = floor(
     ( 
      x - PRIVATE(board)->x_center 
-     - BUBBLE_RADIUS*(  ( 1 + point->y + PRIVATE(board)->odd  ) %2 ))
-    / BUBBLE_SIZE;
+     - BUBBLE_RADIUS*(  ( 1+ point->y + PRIVATE(board)->odd  ) %2 ))
+    / BUBBLE_SIZE);
   
 }
 

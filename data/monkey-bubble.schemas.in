@@ -3,13 +3,13 @@
   <schemalist>
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_1_left</key>
-      <applyto>/apps/monkey-bubble-game/player_1_left</applyto>
+      <key>/schemas/apps/monkey-bubble/player_1_left</key>
+      <applyto>/apps/monkey-bubble/player_1_left</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>s</default>
+        <default>Left</default>
         <short>left key for player one</short>
         <long>left key for player one</long>
       </locale>
@@ -17,13 +17,13 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_1_right</key>
-      <applyto>/apps/monkey-bubble-game/player_1_right</applyto>
+      <key>/schemas/apps/monkey-bubble/player_1_right</key>
+      <applyto>/apps/monkey-bubble/player_1_right</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>f</default>
+        <default>Right</default>
         <short>right key for player one</short>
         <long>right key for player one</long>
       </locale>
@@ -32,13 +32,13 @@
 
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_1_shoot</key>
-      <applyto>/apps/monkey-bubble-game/player_1_shoot</applyto>
+      <key>/schemas/apps/monkey-bubble/player_1_shoot</key>
+      <applyto>/apps/monkey-bubble/player_1_shoot</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>d</default>
+        <default>Up</default>
         <short>shoot key for player one</short>
         <long>shoot key for player one</long>
       </locale>
@@ -47,13 +47,13 @@
 
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_2_left</key>
-      <applyto>/apps/monkey-bubble-game/player_2_left</applyto>
+      <key>/schemas/apps/monkey-bubble/player_2_left</key>
+      <applyto>/apps/monkey-bubble/player_2_left</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>j</default>
+        <default>s</default>
         <short>left key for player two</short>
         <long>left key for player two</long>
       </locale>
@@ -61,13 +61,13 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_2_right</key>
-      <applyto>/apps/monkey-bubble-game/player_2_right</applyto>
+      <key>/schemas/apps/monkey-bubble/player_2_right</key>
+      <applyto>/apps/monkey-bubble/player_2_right</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>l</default>
+        <default>f</default>
         <short>right key for player two</short>
         <long>right key for player two</long>
       </locale>
@@ -76,18 +76,97 @@
 
 
     <schema>
-      <key>/schemas/apps/monkey-bubble-game/player_2_shoot</key>
-      <applyto>/apps/monkey-bubble-game/player_2_shoot</applyto>
+      <key>/schemas/apps/monkey-bubble/player_2_shoot</key>
+      <applyto>/apps/monkey-bubble/player_2_shoot</applyto>
 
-      <owner>monkey-bubble-game</owner>
+      <owner>monkey-bubble</owner>
       <type>string</type>
       <locale name="C">
-        <default>k</default>
+        <default>d</default>
         <short>shoot key for player two</short>
         <long>shoot key for player two</long>
       </locale>
 
     </schema>
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble/pause_game</key>
+      <applyto>/apps/monkey-bubble/pause_game</applyto>
+
+      <owner>monkey-bubble</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>Pause</default>
+        <short>Pause the game</short>
+        <long>Pause the game</long>
+      </locale>
+
+    </schema>
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble/stop_game</key>
+      <applyto>/apps/monkey-bubble/stop_game</applyto>
+
+      <owner>monkey-bubble</owner>
+      <type>string</type>
+      <locale name="C">
+        <default></default>
+        <short>Stop the game</short>
+        <long>Stop the game</long>
+      </locale>
+
+    </schema>
+
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble/quit_game</key>
+      <applyto>/apps/monkey-bubble/quit_game</applyto>
+
+      <owner>monkey-bubble</owner>
+      <type>string</type>
+      <locale name="C">
+        <default></default>
+        <short>Quit the game</short>
+        <long>Quit the game</long>
+      </locale>
+
+    </schema>
+
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble/new_1_player_game</key>
+      <applyto>/apps/monkey-bubble/new_1_player_game</applyto>
+
+      <owner>monkey-bubble</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>F1</default>
+        <short>1 player game</short>
+        <long>1 player game</long>
+      </locale>
+
+    </schema>
+
+
+
+    <schema>
+      <key>/schemas/apps/monkey-bubble/new_2_players_game</key>
+      <applyto>/apps/monkey-bubble/new_2_players_game</applyto>
+
+      <owner>monkey-bubble</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>F2</default>
+        <short>2 players game</short>
+        <long>2 players game</long>
+      </locale>
+
+    </schema>
+
 
   </schemalist>
   

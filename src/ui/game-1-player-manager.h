@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 #include "game-manager.h"
-#include "gdk-canvas.h"
+#include "monkey-canvas.h"
 #include "monkey.h"
 G_BEGIN_DECLS
 
@@ -50,7 +50,7 @@ typedef struct {
 
 GType game_1_player_manager_get_type(void);
 
-Game1PlayerManager * game_1_player_manager_new(GtkWidget * window,GdkCanvas * canvas);
+Game1PlayerManager * game_1_player_manager_new(GtkWidget * window,MonkeyCanvas * canvas);
 void game_1_player_manager_start(GameManager * g);
 void game_1_player_manager_stop(GameManager * g);
 

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY app "Monkey Bubble">  
+  <!ENTITY appversion "0.1.7">
+  <!ENTITY manrevision "0.1">
+  <!ENTITY date "January 2004">
+]>
+<!-- (Do not remove this comment block.)
+  Maintained by the GNOME Documentation Project
+  Template version: 2.0 beta
+  Template last modified Jan 2, 2002 
+    
+  -->
+<article id="index" lang="en"> 
+  <articleinfo> 
+    <title>Manuel &app; V&manrevision;</title> 
+    <copyright> 
+      <year>2004</year> 
+      <holder>Thomas Cataldo</holder> 
+    </copyright> 
+    <publisher> 
+      <publishername>Projet de documentation GNOME</publishername> 
+    </publisher> 
+    <authorgroup> 
+      <author> 
+	<firstname>Thomas</firstname> 
+	<surname>Cataldo</surname> 
+	<affiliation> 
+	  <orgname>Projet de documentation GNOME</orgname> 
+	</affiliation> 
+      </author> 
+    </authorgroup> 
+
+    <revhistory> 
+      <revision> 
+	<revnumber>Manuel &app; V&manrevision;</revnumber> 
+	<date>&date;</date> 
+	<revdescription> 
+	  <para role="author">
+	    Thomas Cataldo
+	  </para>
+	  <para role="publisher">
+	    Projet de documentation GNOME
+	  </para>
+	</revdescription> 
+      </revision> 
+    </revhistory> 
+
+    <releaseinfo>Ce manuel d&eacute;crit la version &appversion; de &app;.
+    </releaseinfo> 
+    <legalnotice> 
+      <title>Votre avis</title> 
+      <para>Pour signaler un probl&egrave;me ou faire une suggestion concernant l'application &app; ou le pr&eacute;sent manuel, proc&eacute;dez comme indiqu&eacute; &agrave; la <ulink url="ghelp:gnome-feedback" type="help">GNOME Feedback Page</ulink>. </para>
+    </legalnotice> 
+  </articleinfo> 
+
+  <indexterm> 
+    <primary>&app;</primary> 
+  </indexterm> 
+  <indexterm> 
+    <primary>jeu bulle</primary> 
+  </indexterm> 
+
+  <sect1 id="monkey-bubble-introduction"> 
+    <title>Introduction</title> 
+    <para>
+      <application>&app;</application> est un jeu d'arcade avec les objectifs suivants :
+    </para>
+
+    <variablelist> 
+      <varlistentry> 
+	<term>Nettoyer la jungle de toutes ces horribles bulles</term> 
+	<listitem> 
+	  <para>
+	    Pour nettoyer un niveau, vous devez accrocher au moins 3
+	    bulles de la même couleur à l'aide du cannon à bulle.
+	  </para>
+	  <para>
+	    Lorsque 3 (ou plus) bulles de la même couleur sont
+	    accroch&eacute;s en haut de l'aire de jeu, elles explosent.
+	  </para>
+	  <para>
+	    Pour passer au niveau suivant vous devez nettoyer toutes
+	    les bulles de l'aire de jeu.
+	  </para>
+	</listitem> 
+      </varlistentry> 
+    </variablelist> 
+  </sect1> 
+
+  <sect1 id="monkey-bubble-get-started"> 
+    <title>Introduction</title> 
+    <para>
+      Les sections suivantes expliquent comment utiliser
+      <application>&app;</application>. 
+    </para>
+    <sect2 id="gnome-terminal-to-start"> 
+      <title>D&eacute;marrage de &app;</title> 
+      <para>
+	Vous pouvez d&eacute;marrer <application>&app;</application> en
+	recourant &agrave; l'une des m&eacute;thodes suivantes :
+      </para>
+      <variablelist> 
+	<varlistentry> 
+	  <term>Menu Applications</term> 
+	  <listitem>
+	    <para>
+	      S&eacute;lectionnez
+	      <menuchoice>
+		<guimenu>Jeux</guimenu>
+		<guimenuitem>Monkey Bubble</guimenuitem>
+	      </menuchoice>.</para>
+	  </listitem>
+	</varlistentry> 
+	<varlistentry> 
+	  <term>Ligne de commande</term> 
+	  <listitem> 
+	    <para>
+	      Executez la commande suivante : <command>monkey-bubble</command>
+	    </para>
+	  </listitem> 
+	</varlistentry> 
+      </variablelist> 
+    </sect2> 
+  </sect1> 
+</article> 

@@ -17,7 +17,7 @@ schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
 
 install-data-local:
 	if test -z "$(DESTDIR)" ; then \
-		for p in $(schema_DATA) ; do \
+		for p in $(schemas_DATA) ; do \
 			GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$$p; \
 		done \
 	fi

@@ -3,17 +3,11 @@ NULL=
 
 
 INCLUDES = \
-	$(LIBMONKEYUTIL_LA_CFLAGS) \
+	$(LIBMONKEYUTIL_A_CFLAGS) \
 	-Wall -Werror -g
 
 
-lib_LTLIBRARIES = libmonkeyutil.la
+noinst_LIBRARIES = libmonkeyutil.a
 
-libmonkeyutil_la_SOURCES = \
+libmonkeyutil_a_SOURCES = \
 	clock.c clock.h
-
-libmonkeyutil_la_LDFLAGS =  
-
-libmonkeyutil_la_LIBADD =  \
-	$(LIBMONKEYUTIL_LA_LIBS)
-

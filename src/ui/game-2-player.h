@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include "game.h"
 #include "monkey.h"
-#include "gdk-canvas.h"
+#include "monkey-canvas.h"
 G_BEGIN_DECLS
 
 #define PLAYER_1 1
@@ -52,7 +52,7 @@ typedef struct {
 
 GType game_2_player_get_type(void);
 
-Game2Player * game_2_player_new(GtkWidget * window,GdkCanvas * canvas,int score_left,int score_right);
+Game2Player * game_2_player_new(GtkWidget * window,MonkeyCanvas * canvas,int score_left,int score_right);
 
 int game_2_player_get_winner(Game2Player * g);
 

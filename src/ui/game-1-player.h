@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 #include "game.h"
-#include "gdk-canvas.h"
+#include "monkey-canvas.h"
 #include "monkey.h"
 G_BEGIN_DECLS
 
@@ -50,7 +50,7 @@ typedef struct {
 
 GType game_1_player_get_type(void);
 
-Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas,int level,gint score);
+Game1Player * game_1_player_new(GtkWidget * window,MonkeyCanvas * canvas,int level,gint score);
 
 gint game_1_player_get_score(Game1Player * g);
 gboolean game_1_player_is_lost(Game1Player * g);

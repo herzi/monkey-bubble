@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: monkey-bubble\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-22 16:56+0100\n"
+"POT-Creation-Date: 2004-01-19 11:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Laurent Belmonte <lolo3d@tuxfamily.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,17 +16,14 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: monkey-bubble.desktop.in.h:1
-msgid "Bubbles"
-msgstr "Bubbles"
-
-#: monkey-bubble.desktop.in.h:2
-msgid "Monkey Bubbles Arcade Game"
-msgstr "Monkey Bubbles"
-
-#: data/monkey-bubble.glade.h:1
+#: monkey-bubble.desktop.in.h:1 data/monkey-bubble.glade.h:1
 msgid "Monkey Bubble"
 msgstr "Monkey Bubble"
+
+#: monkey-bubble.desktop.in.h:2
+#, fuzzy
+msgid "Monkey Bubble Arcade Game"
+msgstr "Monkey Bubbles"
 
 #: data/monkey-bubble.glade.h:2
 msgid "New 1 player"
@@ -36,22 +33,22 @@ msgstr "1 joueur"
 msgid "New 2 players"
 msgstr "2 joueurs"
 
-#: data/monkey-bubble.glade.h:4
+#: data/monkey-bubble.glade.h:4 src/ui/ui-main.c:382 src/ui/ui-main.c:512
 msgid "Pause game"
 msgstr "Pause"
 
 #: data/monkey-bubble.glade.h:5
-msgid "Resume game"
-msgstr "Reprendre"
-
-#: data/monkey-bubble.glade.h:6
 msgid "Stop game"
 msgstr "Arreter"
 
-#: data/monkey-bubble.glade.h:7
+#: data/monkey-bubble.glade.h:6
 #, fuzzy
 msgid "_About"
 msgstr "A _propos"
+
+#: data/monkey-bubble.glade.h:7
+msgid "_Contents"
+msgstr ""
 
 #: data/monkey-bubble.glade.h:8
 msgid "_Game"
@@ -66,96 +63,147 @@ msgid "_Settings"
 msgstr ""
 
 #: data/keybinding.glade.h:1
-msgid "    Aim Left:"
+msgid "Keyboard Shortcuts"
 msgstr ""
 
 #: data/keybinding.glade.h:2
-msgid "    Aim Right:"
-msgstr ""
-
-#: data/keybinding.glade.h:3
-msgid "    Launch Bubble:"
-msgstr ""
-
-#: data/keybinding.glade.h:4
-msgid "*"
-msgstr ""
-
-#: data/keybinding.glade.h:5
-msgid "<span weight=\"bold\">Player 1 Controls</span>"
-msgstr ""
-
-#: data/keybinding.glade.h:6
-msgid "<span weight=\"bold\">Player 2 Controls</span>"
-msgstr ""
-
-#: data/keybinding.glade.h:7
-msgid "Configure Controls"
+msgid "_Shortcut Keys:"
 msgstr ""
 
 #: data/monkey-bubble.schemas.in.h:1
+#, fuzzy
+msgid "1 player game"
+msgstr "1 joueur"
+
+#: data/monkey-bubble.schemas.in.h:2
+#, fuzzy
+msgid "2 players game"
+msgstr "2 joueurs"
+
+#: data/monkey-bubble.schemas.in.h:3
+msgid "F1"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:4
+msgid "F2"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:5
+msgid "Left"
+msgstr "Gauche"
+
+#: data/monkey-bubble.schemas.in.h:6
+#, fuzzy
+msgid "Pause"
+msgstr "Pause"
+
+#: data/monkey-bubble.schemas.in.h:7
+#, fuzzy
+msgid "Pause the game"
+msgstr "Pause"
+
+#: data/monkey-bubble.schemas.in.h:8
+#, fuzzy
+msgid "Quit the game"
+msgstr "Pause"
+
+#: data/monkey-bubble.schemas.in.h:9
+msgid "Right"
+msgstr "Droite"
+
+#: data/monkey-bubble.schemas.in.h:10
+#, fuzzy
+msgid "Stop the game"
+msgstr "Arreter"
+
+#: data/monkey-bubble.schemas.in.h:11
+msgid "Up"
+msgstr ""
+
+#: data/monkey-bubble.schemas.in.h:12
 msgid "d"
 msgstr "d"
 
-#: data/monkey-bubble.schemas.in.h:2
+#: data/monkey-bubble.schemas.in.h:13
 msgid "f"
 msgstr "f"
 
-#: data/monkey-bubble.schemas.in.h:3
-msgid "j"
-msgstr "j"
-
-#: data/monkey-bubble.schemas.in.h:4
-msgid "k"
-msgstr "k"
-
-#: data/monkey-bubble.schemas.in.h:5
-msgid "l"
-msgstr "l"
-
-#: data/monkey-bubble.schemas.in.h:6
+#: data/monkey-bubble.schemas.in.h:14
 msgid "left key for player one"
 msgstr "gauche (joueur 1)"
 
-#: data/monkey-bubble.schemas.in.h:7
+#: data/monkey-bubble.schemas.in.h:15
 msgid "left key for player two"
 msgstr "gauche (joueur 2)"
 
-#: data/monkey-bubble.schemas.in.h:8
+#: data/monkey-bubble.schemas.in.h:16
 msgid "right key for player one"
 msgstr "droite (joueur 1)"
 
-#: data/monkey-bubble.schemas.in.h:9
+#: data/monkey-bubble.schemas.in.h:17
 msgid "right key for player two"
 msgstr "droite (joueur 2)"
 
-#: data/monkey-bubble.schemas.in.h:10
+#: data/monkey-bubble.schemas.in.h:18
 msgid "s"
 msgstr "s"
 
-#: data/monkey-bubble.schemas.in.h:11
+#: data/monkey-bubble.schemas.in.h:19
 msgid "shoot key for player one"
 msgstr "tir (joueur 1)"
 
-#: data/monkey-bubble.schemas.in.h:12
+#: data/monkey-bubble.schemas.in.h:20
 msgid "shoot key for player two"
 msgstr "tir (joueur 2)"
 
-#: src/ui/ui-main.c:566
+#: src/ui/ui-main.c:505
+msgid "Resume game"
+msgstr "Reprendre"
+
+#: src/ui/ui-main.c:551
 msgid "translator_credits"
 msgstr "Crdits"
 
-#~ msgid "Left"
-#~ msgstr "Gauche"
+#: src/ui/ui-main.c:580
+#, c-format
+msgid "There was an error displaying help: %s"
+msgstr ""
+
+#~ msgid "    Aim Left:"
+#~ msgstr "    Gauche:"
+
+#~ msgid "    Aim Right:"
+#~ msgstr "    Droite:"
+
+#~ msgid "    Launch Bubble:"
+#~ msgstr "    Tir:"
+
+#~ msgid "<span weight=\"bold\">Player 1 Controls</span>"
+#~ msgstr "<span weight=\"bold\">Touches joueur 1</span>"
+
+#~ msgid "<span weight=\"bold\">Player 2 Controls</span>"
+#~ msgstr "<span weight=\"bold\">Touches joueur 2</span>"
+
+#~ msgid "Configure Controls"
+#~ msgstr "Configuration clavier"
+
+#~ msgid "j"
+#~ msgstr "j"
+
+#~ msgid "k"
+#~ msgstr "k"
+
+#~ msgid "l"
+#~ msgstr "l"
+
+#~ msgid "Bubbles"
+#~ msgstr "Bubbles"
 
 #~ msgid "Player 1"
 #~ msgstr "Joueur 1"
 
 #~ msgid "Player 2"
 #~ msgstr "Joueur 2"
-
-#~ msgid "Right"
-#~ msgstr "Droite"
 
 #~ msgid "Shoot"
 #~ msgstr "Tir"

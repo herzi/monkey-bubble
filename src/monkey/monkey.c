@@ -29,6 +29,9 @@ static GObjectClass* parent_class = NULL;
 
 enum {
   GAME_LOST,
+  SHOOTER_UP,
+  SHOOTER_DOWN,
+  SHOOTER_CENTER,
   BUBBLES_EXPLODED,
   BUBBLE_SHOT,
   BUBBLE_STICKED,
@@ -104,6 +107,38 @@ static void monkey_class_init (MonkeyClass *klass) {
 					     G_TYPE_NONE,
 				      0,NULL);
 
+
+    signals[SHOOTER_UP]= g_signal_new ("up",
+				      G_TYPE_FROM_CLASS (klass),
+				      G_SIGNAL_RUN_FIRST |
+				      G_SIGNAL_NO_RECURSE,
+				      G_STRUCT_OFFSET (MonkeyClass, shooter_up),
+				      NULL, NULL,
+				      g_cclosure_marshal_VOID__VOID,
+				      G_TYPE_NONE,
+				      0,NULL);
+
+
+    signals[SHOOTER_DOWN]= g_signal_new ("down",
+				      G_TYPE_FROM_CLASS (klass),
+				      G_SIGNAL_RUN_FIRST |
+				      G_SIGNAL_NO_RECURSE,
+				      G_STRUCT_OFFSET (MonkeyClass, shooter_down),
+				      NULL, NULL,
+				      g_cclosure_marshal_VOID__VOID,
+				      G_TYPE_NONE,
+				      0,NULL);
+
+
+    signals[SHOOTER_CENTER]= g_signal_new ("center",
+				      G_TYPE_FROM_CLASS (klass),
+				      G_SIGNAL_RUN_FIRST |
+				      G_SIGNAL_NO_RECURSE,
+				      G_STRUCT_OFFSET (MonkeyClass, shooter_center),
+				      NULL, NULL,
+				      g_cclosure_marshal_VOID__VOID,
+				      G_TYPE_NONE,
+				      0,NULL);
 
     signals[BUBBLES_EXPLODED]= g_signal_new ("bubbles-exploded",
 					     G_TYPE_FROM_CLASS (klass),
@@ -340,6 +375,18 @@ static void monkey_update_shooter(Monkey * monkey,gint time) {
     PRIVATE(monkey)->left_pressed = time;
     
   }
+
+  if( PRIVATE(monkey)->left_pressed!= 0 ) {
+    g_signal_emit( G_OBJECT(monkey),signals[SHOOTER_UP],0);
+
+  } else if( PRIVATE(monkey)->right_pressed != 0 ) {
+    g_signal_emit( G_OBJECT(monkey),signals[SHOOTER_DOWN],0);
+
+  } else {
+    g_signal_emit( G_OBJECT(monkey),signals[SHOOTER_CENTER],0);
+
+  }
+
 
 
   if( ( PRIVATE(monkey)->left_pressed_time != 0) ||

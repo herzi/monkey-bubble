@@ -16,13 +16,15 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#include <gtk/gtk.h>
 #include <stdlib.h>
+#include <gtk/gtk.h>
+#include <gconf/gconf-client.h>
 #include "game-1-player.h"
 #include "game.h"
-#include "gdk-view.h"
-#include <gconf/gconf-client.h>
+#include "monkey-view.h"
 #include "clock.h"
+#include "keyboard-properties.h"
+
 #define FRAME_DELAY 10
 
 #define PRIVATE(game_1_player) (game_1_player->private)
@@ -31,9 +33,9 @@
 static GObjectClass* parent_class = NULL;
 
 struct Game1PlayerPrivate {
-    GdkCanvas * canvas;
+    MonkeyCanvas * canvas;
     GtkWidget * window;
-    GdkView * display;
+    MonkeyView * display;
     Monkey * monkey;
     guint timeout_id;
     GameState state;
@@ -221,7 +223,7 @@ game_1_player_config_notify (GConfClient *client,
 }
 
 
-Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level,gint score) {
+Game1Player * game_1_player_new(GtkWidget * window,MonkeyCanvas * canvas, int level,gint score) {
   Game1Player * game;
 
 
@@ -230,21 +232,21 @@ Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level
 
   PRIVATE(game)->gconf_client = gconf_client_get_default ();
 
-  gconf_client_add_dir (PRIVATE(game)->gconf_client, "/apps/monkey-bubble-game",
+  gconf_client_add_dir (PRIVATE(game)->gconf_client, CONF_KEY_PREFIX,
                         GCONF_CLIENT_PRELOAD_NONE, NULL);
 
-  gdk_canvas_clear(canvas);
+  monkey_canvas_clear(canvas);
   PRIVATE(game)->monkey = 
     monkey_new_level_from_file(DATADIR"/monkey-bubble/levels",
 			       level);
   PRIVATE(game)->display = 
-    gdk_view_new(canvas, 
+    monkey_view_new(canvas, 
 		 PRIVATE(game)->monkey,0,0,TRUE);
   
   PRIVATE(game)->canvas = canvas;
   PRIVATE(game)->window = window;
   
-  gdk_view_set_score(PRIVATE(game)->display,level+1);
+  monkey_view_set_score(PRIVATE(game)->display,level+1);
   g_signal_connect( G_OBJECT( window) ,"key-press-event",
 		    GTK_SIGNAL_FUNC (game_1_player_key_pressed),game);
   
@@ -254,13 +256,13 @@ Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level
   
 
   PRIVATE(game)->paused_block = 
-    gdk_canvas_create_block_from_image(canvas,
+    monkey_canvas_create_block_from_image(canvas,
 				       DATADIR"/monkey-bubble/gfx/pause.svg",
 				       200,200,
 				       100,100);
 
   PRIVATE(game)->paused_layer =
-    gdk_canvas_append_layer(canvas,0,0);
+    monkey_canvas_append_layer(canvas,0,0);
 
 
   PRIVATE(game)->clock = clock_new();
@@ -274,7 +276,7 @@ Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level
   
   PRIVATE(game)->score = score;
 
-  gdk_view_set_points( PRIVATE(game)->display,score);
+  monkey_view_set_points( PRIVATE(game)->display,score);
 
   g_signal_connect( G_OBJECT( PRIVATE(game)->monkey),
 		    "bubble-sticked",
@@ -306,7 +308,7 @@ Game1Player * game_1_player_new(GtkWidget * window,GdkCanvas * canvas, int level
 
   PRIVATE(game)->notify_id =
       gconf_client_notify_add( PRIVATE(game)->gconf_client,
-			       "/apps/monkey-bubble-game",
+			       CONF_KEY_PREFIX,
 			       game_1_player_config_notify,
 			       game,NULL,NULL);
   return game;
@@ -316,7 +318,7 @@ static void game_1_player_conf_keyboard(Game1Player * game) {
     gchar * str;
     guint accel;
     GdkModifierType modifier;
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_left",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_left",NULL);
 
     if( str != NULL) {
 	
@@ -333,7 +335,7 @@ static void game_1_player_conf_keyboard(Game1Player * game) {
 	
     }
 
-    str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_right",NULL);
+    str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_right",NULL);
 
     if( str != NULL) {
 	
@@ -350,7 +352,7 @@ static void game_1_player_conf_keyboard(Game1Player * game) {
 	
     }
 
- str = gconf_client_get_string(PRIVATE(game)->gconf_client,"/apps/monkey-bubble-game/player_1_shoot",NULL);
+ str = gconf_client_get_string(PRIVATE(game)->gconf_client,CONF_KEY_PREFIX"/player_1_shoot",NULL);
 
     if( str != NULL) {
 	
@@ -447,10 +449,10 @@ static gint game_1_player_timeout (gpointer data)
     
     
   } 
-    gdk_view_update( PRIVATE(game)->display,
+    monkey_view_update( PRIVATE(game)->display,
 		    time);
 
-    gdk_canvas_paint(PRIVATE(game)->canvas);
+    monkey_canvas_paint(PRIVATE(game)->canvas);
  
   return TRUE;
 }
@@ -493,7 +495,7 @@ static void game_1_player_stop(Game * game) {
 
   PRIVATE(g)->state = GAME_STOPPED;
 
-  time_paused(g);
+  //  time_paused(g);
   game_1_player_fire_changed(g);
 
 }
@@ -523,7 +525,7 @@ static void game_1_player_pause(Game * game,gboolean pause) {
     PRIVATE(g)->state = GAME_PAUSED;
     time_paused( g);
 
-    gdk_canvas_add_block(PRIVATE(g)->canvas,
+    monkey_canvas_add_block(PRIVATE(g)->canvas,
 			 PRIVATE(g)->paused_layer,
 			 PRIVATE(g)->paused_block,
 			 320,240);
@@ -532,7 +534,7 @@ static void game_1_player_pause(Game * game,gboolean pause) {
   } else {
     PRIVATE(g)->state = GAME_PLAYING;
     time_unpaused( g);
-    gdk_canvas_remove_block(PRIVATE(g)->canvas,
+    monkey_canvas_remove_block(PRIVATE(g)->canvas,
 			    PRIVATE(g)->paused_block);    
 
 	 game_1_player_fire_changed(g);
@@ -555,7 +557,7 @@ static void game_1_player_game_lost(Monkey * monkey,Game1Player * g) {
 
   PRIVATE(g)->lost = TRUE;
 
-  gdk_view_draw_lost( PRIVATE(g)->display );
+  monkey_view_draw_lost( PRIVATE(g)->display );
 
   game_1_player_stop( GAME(g));
 
@@ -563,7 +565,7 @@ static void game_1_player_game_lost(Monkey * monkey,Game1Player * g) {
   PRIVATE(g)->state = GAME_FINISHED;
   
   game_1_player_fire_changed(g);
-  gdk_canvas_paint(PRIVATE(g)->canvas);
+  monkey_canvas_paint(PRIVATE(g)->canvas);
     
 }
 
@@ -579,21 +581,21 @@ static void game_1_player_bubbles_exploded(  Monkey * monkey,
 
     /**
      * evaluate score :
-     * a exploded bubble = 100 pts
-     * a fall bubble = 200 pts
-     * a minimum of 300 pts to add to score
+     * a exploded bubble = 10 pts
+     * a fall bubble = 20 pts
+     * a minimum of 30 pts to add to score
      */
 
-  points = g_list_length(exploded)*100 + g_list_length(fallen)*200;
-  if( points > 300 ) {
-    game_1_player_add_to_score(g,points);
+  points = g_list_length(exploded) + g_list_length(fallen)*2;
+  if( points > 3 ) {
+    game_1_player_add_to_score(g,points*10);
   }    
   
   if( monkey_is_empty( monkey) ) {
     
     PRIVATE(g)->state = GAME_FINISHED;
     
-    gdk_view_draw_win( PRIVATE(g)->display );
+    monkey_view_draw_win( PRIVATE(g)->display );
     
     game_1_player_fire_changed(g);	
     game_1_player_stop(GAME(g));
@@ -606,7 +608,7 @@ static void game_1_player_add_to_score(Game1Player * g,gint points) {
   g_assert( IS_GAME_1_PLAYER(g));
 
   PRIVATE(g)->score += points;
-  gdk_view_set_points(PRIVATE(g)->display,PRIVATE(g)->score);  
+  monkey_view_set_points(PRIVATE(g)->display,PRIVATE(g)->score);  
 }
 
 static void game_1_player_add_bubble(Game1Player * game) {

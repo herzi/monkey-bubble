@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<omf>
+  <resource>
+    <creator>
+      tom@aliacom.fr
+    </creator>
+    <maintainer>
+      laurentb@aliacom.fr
+    </maintainer>
+
+    <title>
+      Monkey Bubble
+    </title>    
+
+    <date>
+      2004-01-08
+    </date>
+    <version identifier="0.1" date="2004-01-08" description="Initial version for Monkey Bubble 2.0"/>
+    <subject category="GNOME|Games"/>
+    <description>
+      User manual for the Monkey Bubble game.
+    </description>
+    <type>
+      user's guide
+    </type>
+    <format mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"/>
+    <identifier url="monkey-bubble.xml"/>
+    <language code="C"/>
+    <relation seriesid="d7834910-40e7-11d6-87e4-aa5f78e530ae"/>
+    <rights type="GNU FDL" license.version="1.1" holder="Thomas Cataldo"/>
+  </resource>
+</omf>

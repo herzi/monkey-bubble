@@ -45,6 +45,13 @@ typedef struct {
 typedef struct {
   GObjectClass parent_class;
   void (*  game_lost)(Monkey * monkey);
+
+  void (*  shooter_up)(Monkey * monkey);
+
+  void (*  shooter_down)(Monkey * monkey);
+
+  void (*  shooter_center)(Monkey * monkey);
+
   void (* bubbles_exploded)(Monkey * monkey,
 			    GList * exploded,
 			    GList * fallen);

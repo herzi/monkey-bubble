@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY app "Monkey Bubble">  
+  <!ENTITY appversion "0.1.7">
+  <!ENTITY manrevision "0.1">
+  <!ENTITY date "January 2004">
+]>
+<!-- (Do not remove this comment block.)
+  Maintained by the GNOME Documentation Project
+  Template version: 2.0 beta
+  Template last modified Jan 2, 2002 
+    
+  -->
+<article id="index" lang="en"> 
+  <articleinfo> 
+    <title>&app; Manual V&manrevision;</title> 
+    <copyright> 
+      <year>2004</year> 
+      <holder>Thomas Cataldo</holder> 
+    </copyright> 
+    <publisher> 
+      <publishername>GNOME Documentation Project</publishername> 
+    </publisher> 
+    <authorgroup> 
+      <author> 
+	<firstname>Thomas</firstname> 
+	<surname>Cataldo</surname> 
+	<affiliation> 
+	  <orgname>GNOME Documentation Project</orgname> 
+	</affiliation> 
+      </author> 
+    </authorgroup> 
+
+    <revhistory> 
+      <revision> 
+	<revnumber>&app; Manual V&manrevision;</revnumber> 
+	<date>&date;</date> 
+	<revdescription> 
+	  <para role="author">
+	    Thomas Cataldo
+	  </para>
+	  <para role="publisher">
+	    GNOME Documentation Project 
+	  </para>
+	</revdescription> 
+      </revision> 
+    </revhistory> 
+
+    <releaseinfo> This manual describes version &appversion; of &app;.
+    </releaseinfo> 
+    <legalnotice> 
+      <title>Feedback</title> 
+      <para> To report a bug or make a suggestion regarding the &app; application or this
+	manual, follow the directions in the 
+	<ulink url="ghelp:gnome-feedback" type="help">GNOME Feedback Page</ulink>. </para>
+    </legalnotice> 
+  </articleinfo> 
+
+  <indexterm> 
+    <primary>&app;</primary> 
+  </indexterm> 
+  <indexterm> 
+    <primary>bubble game</primary> 
+  </indexterm> 
+
+  <sect1 id="monkey-bubble-introduction"> 
+    <title>Introduction</title> 
+    <para>
+      <application>&app;</application> is an arcade game with the following objectives :
+    </para>
+
+    <variablelist> 
+      <varlistentry> 
+	<term>Clear the jungle from all those nasty bubbles</term> 
+	<listitem> 
+	  <para>
+	    To clear a level, you need to stick at least 3 bubbles of the same
+	    color together using the bubble shooter.
+	  </para>
+	  <para>
+	    Once 3 or more bubbles of the color are sticked together
+	    at the top of the playground, they will explode.
+	  </para>
+	  <para>
+	    To level up, you need to clear all the bubbles stuck in the playground.
+	  </para>
+	</listitem> 
+      </varlistentry> 
+    </variablelist> 
+  </sect1> 
+
+  <sect1 id="monkey-bubble-get-started"> 
+    <title>Getting Started</title> 
+    <para>
+      The following sections describe how to start 
+      <application>&app;</application>. 
+    </para>
+    <sect2 id="gnome-terminal-to-start"> 
+      <title>To Start &app;</title> 
+      <para>
+	You can start <application>&app;</application> in the following ways: 
+      </para>
+      <variablelist> 
+	<varlistentry> 
+	  <term>Applications menu</term> 
+	  <listitem>
+	    <para>
+	      Choose
+	      <menuchoice>
+		<guimenu>Games</guimenu>
+		<guimenuitem>Monkey Bubble</guimenuitem>
+	      </menuchoice>.</para>
+	  </listitem>
+	</varlistentry> 
+	<varlistentry> 
+	  <term>Command line</term> 
+	  <listitem> 
+	    <para>
+	      Execute the following command: <command>monkey-bubble</command>
+	    </para>
+	  </listitem> 
+	</varlistentry> 
+      </variablelist> 
+    </sect2> 
+  </sect1> 
+</article> 

@@ -1,3 +1,369 @@
+2004-01-19  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	0.1.9 release
+	* configure.in:
+
+2004-01-19  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+        This patch prevents monkey-bubble from stomping
+	on memory it doesn'town.# Adam
+	
+	* src/audio/sound-manager.c: (start_play):
+	* src/monkey/bubble.c: (bubble_collide_bubble):
+
+	Make control keys first in the list
+	* src/ui/keyboard-properties.c:
+
+2004-01-16  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	new background for 2 player game
+	* pixmaps/layout_2_players.svg:
+
+2004-01-16  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	new bubbles with symbol inside
+	* pixmaps/bubbles/bubble_01.svg:
+	* pixmaps/bubbles/bubble_02.svg:
+	* pixmaps/bubbles/bubble_03.svg:
+	* pixmaps/bubbles/bubble_04.svg:
+	* pixmaps/bubbles/bubble_05.svg:
+	* pixmaps/bubbles/bubble_06.svg:
+	* pixmaps/bubbles/bubble_07.svg:
+	* pixmaps/bubbles/bubble_08.svg:
+
+2004-01-16  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+        oupss .. forget some image in the makefile.am..
+	* pixmaps/Makefile.am:
+
+2004-01-15  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+        
+	fix automake/autoconf script
+	the library are no more installed for nothing
+	* configure.in:
+	* src/audio/Makefile.am:
+	* src/monkey/Makefile.am:
+	* src/ui/Makefile.am:
+	* src/util/Makefile.am:
+	* src/view/Makefile.am:
+
+2004-01-14  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+          update schema and update menu accelerator
+	* data/monkey-bubble.schemas.in:
+	* src/ui/keyboard-properties.c: (keyboard_properties_get_instance),
+	(keyboard_properties_new), (binding_from_string),
+	(binding_from_value):
+	* src/ui/ui-main.c: (ui_main_new), (new_1_player_game),
+	(pause_game):
+
+2004-01-14  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+        fix the new dialog
+	* data/keybinding.glade:
+	* src/ui/keyboard-properties.c: (edit_keys_dialog_new):
+
+2004-01-14  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+        Lot of things :
+        add animate harm for the monkey
+	temporize buubles which fall
+	temporize star animation
+
+	first version of the new keybinding dialog using
+	libegg
+
+	remove of menu entry resume/pause for only one
+	entry
+
+	dont disable new game entry when a game
+	is playing
+	
+	* data/keybinding.glade:
+	* data/monkey-bubble.glade:
+	* pixmaps/Makefile.am:
+	* pixmaps/harm.svg:
+	* pixmaps/harm_down.svg:
+	* pixmaps/harm_shoot.svg:
+	* pixmaps/harm_up.svg:
+	* src/audio/sound-manager.c: (sound_manager_active_sound),
+	(stop_play), (start_play):
+	* src/audio/sound-manager.h:
+	* src/monkey/monkey.c: (monkey_class_init),
+	(monkey_update_shooter):
+	* src/monkey/monkey.h:
+	* src/ui/Makefile.am:
+	* src/ui/eggaccelerators.c: (is_alt), (is_ctl), (is_modx),
+	(is_ctrl), (is_shft), (is_shift), (is_control), (is_release),
+	(is_meta), (is_super), (is_hyper), (egg_accelerator_parse_virtual),
+	(egg_virtual_accelerator_name),
+	(egg_keymap_resolve_virtual_modifiers),
+	(egg_keymap_virtualize_modifiers), (reload_modmap),
+	(egg_keymap_get_modmap):
+	* src/ui/eggaccelerators.h:
+	* src/ui/eggcellrendererkeys.c: (egg_cell_renderer_keys_get_type),
+	(egg_cell_renderer_keys_init),
+	(marshal_VOID__STRING_UINT_FLAGS_UINT),
+	(egg_cell_renderer_keys_class_init), (egg_cell_renderer_keys_new),
+	(egg_cell_renderer_keys_finalize),
+	(convert_keysym_state_to_string),
+	(egg_cell_renderer_keys_get_property),
+	(egg_cell_renderer_keys_set_property), (is_modifier),
+	(egg_cell_renderer_keys_get_size), (grab_key_callback),
+	(ungrab_stuff), (pointless_eventbox_start_editing),
+	(pointless_eventbox_cell_editable_init),
+	(pointless_eventbox_subclass_get_type),
+	(egg_cell_renderer_keys_start_editing),
+	(egg_cell_renderer_keys_set_accelerator),
+	(egg_cell_renderer_keys_get_accelerator),
+	(egg_cell_renderer_keys_set_accel_mode):
+	* src/ui/eggcellrendererkeys.h:
+	* src/ui/game-1-player-manager.c: (game_1_player_manager_stop):
+	* src/ui/game-1-player.c: (game_1_player_new),
+	(game_1_player_conf_keyboard), (game_1_player_stop):
+	* src/ui/game-2-player.c: (game_2_player_new),
+	(game_2_player_conf_keyboard):
+	* src/ui/keyboard-properties.c: (keyboard_properties_get_instance),
+	(keyboard_properties_show), (keyboard_properties_get_accel_group),
+	(keyboard_properties_new), (keyboard_properties_finalize),
+	(keyboard_properties_class_init), (keyboard_properties_init),
+	(keyboard_properties_init_accel_group), (update_model_foreach),
+	(keys_change_notify), (accel_changed_callback),
+	(mnemonics_change_notify), (menu_accels_change_notify),
+	(binding_from_string), (binding_from_value), (binding_name),
+	(sync_handler), (queue_gconf_sync), (accel_set_func),
+	(name_compare_func), (accel_compare_func),
+	(remove_from_list_callback), (accel_edited_callback),
+	(disable_mnemonics_toggled), (disable_menu_accels_toggled),
+	(real_start_editing_cb), (start_editing_cb),
+	(edit_keys_dialog_new), (update_menu_accel_state):
+	* src/ui/keyboard-properties.h:
+	* src/ui/main.c: (main):
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_new_1_player_game),
+	(ui_main_new_2_player_game), (ui_main_enabled_games_item),
+	(pause_game), (ui_main_stop_game), (stop_game), (ui_main_set_game),
+	(ui_main_game_changed), (show_preferences_dialog):
+	* src/ui/update-from-egg.sh:
+	* src/view/monkey-view.c: (monkey_view_set_harm),
+	(monkey_view_shooter_down), (monkey_view_shooter_up),
+	(monkey_view_shooter_center), (monkey_view_shooter_shoot),
+	(monkey_view_new), (monkey_view_update),
+	(monkey_view_animate_stars), (monkey_view_add_explode_stars):
+
+2004-01-13  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	0.1.8 release
+	fix icon for gnome menu
+	* configure.in:
+	* debian/changelog:
+	* monkey-bubble.desktop.in:
+	* pixmaps/Makefile.am:
+	* pixmaps/monkey-bubble-icon.png:
+
+2004-01-13  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	the sound is not looping
+	* src/audio/sound-manager.c: (start_play):
+
+2004-01-09  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	remove gst-audio for the moment because is unused
+	gdk-canvas to monkey-canva
+        gdk-view   to monkey-view as suggested by
+        Mark McLoughlin <mark@skynet.ie> 
+	* configure.in:
+	* src/audio/Makefile.am:
+	* src/audio/gst-audio.c:
+	* src/audio/gst-audio.h:
+	* src/audio/sound-manager.c:
+	* src/audio/sound-manager.h:
+	* src/audio/test.c:
+	* src/ui/Makefile.am:
+	* src/ui/game-1-player-manager.c: (game_1_player_manager_new),
+	(game_1_player_manager_start_level), (game_1_player_manager_stop):
+	* src/ui/game-1-player-manager.h:
+	* src/ui/game-1-player.c: (game_1_player_new),
+	(game_1_player_timeout), (game_1_player_pause),
+	(game_1_player_game_lost), (game_1_player_bubbles_exploded),
+	(game_1_player_add_to_score):
+	* src/ui/game-1-player.h:
+	* src/ui/game-2-player-manager.c: (game_2_player_manager_new),
+	(game_2_player_manager_restart), (game_2_player_manager_stop):
+	* src/ui/game-2-player-manager.h:
+	* src/ui/game-2-player.c: (game_2_player_new),
+	(game_2_player_timeout), (game_2_player_pause),
+	(game_2_player_game_lost), (game_2_player_bubbles_exploded):
+	* src/ui/game-2-player.h:
+	* src/ui/main.c:
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_draw_main),
+	(ui_main_get_canvas), (ui_main_new_1_player_game),
+	(ui_main_new_2_player_game), (stop_game):
+	* src/ui/ui-main.h:
+	* src/view/Makefile.am:
+	* src/view/gdk-canvas.c:
+	* src/view/gdk-canvas.h:
+	* src/view/gdk-view.c:
+	* src/view/gdk-view.h:
+	* src/view/monkey-canvas.c: (monkey_canvas_instance_init),
+	(monkey_canvas_finalize), (monkey_canvas_class_init),
+	(monkey_canvas_get_type), (monkey_canvas_new),
+	(block_get_position), (monkey_canvas_configure),
+	(monkey_canvas_scale_image_ghfunc), (monkey_canvas_scale_images),
+	(monkey_canvas_expose), (monkey_canvas_draw),
+	(monkey_canvas_create_block_from_image),
+	(monkey_canvas_create_block), (monkey_canvas_load_image_from_path),
+	(image_scale), (create_pixbuf_normal), (create_pixbuf_svg),
+	(image_create_pixbuf), (monkey_canvas_get_root_layer),
+	(monkey_canvas_append_layer), (monkey_canvas_new_layer),
+	(monkey_canvas_add_block), (block_set_position),
+	(block_get_rectangle), (monkey_canvas_move_block),
+	(monkey_canvas_remove_block), (monkey_canvas_unref_block),
+	(layer_draw), (block_draw), (layer_delete), (monkey_canvas_clear),
+	(monkey_canvas_paint):
+	* src/view/monkey-canvas.h:
+	* src/view/monkey-view.c: (monkey_view_load_shooter_images),
+	(monkey_view_new), (monkey_view_update),
+	(monkey_view_animate_stars), (monkey_view_instance_init),
+	(monkey_view_finalize), (monkey_view_free_map),
+	(monkey_view_class_init), (monkey_view_get_type),
+	(monkey_view_bubble_changed), (monkey_view_shooter_rotated),
+	(monkey_view_shooter_bubble_added), (monkey_view_create_bubble),
+	(monkey_view_board_down), (monkey_view_bubbles_exploded),
+	(monkey_view_draw_lost), (monkey_view_add_explode_stars),
+	(monkey_view_create_gem), (monkey_view_clear_gems),
+	(monkey_view_set_gems_count), (monkey_view_create_number),
+	(monkey_view_clear_score), (monkey_view_set_score),
+	(monkey_view_clear_points), (monkey_view_set_points),
+	(monkey_view_create_little_waiting),
+	(monkey_view_create_big_waiting), (monkey_view_clear_waiting),
+	(monkey_view_set_waiting_bubbles), (monkey_view_draw_win),
+	(monkey_view_bubbles_inserted), (monkey_view_bubbles_added),
+	(monkey_view_bubbles_waiting_changed):
+	* src/view/monkey-view.h:
+
+2004-01-08  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+        help doc done by tom <thomas.cataldo@aliacom.fr>
+	* Makefile.am:
+	* configure.in:
+	* data/monkey-bubble.glade:
+	* help/.cvsignore:
+	* help/C/.cvsignore:
+	* help/C/Makefile.am:
+	* help/C/monkey-bubble-C.omf:
+	* help/C/monkey-bubble.xml:
+	* help/Makefile.am:
+	* help/fr/.cvsignore:
+	* help/fr/Makefile.am:
+	* help/fr/monkey-bubble-fr.omf:
+	* help/fr/monkey-bubble.xml:
+	* help/omf.make:
+	* help/xmldocs.make:
+	* src/ui/Makefile.am:
+	* src/ui/main.c: (main):
+	* src/ui/ui-main.c: (ui_main_new), (about), (show_help_content),
+	(show_error_dialog):
+
+2004-01-07  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+	make the song loop
+	* src/audio/sound-manager.c: (eos), (stop_play):
+
+2004-01-07  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+         fix autogen.sh to use gnome-autogen
+	 fix some makefile
+	done by tom	
+	* autogen.sh:
+	* src/audio/Makefile.am:
+	* src/monkey/Makefile.am:
+
+	a try to make the music loop
+	* src/audio/sound-manager.c: (eos), (start_play):
+
+
+2004-01-07  Thomas Cataldo  <thomas.cataldo@aliacom.fr>
+
+	* src/monkey/Makefile.am: fix marshallers build
+
+2004-01-06  Laurent Belmonte  <laurent.belmonte@aliacom.fr>
+
+         Remove the web site from the cvs
+	Add the soungs and the code to play the songs
+	+ some bugfix in rounding double
+	* Makefile.am:
+	* configure.in:
+	* html/.cvsignore:
+	* html/Makefile:
+	* html/README:
+	* html/css/monkey-bubble.css:
+	* html/downloads.xml:
+	* html/header.xml:
+	* html/index.xml:
+	* html/links.xml:
+	* html/mb.png:
+	* html/menu.xml:
+	* html/monkey-bubble-0.1.3-gentoo.tar.bz2:
+	* html/monkey-bubble.css:
+	* html/monkey-bubble.xsl:
+	* html/monkey.png:
+	* html/roadmap.xml:
+	* html/scr-1-player.png:
+	* html/scr-2-players.png:
+	* html/scr-red-splash.png:
+	* html/scr-stars.png:
+	* html/screenshots.xml:
+	* html/status.xml:
+	* html/thumb-scr-1-player.png:
+	* html/thumb-scr-2-players.png:
+	* html/thumb-scr-red-splash.png:
+	* html/thumb-scr-stars.png:
+	* html/whatis.xml:
+	* sounds/Makefile.am:
+	* sounds/game.ogg:
+	* sounds/splash.ogg:
+	* src/audio/Makefile.am:
+	* src/audio/sound-manager.c: (sound_manager_instance_init),
+	(sound_manager_finalize), (sound_manager_class_init),
+	(sound_manager_get_type), (error_handler), (eos),
+	(sound_manager_new), (stop_play), (start_play),
+	(sound_manager_play_music_file):
+	* src/audio/sound-manager.h:
+	* src/monkey/board.c: (board_get_cell):
+	* src/ui/Makefile.am:
+	* src/ui/main.c: (main):
+	* src/ui/ui-main.c: (ui_main_new), (ui_main_new_1_player_game),
+	(ui_main_new_2_player_game), (stop_game):
+	* src/view/gdk-canvas.c: (gdk_canvas_scale_image_ghfunc):
+
+2004-01-02  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	New gfx from olivier
+	* pixmaps/layout_1_player.svg:
+	* pixmaps/number/0.svg:
+	* pixmaps/number/1.svg:
+	* pixmaps/number/2.svg:
+	* pixmaps/number/3.svg:
+	* pixmaps/number/4.svg:
+	* pixmaps/number/5.svg:
+	* pixmaps/number/6.svg:
+	* pixmaps/number/7.svg:
+	* pixmaps/number/8.svg:
+	* pixmaps/number/9.svg:
+	* src/ui/game-1-player.c:
+	* src/view/gdk-view.c: (gdk_view_set_points):
+
+2004-01-02  Laurent Belmonte  <lolo3d@tuxfamily.org>
+
+	fix schema registration from Joe Marcus Clarke
+	* data/Makefile.am:
+
+	GFX Update 
+	* pixmaps/layout_1_player.svg:
+
+	UI fix
+	* src/ui/ui-main.c:
+
 2003-12-22  Laurent Belmonte  <lolo3d@tuxfamily.org>
 
         0.1.7 release

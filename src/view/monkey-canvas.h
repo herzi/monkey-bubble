@@ -1,4 +1,4 @@
-/* gdk-canvas.h
+/* monkey-canvas.h
  * Copyright (C) 2002 Laurent Belmonte
  *
  * This library is free software; you can redistribute it and/or
@@ -17,83 +17,82 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef GDK_CANVAS_H
-#define GDK_CANVAS_H
+#ifndef MONKEY_CANVAS_H
+#define MONKEY_CANVAS_H
 
 #include <gtk/gtk.h>
 
 
 G_BEGIN_DECLS
 
-#define TYPE_GDK_CANVAS      (gdk_canvas_get_type())
+#define TYPE_MONKEY_CANVAS      (monkey_canvas_get_type())
 
-#define GDK_CANVAS(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_GDK_CANVAS,GdkCanvas))
-#define GDK_CANVAS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_GDK_CANVAS,GdkCanvasClass))
-#define IS_GDK_CANVAS(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_GDK_CANVAS))
-#define IS_GDK_CANVAS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_GDK_CANVAS))
-#define GDK_CANVAS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_GDK_CANVAS, GdkCanvasClass))
+#define MONKEY_CANVAS(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), TYPE_MONKEY_CANVAS,MonkeyCanvas))
+#define MONKEY_CANVAS_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_MONKEY_CANVAS,MonkeyCanvasClass))
+#define IS_MONKEY_CANVAS(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), TYPE_MONKEY_CANVAS))
+#define IS_MONKEY_CANVAS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_MONKEY_CANVAS))
+#define MONKEY_CANVAS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_MONKEY_CANVAS, MonkeyCanvasClass))
 
 
 
-typedef struct GdkCanvasPrivate GdkCanvasPrivate;
+typedef struct MonkeyCanvasPrivate MonkeyCanvasPrivate;
 
 
 
 typedef struct {
   GtkDrawingArea parent_instance;
-  GdkCanvasPrivate * private;
-} GdkCanvas ;
+  MonkeyCanvasPrivate * private;
+} MonkeyCanvas ;
 
 typedef struct {
   GtkDrawingAreaClass parent_class;
-} GdkCanvasClass;
+} MonkeyCanvasClass;
 
 typedef struct Block Block;
 typedef struct Layer Layer;
 
-GType gdk_canvas_get_type(void);
+GType monkey_canvas_get_type(void);
 
-GdkCanvas * gdk_canvas_new(void);
+MonkeyCanvas * monkey_canvas_new(void);
 
 
-Block * gdk_canvas_create_block_from_image(GdkCanvas * canvas,
+Block * monkey_canvas_create_block_from_image(MonkeyCanvas * canvas,
 					    const char * path,
 					    gint x_size,
 					    gint y_size,
 					    gint x_center,
 					    gint y_center);
 
-Layer * gdk_canvas_get_root_layer(GdkCanvas * canvas);
+Layer * monkey_canvas_get_root_layer(MonkeyCanvas * canvas);
 
-Layer * gdk_canvas_append_layer(GdkCanvas * canvas,
+Layer * monkey_canvas_append_layer(MonkeyCanvas * canvas,
 				 gdouble x,gdouble y);
 
-void gdk_canvas_add_block(GdkCanvas * canvas,
+void monkey_canvas_add_block(MonkeyCanvas * canvas,
 			  Layer * layer,
 			  Block * block,
 			  gdouble x,
 			  gdouble y);
 
-void gdk_canvas_move_block(GdkCanvas * canvas,
+void monkey_canvas_move_block(MonkeyCanvas * canvas,
 			   Block * block,
 			   gdouble x,
 			   gdouble y);
 
-void gdk_canvas_remove_block(GdkCanvas * canvas,
+void monkey_canvas_remove_block(MonkeyCanvas * canvas,
 			     Block * block);
 
 
-void gdk_canvas_unref_block(GdkCanvas * canvas,
+void monkey_canvas_unref_block(MonkeyCanvas * canvas,
 			    Block * b);
 
 
-void gdk_canvas_clear(GdkCanvas * gdk_canvas);
-void gdk_canvas_paint(GdkCanvas * gdk_canvas);
+void monkey_canvas_clear(MonkeyCanvas * monkey_canvas);
+void monkey_canvas_paint(MonkeyCanvas * monkey_canvas);
 
 void block_get_position(Block * block,
 			gdouble *x,
 			gdouble *y);
-//GtkWidget * gdk_canvas_get_widget( GdkCanvas * gdk_canvas );
 
 G_END_DECLS
 

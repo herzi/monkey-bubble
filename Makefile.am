@@ -1,12 +1,14 @@
-## Process this file with automake to produce Makefile.in
+NULL=
 
-
-SUBDIRS = \
+SUBDIRS = 	\
 	data	\
 	pixmaps	\
+	sounds 	\
         src     \
         po      \
-        debian
+        help    \
+        debian 	\
+	$(NULL)
 
 applications_in_files = monkey-bubble.desktop.in
 applications_DATA = $(applications_in_files:.desktop.in=.desktop)
@@ -19,5 +21,5 @@ EXTRA_DIST = \
 	intltool-extract.in		\
 	intltool-merge.in		\
 	intltool-update.in		\
-	po
-
+	po				\
+	$(NULL)

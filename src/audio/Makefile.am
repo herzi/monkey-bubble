@@ -1,29 +1,15 @@
 NULL=
 
-
 INCLUDES = \
-	$(LIBGSTAUDIO_LA_CFLAGS) \
+	$(LIBMONKEYAUDIO_A_CFLAGS) \
 	-I../monkey \
 	-g -O2 -Wall -Werror -D_REENTRANT -DDATADIR=\""$(datadir)"\"
 
-lib_LTLIBRARIES = libgstaudio.la
-
-noinst_PROGRAMS = gsttest
-
-gsttest_SOURCES = \
-	gst-audio.h gst-audio.c \
-	test.c
-
-gsttest_LDFLAGS = 
-gsttest_LDADD =   \
-	$(LIBGSTAUDIO_LA_LIBS)
+noinst_LIBRARIES = libmonkeyaudio.a
 
 
-libgstaudio_la_SOURCES = \
-	gst-audio.h gst-audio.c
+libmonkeyaudio_a_SOURCES = \
+	sound-manager.h sound-manager.c \
+	$(NULL)
 
-libgstaudio_la_LDFLAGS = 
-
-libgstaudio_la_LIBADD =  \
-	$(LIBGSTAUDIO_LA_LIBS)
 
